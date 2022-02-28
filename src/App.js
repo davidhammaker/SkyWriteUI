@@ -73,12 +73,18 @@ const Leaf = (props) => {
 
 const App = () => {
   const editor = useMemo(() => withReact(createEditor()), []);
-  const [value, setValue] = useState([
-    {
-      type: "paragraph",
-      children: [{ text: "Untitled" }],
-    },
-  ]);
+
+  /* "value" ends up being an array of objects, each of which
+  represents a continuous section of text */
+  const [value, setValue] = useState(
+    // Simple example of loading a value from Local Storage
+    JSON.parse(localStorage.getItem("content")) || [
+      {
+        type: "paragraph",
+        children: [{ text: "Untitled" }],
+      },
+    ]
+  );
 
   const renderElement = useCallback((props) => {
     switch (props.element.type) {
@@ -97,7 +103,18 @@ const App = () => {
     <Slate
       editor={editor}
       value={value}
-      onChange={(newValue) => setValue(newValue)}
+      onChange={(value) => {
+        setValue(value);
+
+        // Simple example of constantly storing the value locally.
+        const isAstChange = editor.operations.some(
+          (op) => "set_selection" !== op.type
+        );
+        if (isAstChange) {
+          const content = JSON.stringify(value);
+          localStorage.setItem("content", content);
+        }
+      }}
     >
       <div>
         <button
