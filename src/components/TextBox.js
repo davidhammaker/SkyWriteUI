@@ -1,17 +1,93 @@
-import * as React from "react";
-import Box from "@mui/material/Box";
-import TextField from "@mui/material/TextField";
+import React, { useCallback, useState, useMemo } from "react";
+import { createEditor, Editor, Transforms, Text } from "slate";
+import { Slate, Editable, withReact } from "slate-react";
+import { withHistory } from "slate-history";
 
-export default function TextBox() {
+const Element = ({ attributes, children, element }) => {
+  return <p {...attributes}>{children}</p>;
+};
+
+const Leaf = ({ attributes, children, leaf }) => {
+  if (leaf.bold) {
+    children = <strong>{children}</strong>;
+  }
+
+  if (leaf.italics) {
+    children = <em>{children}</em>;
+  }
+
+  if (leaf.underline) {
+    children = <u>{children}</u>;
+  }
+
+  return <span {...attributes}>{children}</span>;
+};
+
+const TextBox = () => {
+  // We need an editor that doesn't change when we render.
+  // ('withHistory' lets us undo with ctrl+z)
+  const editor = useMemo(() => withReact(withHistory(createEditor())), []);
+
+  // We need a way to tell Slate how to render our different text
+  // types. These will help us do that.
+  const renderElement = useCallback((props) => <Element {...props} />, []);
+  const renderLeaf = useCallback((props) => <Leaf {...props} />, []);
+
+  // This hook handles the value inside the Slate element.
+  const defaultChild = { text: "" };
+  const defaultValue = [{ type: "paragraph", children: [defaultChild] }];
+  const [value, setValue] = useState(defaultValue);
+
+  // For toggling text types:
+  function toggleBold(editor, format) {
+    if (!Editor.marks(editor) || !Editor.marks(editor)[format]) {
+      Editor.addMark(editor, format, true);
+    } else {
+      Editor.removeMark(editor, format);
+    }
+  }
+
   return (
-    <Box
-      sx={{
-        maxWidth: "100%",
-      }}
-      noValidate
-      autoComplete="off"
+    <Slate
+      editor={editor}
+      value={value}
+      onChange={(newValue) => setValue(newValue)}
     >
-      <TextField fullWidth placeholder="Start writing!" multiline />
-    </Box>
+      <div>
+        <button
+          onMouseDown={(event) => {
+            event.preventDefault();
+            toggleBold(editor, "bold");
+          }}
+        >
+          Bold
+        </button>
+        <button
+          onMouseDown={(event) => {
+            event.preventDefault();
+            toggleBold(editor, "italics");
+          }}
+        >
+          Italics
+        </button>
+        <button
+          onMouseDown={(event) => {
+            event.preventDefault();
+            toggleBold(editor, "underline");
+          }}
+        >
+          Underline
+        </button>
+      </div>
+      {/* The 'Editable' is the part we can edit like a text editor. */}
+      <Editable
+        renderElement={renderElement}
+        renderLeaf={renderLeaf}
+        placeholder="Type here."
+        autoFocus
+      />
+    </Slate>
   );
-}
+};
+
+export default TextBox;

@@ -1,7 +1,7 @@
 import React, { useCallback, useState, useMemo } from "react";
 import { createEditor, Editor, Transforms, Text } from "slate";
 import { Slate, Editable, withReact } from "slate-react";
-import "./App.css";
+import TextBox from "./components/TextBox";
 
 const CustomEditor = {
   isBoldMarkActive(editor) {
@@ -71,7 +71,7 @@ const Leaf = (props) => {
   );
 };
 
-const App = () => {
+const NotApp = () => {
   const editor = useMemo(() => withReact(createEditor()), []);
 
   /* "value" ends up being an array of objects, each of which
@@ -101,6 +101,7 @@ const App = () => {
 
   return (
     <Slate
+      style={{ height: "100%" }}
       editor={editor}
       value={value}
       onChange={(value) => {
@@ -159,6 +160,10 @@ const App = () => {
       />
     </Slate>
   );
+};
+
+const App = () => {
+  return <TextBox />;
 };
 
 export default App;
