@@ -1,4 +1,8 @@
 import React, { useCallback, useState, useMemo } from "react";
+import IconButton from "@mui/material/IconButton";
+import FormatBold from "@mui/icons-material/FormatBold";
+import FormatItalic from "@mui/icons-material/FormatItalic";
+import FormatUnderlinedIcon from "@mui/icons-material/FormatUnderlined";
 import { createEditor, Editor, Transforms, Text } from "slate";
 import { Slate, Editable, withReact } from "slate-react";
 import { withHistory } from "slate-history";
@@ -54,30 +58,33 @@ const TextBox = () => {
       onChange={(newValue) => setValue(newValue)}
     >
       <div>
-        <button
+        <IconButton
+          color="primary"
           onMouseDown={(event) => {
             event.preventDefault();
             toggleBold(editor, "bold");
           }}
         >
-          Bold
-        </button>
-        <button
+          <FormatBold />
+        </IconButton>
+        <IconButton
+          color="primary"
           onMouseDown={(event) => {
             event.preventDefault();
             toggleBold(editor, "italics");
           }}
         >
-          Italics
-        </button>
-        <button
+          <FormatItalic />
+        </IconButton>
+        <IconButton
+          color="primary"
           onMouseDown={(event) => {
             event.preventDefault();
             toggleBold(editor, "underline");
           }}
         >
-          Underline
-        </button>
+          <FormatUnderlinedIcon />
+        </IconButton>
       </div>
       {/* The 'Editable' is the part we can edit like a text editor. */}
       <Editable
