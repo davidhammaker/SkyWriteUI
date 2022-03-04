@@ -8,7 +8,7 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import blue from "@mui/material/colors/blue";
 import grey from "@mui/material/colors/grey";
 import { createEditor, Editor, Transforms, Text } from "slate";
-import { Slate, Editable, withReact } from "slate-react";
+import { Slate, Editable, withReact, useSlate } from "slate-react";
 import { withHistory } from "slate-history";
 import isHotkey from "is-hotkey";
 
@@ -29,6 +29,35 @@ const Element = ({ attributes, children, element }) => {
   return <p {...attributes}>{children}</p>;
 };
 
+// For toggling text types:
+function toggleMark(editor, format) {
+  if (!Editor.marks(editor) || !Editor.marks(editor)[format]) {
+    Editor.addMark(editor, format, true);
+  } else {
+    Editor.removeMark(editor, format);
+  }
+}
+
+const FormatButton = ({ format }) => {
+  const editor = useSlate();
+  const icon = {
+    bold: <FormatBold />,
+    italic: <FormatItalic />,
+    underline: <FormatUnderlinedIcon />,
+  }[format];
+  return (
+    <IconButton
+      color={(Editor.marks(editor) || {})[format] ? "primary" : "secondary"}
+      onMouseDown={(event) => {
+        event.preventDefault();
+        toggleMark(editor, format);
+      }}
+    >
+      {icon}
+    </IconButton>
+  );
+};
+
 const TextBox = () => {
   // We need an editor that doesn't change when we render.
   // ('withHistory' lets us undo with ctrl+z)
@@ -43,16 +72,6 @@ const TextBox = () => {
   const defaultChild = { text: "" };
   const defaultValue = [{ type: "paragraph", children: [defaultChild] }];
   const [value, setValue] = useState(defaultValue);
-
-  // Button colors
-  const [boldButtonColor, setBoldButtonColor] = useState("secondary");
-  const [italicButtonColor, setItalicButtonColor] = useState("secondary");
-  const [underlineButtonColor, setUnderlineButtonColor] = useState("secondary");
-  const buttonColorSetters = {
-    bold: setBoldButtonColor,
-    italic: setItalicButtonColor,
-    underline: setUnderlineButtonColor,
-  };
 
   const Leaf = ({ attributes, children, leaf }) => {
     if (leaf.bold) {
@@ -70,17 +89,6 @@ const TextBox = () => {
     return <span {...attributes}>{children}</span>;
   };
 
-  // For toggling text types:
-  function toggleMark(editor, format) {
-    if (!Editor.marks(editor) || !Editor.marks(editor)[format]) {
-      Editor.addMark(editor, format, true);
-      buttonColorSetters[format]("primary");
-    } else {
-      Editor.removeMark(editor, format);
-      buttonColorSetters[format]("secondary");
-    }
-  }
-
   return (
     <ThemeProvider theme={theme}>
       <Slate
@@ -89,33 +97,9 @@ const TextBox = () => {
         onChange={(newValue) => setValue(newValue)}
       >
         <ButtonGroup variant="contained">
-          <IconButton
-            color={boldButtonColor}
-            onMouseDown={(event) => {
-              event.preventDefault();
-              toggleMark(editor, "bold");
-            }}
-          >
-            <FormatBold />
-          </IconButton>
-          <IconButton
-            color={italicButtonColor}
-            onMouseDown={(event) => {
-              event.preventDefault();
-              toggleMark(editor, "italic");
-            }}
-          >
-            <FormatItalic />
-          </IconButton>
-          <IconButton
-            color={underlineButtonColor}
-            onMouseDown={(event) => {
-              event.preventDefault();
-              toggleMark(editor, "underline");
-            }}
-          >
-            <FormatUnderlinedIcon />
-          </IconButton>
+          <FormatButton format="bold" />
+          <FormatButton format="italic" />
+          <FormatButton format="underline" />
         </ButtonGroup>
         {/* The 'Editable' is the part we can edit like a text editor. */}
         <Editable
