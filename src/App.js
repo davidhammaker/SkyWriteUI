@@ -101,7 +101,6 @@ const NotApp = () => {
 
   return (
     <Slate
-      style={{ height: "100%" }}
       editor={editor}
       value={value}
       onChange={(value) => {
@@ -163,7 +162,11 @@ const NotApp = () => {
 };
 
 const App = () => {
-  return <TextBox />;
+  return (
+    <div style={{ margin: "2em" }}>
+      <TextBox />
+    </div>
+  );
 };
 
 export default App;
