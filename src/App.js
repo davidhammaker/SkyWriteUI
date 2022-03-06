@@ -25,7 +25,6 @@ const App = () => {
       <Box
         sx={{
           padding: "2em",
-          height: "100%",
           backgroundColor: "secondary.dark",
         }}
       >
