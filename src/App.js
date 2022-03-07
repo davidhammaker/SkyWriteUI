@@ -1,40 +1,30 @@
 import React from "react";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
 import SkySlateBox from "./components/SkySlateBox";
-
-const theme = createTheme({
-  palette: {
-    primary: {
-      dark: "#2f323a",
-      main: "#342796",
-      light: "#5a7fc4",
-    },
-    secondary: {
-      dark: "#495166",
-      main: "#8ad4b4",
-      light: "#defaee",
-    },
-  },
-});
+import NavBarAndDrawer, { drawerWidth } from "./components/NavBarAndDrawer";
+import theme from "./components/utils/theme";
 
 const App = () => {
   return (
-    <ThemeProvider theme={theme}>
+    <Box sx={{ display: "flex" }}>
+      <NavBarAndDrawer />
       <Box
         sx={{
-          padding: "2em",
-          backgroundColor: "secondary.dark",
+          flexGrow: 1,
+          px: 3,
+          py: 11,
+          width: { sm: `calc(100% - ${drawerWidth}px)` },
+          backgroundColor: theme.secondaryDark,
         }}
       >
         <Paper>
-          <Box sx={{ padding: "1em" }}>
+          <Box sx={{ p: 2 }}>
             <SkySlateBox />
           </Box>
         </Paper>
       </Box>
-    </ThemeProvider>
+    </Box>
   );
 };
 
