@@ -112,12 +112,7 @@ const NavBarAndDrawer = (props) => {
           >
             <MenuIcon sx={{ color: "#fff" }} />
           </IconButton>
-          <Typography
-            sx={{ ml: { sm: `${drawerWidth}px` } }}
-            variant="h6"
-            noWrap
-            component="div"
-          >
+          <Typography variant="h6" noWrap component="div">
             Sky-Write
           </Typography>
         </Toolbar>
@@ -127,6 +122,12 @@ const NavBarAndDrawer = (props) => {
         sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
       >
         <Drawer
+          PaperProps={{
+            sx: {
+              backgroundColor: theme.secondaryDark,
+              border: 0,
+            },
+          }}
           container={container}
           variant="temporary"
           open={mobileOpen}
@@ -143,6 +144,13 @@ const NavBarAndDrawer = (props) => {
           {drawer}
         </Drawer>
         <Drawer
+          PaperProps={{
+            sx: {
+              mt: "5.5em",
+              backgroundColor: theme.secondaryDark,
+              border: 0,
+            },
+          }}
           variant="permanent"
           sx={{
             display: { xs: "none", sm: "block" },

@@ -3,7 +3,6 @@ import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import SkySlateBox from "./components/SkySlateBox";
 import NavBarAndDrawer, { drawerWidth } from "./components/NavBarAndDrawer";
-import theme from "./components/utils/theme";
 
 const App = () => {
   return (
@@ -15,7 +14,6 @@ const App = () => {
           px: 3,
           py: 11,
           width: { sm: `calc(100% - ${drawerWidth}px)` },
-          backgroundColor: theme.secondaryDark,
         }}
       >
         <Paper>
