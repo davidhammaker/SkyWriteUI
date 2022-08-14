@@ -3,6 +3,7 @@ import IconButton from "@mui/material/IconButton";
 import FormatBold from "@mui/icons-material/FormatBold";
 import FormatItalic from "@mui/icons-material/FormatItalic";
 import FormatUnderlinedIcon from "@mui/icons-material/FormatUnderlined";
+import Save from "@mui/icons-material/Save";
 import Box from "@mui/material/Box";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import { createEditor, Editor } from "slate";
@@ -10,12 +11,24 @@ import { Slate, Editable, withReact, useSlate } from "slate-react";
 import { withHistory } from "slate-history";
 import isHotkey from "is-hotkey";
 import theme from "./utils/theme";
+import axios from "axios";
 
 const hotkeys = {
   "mod+b": "bold",
   "mod+i": "italic",
   "mod+u": "underline",
 };
+
+const altHotkeys = {
+  "mod+s": "save",
+};
+
+function doSave(value) {
+  axios
+    .post("http://localhost:5000/", value)
+    .then((response) => console.log(`Response: ${response.data}`))
+    .catch((error) => console.log(error));
+}
 
 const Element = ({ attributes, children, element }) => {
   return <p {...attributes}>{children}</p>;
@@ -29,6 +42,13 @@ function toggleMark(editor, format) {
     Editor.removeMark(editor, format);
   }
   document.getElementById("sky-slate-editable").focus();
+}
+
+function handleAltHotkey(editor, action) {
+  if (action === "save") {
+    console.log(editor);
+    doSave(editor.children);
+  }
 }
 
 const FormatButton = ({ format }) => {
@@ -99,6 +119,9 @@ const SkySlateBox = () => {
           <FormatButton format="bold" />
           <FormatButton format="italic" />
           <FormatButton format="underline" />
+          <IconButton onClick={() => doSave(value)}>
+            <Save sx={{ color: theme.primaryLight }} />
+          </IconButton>
         </Box>
       </ButtonGroup>
       {/* The 'Editable' is the part we can edit like a text editor. */}
@@ -110,6 +133,12 @@ const SkySlateBox = () => {
             if (isHotkey(hotkey, event)) {
               event.preventDefault();
               toggleMark(editor, hotkeys[hotkey]);
+            }
+          }
+          for (const hotkey in altHotkeys) {
+            if (isHotkey(hotkey, event)) {
+              event.preventDefault();
+              handleAltHotkey(editor, altHotkeys[hotkey]);
             }
           }
         }}

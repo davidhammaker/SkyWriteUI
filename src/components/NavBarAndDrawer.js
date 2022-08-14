@@ -15,6 +15,9 @@ import IconButton from "@mui/material/IconButton";
 import FolderIcon from "@mui/icons-material/Folder";
 import ArticleIcon from "@mui/icons-material/Article";
 import MenuIcon from "@mui/icons-material/Menu";
+import Grid from "@mui/material/Grid";
+import Link from "@mui/material/Link";
+import Button from "@mui/material/Button";
 import theme from "./utils/theme";
 
 export const drawerWidth = 240;
@@ -112,9 +115,29 @@ const NavBarAndDrawer = (props) => {
           >
             <MenuIcon sx={{ color: "#fff" }} />
           </IconButton>
-          <Typography variant="h6" noWrap component="div">
-            Sky-Write
-          </Typography>
+          <Grid
+            container
+            spacing={2}
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
+          >
+            <Grid item>
+              <Typography variant="h6" noWrap component="div">
+                Sky-Write
+              </Typography>
+            </Grid>
+            <Grid item>
+              <Box spacing={2}>
+                <Link underline="none" sx={{ px: 1 }}>
+                  <Button sx={{ color: theme.primaryLight }}>Log In</Button>
+                </Link>
+                <Link underline="none" sx={{ px: 1 }}>
+                  <Button sx={{ color: theme.primaryLight }}>Sign up</Button>
+                </Link>
+              </Box>
+            </Grid>
+          </Grid>
         </Toolbar>
       </AppBar>
       <Box
