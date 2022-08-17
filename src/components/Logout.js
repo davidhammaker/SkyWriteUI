@@ -5,7 +5,7 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Cookies from "js-cookie";
-import { navigateTo } from "../utils/navTools";
+import { navigateTo } from "./utils/navTools";
 
 export default function AppLogout() {
   function doLogout() {

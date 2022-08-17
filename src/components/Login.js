@@ -6,8 +6,8 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import axios from "axios";
 import Cookies from "js-cookie";
-import { backendOrigin, navigateTo } from "../utils/navTools";
-import { getFieldValue, onEnterKey } from "../utils/elementTools";
+import { backendOrigin, navigateTo } from "./utils/navTools";
+import { getFieldValue, onEnterKey } from "./utils/elementTools";
 import CustomTextField from "./CustomTextField";
 
 export default function AppLogin(props) {

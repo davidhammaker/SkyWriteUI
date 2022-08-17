@@ -1,3 +1,5 @@
+export const drawerWidth = 240;
+
 const theme = {
   primaryDark: "#2f323a",
   primary: "#342796",
