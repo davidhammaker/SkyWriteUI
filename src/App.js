@@ -19,6 +19,8 @@ const App = () => {
   const [token, setToken] = useState("");
   const [username, setUsername] = useState("");
   const [storageObjects, setStorageObjects] = useState([]);
+  const [filename, setFilename] = useState("untitled");
+  const [folderId, setFolderId] = useState(null);
 
   function getUser() {
     axios
@@ -75,7 +77,10 @@ const App = () => {
                 >
                   <Paper>
                     <Box sx={{ p: 2 }}>
-                      <SkySlateBox />
+                      <SkySlateBox
+                        filename={filename}
+                        setFilename={setFilename}
+                      />
                     </Box>
                   </Paper>
                 </Box>

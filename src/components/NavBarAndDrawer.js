@@ -15,14 +15,14 @@ import AppDrawer from "./AppDrawer";
 import { drawerWidth } from "./utils/theme";
 import { cutOffString } from "./utils/elementTools";
 
-const makeAccordion = (storageObjects, depth) => {
+const makeAccordion = (storageObjects, depth, setFilename) => {
   const newWidth = drawerWidth - depth * 16;
   const maxStringLength = 24 - depth * 2;
   const newDepth = depth + 1;
   return (
     <>
       {storageObjects.map((obj) => (
-        <>
+        <div key={obj.id}>
           {!obj.is_file && (
             <>
               <Accordion disableGutters sx={{ width: newWidth }}>
@@ -47,12 +47,12 @@ const makeAccordion = (storageObjects, depth) => {
               </Accordion>
             </>
           )}
-        </>
+        </div>
       ))}
       <Paper sx={{ width: newWidth }}>
         <List sx={{ p: 0 }}>
           {storageObjects.map((obj) => (
-            <>
+            <div key={obj.id}>
               {obj.is_file && (
                 <ListItem>
                   <ListItemIcon sx={{ mr: -2.5 }}>
@@ -63,7 +63,7 @@ const makeAccordion = (storageObjects, depth) => {
                   </Typography>
                 </ListItem>
               )}
-            </>
+            </div>
           ))}
         </List>
       </Paper>

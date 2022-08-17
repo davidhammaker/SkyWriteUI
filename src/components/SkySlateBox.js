@@ -1,11 +1,13 @@
 import React, { useCallback, useState, useMemo } from "react";
 import IconButton from "@mui/material/IconButton";
+import Grid from "@mui/material/Grid";
 import FormatBold from "@mui/icons-material/FormatBold";
 import FormatItalic from "@mui/icons-material/FormatItalic";
 import FormatUnderlinedIcon from "@mui/icons-material/FormatUnderlined";
 import Save from "@mui/icons-material/Save";
 import Box from "@mui/material/Box";
 import ButtonGroup from "@mui/material/ButtonGroup";
+import TextField from "@mui/material/TextField";
 import { createEditor, Editor } from "slate";
 import { Slate, Editable, withReact, useSlate } from "slate-react";
 import { withHistory } from "slate-history";
@@ -25,7 +27,7 @@ const altHotkeys = {
 
 function doSave(value) {
   axios
-    .post("http://localhost:5000/", value)
+    .post("http://localhost:8000/", value)
     .then((response) => console.log(`Response: ${response.data}`))
     .catch((error) => console.log(error));
 }
@@ -75,7 +77,7 @@ const FormatButton = ({ format }) => {
   );
 };
 
-const SkySlateBox = () => {
+const SkySlateBox = (props) => {
   // We need an editor that doesn't change when we render.
   // ('withHistory' lets us undo with ctrl+z)
   const editor = useMemo(() => withReact(withHistory(createEditor())), []);
@@ -112,18 +114,40 @@ const SkySlateBox = () => {
       value={value}
       onChange={(newValue) => setValue(newValue)}
     >
-      <ButtonGroup variant="contained">
-        <Box
-          sx={{ backgroundColor: theme.secondaryLight, borderRadius: "4px" }}
-        >
-          <FormatButton format="bold" />
-          <FormatButton format="italic" />
-          <FormatButton format="underline" />
-          <IconButton onClick={() => doSave(value)}>
-            <Save sx={{ color: theme.primaryLight }} />
-          </IconButton>
-        </Box>
-      </ButtonGroup>
+      <Grid
+        container
+        direction="row"
+        justifyContent="left"
+        alignItems="center"
+        spacing={2}
+      >
+        <Grid item>
+          <ButtonGroup variant="contained">
+            <Box
+              sx={{
+                backgroundColor: theme.secondaryLight,
+                borderRadius: "4px",
+              }}
+            >
+              <FormatButton format="bold" />
+              <FormatButton format="italic" />
+              <FormatButton format="underline" />
+              <IconButton onClick={() => doSave(value)}>
+                <Save sx={{ color: theme.primaryLight }} />
+              </IconButton>
+            </Box>
+          </ButtonGroup>
+        </Grid>
+        <Grid item>
+          <TextField
+            size="small"
+            defaultValue={props.filename}
+            onChange={(e) => {
+              props.setFilename(e.target.value);
+            }}
+          />
+        </Grid>
+      </Grid>
       {/* The 'Editable' is the part we can edit like a text editor. */}
       <Editable
         renderElement={renderElement}
