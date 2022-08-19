@@ -1,6 +1,6 @@
 import theme from "./utils/theme";
 
-const FilenameInput = (props) => {
+const FileNameInput = (props) => {
   return (
     <input
       id="filename"
@@ -21,4 +21,4 @@ const FilenameInput = (props) => {
     />
   );
 };
-export default FilenameInput;
+export default FileNameInput;

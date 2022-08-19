@@ -7,8 +7,7 @@ const DrawerPermanent = (props) => {
     <Drawer
       PaperProps={{
         sx: {
-          mt: "5.5em",
-          backgroundColor: theme.secondaryDark,
+          backgroundColor: props.bgcolor,
           border: 0,
         },
       }}

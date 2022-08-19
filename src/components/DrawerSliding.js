@@ -6,7 +6,7 @@ const DrawerSliding = (props) => {
     <Drawer
       PaperProps={{
         sx: {
-          backgroundColor: theme.secondaryDark,
+          backgroundColor: props.bgcolor,
           border: 0,
         },
       }}

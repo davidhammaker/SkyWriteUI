@@ -10,6 +10,7 @@ import NavBarAndDrawer from "./components/NavBarAndDrawer";
 import Start from "./components/Start";
 import AppLogin from "./components/Login";
 import AppLogout from "./components/Logout";
+import AppDrawer from "./components/AppDrawer";
 import { drawerWidth } from "./components/utils/theme";
 import { backendOrigin, inPath } from "./components/utils/navTools";
 
@@ -62,7 +63,10 @@ const App = () => {
           path="/"
           element={
             (token && (
-              <SkySlateBox filename={filename} setFilename={setFilename} />
+              <>
+                <AppDrawer storageObjects={storageObjects} />
+                <SkySlateBox filename={filename} setFilename={setFilename} />
+              </>
             )) || <Start />
           }
         />

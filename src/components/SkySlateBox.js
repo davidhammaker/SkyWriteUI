@@ -6,8 +6,8 @@ import { Slate, Editable, withReact, ReactEditor } from "slate-react";
 import { withHistory } from "slate-history";
 import isHotkey from "is-hotkey";
 import FormatBar from "./FormatBar";
-import FilenameInput from "./FilenameInput";
-import theme from "./utils/theme";
+import FileNameInput from "./FileNameInput";
+import theme, { drawerWidth } from "./utils/theme";
 import axios from "axios";
 
 /*************
@@ -143,12 +143,17 @@ const SkySlateBox = (props) => {
     );
   };
 
+  // Do once
   useEffect(() => {
     window.addEventListener("resize", () => {
       resizeFileName();
       resizeEditorBox();
       resizeBlankDivHeight();
     });
+  }, []);
+
+  // Do on every update
+  useEffect(() => {
     resizeFileName();
     resizeEditorBox();
     resizeBlankDivHeight();
@@ -175,7 +180,13 @@ const SkySlateBox = (props) => {
         }
       }}
     >
-      <Box sx={{ backgroundColor: theme.primaryLightest, height: "100%" }}>
+      <Box
+        sx={{
+          backgroundColor: theme.primaryLightest,
+          height: "100%",
+          ml: `${drawerWidth}px`,
+        }}
+      >
         <Grid
           container
           direction="row"
@@ -186,7 +197,7 @@ const SkySlateBox = (props) => {
             <FormatBar toggleMark={toggleMark} doSave={doSave} />
           </Grid>
           <Grid item>
-            <FilenameInput
+            <FileNameInput
               filename={props.filename}
               fileNameWidth={fileNameWidth}
             />
