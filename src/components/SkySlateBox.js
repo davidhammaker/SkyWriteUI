@@ -1,19 +1,20 @@
 import React, { useCallback, useState, useMemo, useEffect } from "react";
-import IconButton from "@mui/material/IconButton";
 import Grid from "@mui/material/Grid";
-import FormatBold from "@mui/icons-material/FormatBold";
-import FormatItalic from "@mui/icons-material/FormatItalic";
-import FormatUnderlinedIcon from "@mui/icons-material/FormatUnderlined";
-import Save from "@mui/icons-material/Save";
 import Box from "@mui/material/Box";
-import ButtonGroup from "@mui/material/ButtonGroup";
 import { createEditor, Editor, Transforms } from "slate";
-import { Slate, Editable, withReact, useSlate, ReactEditor } from "slate-react";
+import { Slate, Editable, withReact, ReactEditor } from "slate-react";
 import { withHistory } from "slate-history";
 import isHotkey from "is-hotkey";
+import FormatBar from "./FormatBar";
+import FilenameInput from "./FilenameInput";
 import theme from "./utils/theme";
 import axios from "axios";
 
+/*************
+ *
+ * Constants
+ *
+ ************/
 const hotkeys = {
   "mod+b": "bold",
   "mod+i": "italic",
@@ -24,16 +25,17 @@ const altHotkeys = {
   "mod+s": "save",
 };
 
+/*************
+ *
+ * Functions
+ *
+ ************/
 function doSave(value) {
   axios
     .post("http://localhost:8000/", value)
     .then((response) => console.log(`Response: ${response.data}`))
     .catch((error) => console.log(error));
 }
-
-const Element = ({ attributes, children, element }) => {
-  return <p {...attributes}>{children}</p>;
-};
 
 // For toggling text types:
 function toggleMark(editor, format) {
@@ -52,31 +54,22 @@ function handleAltHotkey(editor, action) {
   }
 }
 
-const FormatButton = ({ format }) => {
-  const editor = useSlate();
-  const icon = {
-    bold: <FormatBold />,
-    italic: <FormatItalic />,
-    underline: <FormatUnderlinedIcon />,
-  }[format];
-  return (
-    <IconButton
-      sx={{
-        color: (Editor.marks(editor) || {})[format]
-          ? theme.secondaryDark
-          : theme.secondaryLight,
-      }}
-      onClick={(event) => {
-        event.preventDefault();
-        toggleMark(editor, format);
-      }}
-    >
-      {icon}
-    </IconButton>
-  );
+/*************
+ *
+ * Components
+ *
+ ************/
+const Element = ({ attributes, children, element }) => {
+  return <p {...attributes}>{children}</p>;
 };
 
 const SkySlateBox = (props) => {
+  /*************
+   *
+   * Slate hooks and setup
+   *
+   ************/
+
   // We need an editor that doesn't change when we render.
   // ('withHistory' lets us undo with ctrl+z)
   const editor = useMemo(() => withReact(withHistory(createEditor())), []);
@@ -90,6 +83,12 @@ const SkySlateBox = (props) => {
   const defaultChild = { text: "" };
   const defaultValue = [{ type: "paragraph", children: [defaultChild] }];
   const [value, setValue] = useState(defaultValue);
+
+  /*************
+   *
+   * Slate 'Leaf' component
+   *
+   ************/
 
   const Leaf = ({ attributes, children, leaf }) => {
     if (leaf.bold) {
@@ -107,7 +106,12 @@ const SkySlateBox = (props) => {
     return <span {...attributes}>{children}</span>;
   };
 
-  // Hooks and functions for keeping heights/widths where I want them
+  /*************
+   *
+   * Customization hooks and functions
+   *
+   ************/
+
   const [fileNameWidth, setFileNameWidth] = useState("200px");
   const resizeFileName = () => {
     setFileNameWidth(
@@ -150,6 +154,12 @@ const SkySlateBox = (props) => {
     resizeBlankDivHeight();
   });
 
+  /*************
+   *
+   * Component return
+   *
+   ************/
+
   return (
     <Slate
       editor={editor}
@@ -173,46 +183,12 @@ const SkySlateBox = (props) => {
           alignItems="center"
         >
           <Grid item>
-            <ButtonGroup
-              id="editorButtons"
-              variant="contained"
-              sx={{
-                boxShadow: 0,
-              }}
-            >
-              <Box
-                sx={{
-                  backgroundColor: theme.secondaryLightest,
-                  borderWidth: 1,
-                  borderColor: theme.secondaryLight,
-                  borderStyle: "solid",
-                }}
-              >
-                <IconButton onClick={() => doSave(value)}>
-                  <Save sx={{ color: theme.secondary }} />
-                </IconButton>
-                <FormatButton format="bold" />
-                <FormatButton format="italic" />
-                <FormatButton format="underline" />
-              </Box>
-            </ButtonGroup>
+            <FormatBar toggleMark={toggleMark} doSave={doSave} />
           </Grid>
           <Grid item>
-            <input
-              id="filename"
-              defaultValue={props.filename}
-              style={{
-                borderWidth: "1px",
-                borderStyle: "solid",
-                borderColor: theme.secondaryLight,
-                height: "20px",
-                padding: "20px",
-                backgroundColor: theme.primaryLightest,
-                fontSize: "larger",
-                marginRight: 0,
-                display: "inline-block",
-                width: fileNameWidth,
-              }}
+            <FilenameInput
+              filename={props.filename}
+              fileNameWidth={fileNameWidth}
             />
           </Grid>
         </Grid>

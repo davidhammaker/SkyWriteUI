@@ -9,7 +9,6 @@ import MenuIcon from "@mui/icons-material/Menu";
 import Grid from "@mui/material/Grid";
 import Link from "@mui/material/Link";
 import Button from "@mui/material/Button";
-import FilenameField from "./FilenameField";
 import theme, { drawerWidth } from "./utils/theme";
 
 const NavBar = (props) => {
@@ -23,7 +22,6 @@ const NavBar = (props) => {
         >
           <MenuIcon sx={{ color: "#fff" }} />
         </IconButton>
-        <FilenameField />
       </Toolbar>
     </AppBar>
   );
