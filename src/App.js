@@ -62,29 +62,7 @@ const App = () => {
           path="/"
           element={
             (token && (
-              <Box sx={{ display: "flex" }}>
-                <NavBarAndDrawer
-                  username={username}
-                  storageObjects={storageObjects}
-                />
-                <Box
-                  sx={{
-                    flexGrow: 1,
-                    px: 3,
-                    py: 11,
-                    width: { sm: `calc(100% - ${drawerWidth}px)` },
-                  }}
-                >
-                  <Paper>
-                    <Box sx={{ p: 2 }}>
-                      <SkySlateBox
-                        filename={filename}
-                        setFilename={setFilename}
-                      />
-                    </Box>
-                  </Paper>
-                </Box>
-              </Box>
+              <SkySlateBox filename={filename} setFilename={setFilename} />
             )) || <Start />
           }
         />
