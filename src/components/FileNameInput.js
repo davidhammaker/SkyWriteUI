@@ -1,6 +1,29 @@
-import theme from "./utils/theme";
+import React, { useState, useEffect } from "react";
+import theme, { xs, sm } from "./utils/theme";
 
 const FileNameInput = (props) => {
+  const [fileNameWidth, setFileNameWidth] = useState("200px");
+  const resizeFileName = () => {
+    const editableWidth = document.getElementById("editableBox").clientWidth;
+    if (window.innerWidth >= sm) {
+      setFileNameWidth(
+        `${
+          editableWidth - document.getElementById("editorButtons").clientWidth
+        }px`
+      );
+    } else {
+      setFileNameWidth(`${editableWidth}px`);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("resize", resizeFileName);
+  }, []);
+
+  useEffect(() => {
+    resizeFileName();
+  });
+
   return (
     <input
       id="filename"
@@ -15,8 +38,8 @@ const FileNameInput = (props) => {
         backgroundColor: theme.primaryLightest,
         fontSize: "larger",
         marginRight: 0,
-        display: "inline-block",
-        width: props.fileNameWidth,
+        display: "inline-flex",
+        width: "100%",
       }}
     />
   );

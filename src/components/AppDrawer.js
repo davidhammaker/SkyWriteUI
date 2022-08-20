@@ -87,7 +87,6 @@ const makeList = (storageObjects, depth) => {
   let folders = [];
   let files = [];
   for (let i = 0; i < storageObjects.length; i++) {
-    console.log(storageObjects[i]);
     if (storageObjects[i].is_file) {
       folders.push(storageObjects[i]);
     } else {
@@ -95,7 +94,6 @@ const makeList = (storageObjects, depth) => {
     }
   }
   let sortedObjects = [...files, ...folders];
-  console.log(sortedObjects);
 
   return (
     <>

@@ -1,14 +1,15 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import IconButton from "@mui/material/IconButton";
 import FormatBold from "@mui/icons-material/FormatBold";
 import FormatItalic from "@mui/icons-material/FormatItalic";
 import FormatUnderlinedIcon from "@mui/icons-material/FormatUnderlined";
 import Save from "@mui/icons-material/Save";
+import MenuIcon from "@mui/icons-material/Menu";
 import Box from "@mui/material/Box";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import { Editor } from "slate";
 import { useSlate } from "slate-react";
-import theme from "./utils/theme";
+import theme, { sm } from "./utils/theme";
 
 const FormatButton = ({ toggleMark, format }) => {
   const editor = useSlate();
@@ -35,6 +36,31 @@ const FormatButton = ({ toggleMark, format }) => {
 };
 
 const FormatBar = (props) => {
+  const menuIcon = (
+    <IconButton>
+      <MenuIcon />
+    </IconButton>
+  );
+
+  const [showMenuIcon, setShowMenuIcon] = useState(false);
+
+  const resizeBar = () => {
+    const editableWidth = document.getElementById("editableBox").clientWidth;
+    if (window.innerWidth >= sm) {
+      setShowMenuIcon(false);
+    } else {
+      setShowMenuIcon(true);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("resize", resizeBar);
+  }, []);
+
+  useEffect(() => {
+    resizeBar();
+  });
+
   return (
     <ButtonGroup
       id="editorButtons"
@@ -49,8 +75,12 @@ const FormatBar = (props) => {
           borderWidth: 1,
           borderColor: theme.secondaryLight,
           borderStyle: "solid",
+          flexWrap: "nowrap",
+          width: { xs: "100%" },
+          display: { xs: "inline-block", sm: "flex" },
         }}
       >
+        {showMenuIcon && menuIcon}
         <IconButton onClick={() => props.doSave(value)}>
           <Save sx={{ color: theme.secondary }} />
         </IconButton>

@@ -7,7 +7,7 @@ import { withHistory } from "slate-history";
 import isHotkey from "is-hotkey";
 import FormatBar from "./FormatBar";
 import FileNameInput from "./FileNameInput";
-import theme, { drawerWidth } from "./utils/theme";
+import theme, { drawerWidth, xs, sm } from "./utils/theme";
 import axios from "axios";
 
 /*************
@@ -112,25 +112,16 @@ const SkySlateBox = (props) => {
    *
    ************/
 
-  const [fileNameWidth, setFileNameWidth] = useState("200px");
-  const resizeFileName = () => {
-    setFileNameWidth(
-      `${
-        document.getElementById("editableBox").clientWidth -
-        document.getElementById("editorButtons").clientWidth
-      }px`
-    );
-  };
-
   const [editableBoxHeight, setEditableBoxHeight] = useState("100%");
   const resizeEditorBox = () => {
-    setEditableBoxHeight(
-      `${
-        window.innerHeight -
-        document.getElementById("editorButtons").clientHeight -
-        32
-      }px`
-    );
+    const buttonsHeight = document.getElementById("editorButtons").clientHeight;
+    if (window.innerWidth >= sm) {
+      setEditableBoxHeight(`${window.innerHeight - buttonsHeight - 32}px`);
+      console.log("x", editableBoxHeight);
+    } else {
+      setEditableBoxHeight(`${window.innerHeight - 2 * buttonsHeight - 32}px`);
+      console.log(editableBoxHeight);
+    }
   };
 
   const [blankDivHeight, setBlankDivHeight] = useState("100%");
@@ -146,7 +137,6 @@ const SkySlateBox = (props) => {
   // Do once
   useEffect(() => {
     window.addEventListener("resize", () => {
-      resizeFileName();
       resizeEditorBox();
       resizeBlankDivHeight();
     });
@@ -154,7 +144,6 @@ const SkySlateBox = (props) => {
 
   // Do on every update
   useEffect(() => {
-    resizeFileName();
     resizeEditorBox();
     resizeBlankDivHeight();
   });
@@ -184,25 +173,34 @@ const SkySlateBox = (props) => {
         sx={{
           backgroundColor: theme.primaryLightest,
           height: "100%",
-          ml: `${drawerWidth}px`,
+          ml: { sm: `${drawerWidth}px` },
         }}
       >
-        <Grid
+        {/* <Grid
           container
-          direction="row"
+          direction={{ xs: "column", sm: "row" }}
           justifyContent="left"
           alignItems="center"
         >
-          <Grid item>
+          <Grid item sx={{ width: { xs: "100%", sm: "auto" } }}>
             <FormatBar toggleMark={toggleMark} doSave={doSave} />
           </Grid>
           <Grid item>
-            <FileNameInput
-              filename={props.filename}
-              fileNameWidth={fileNameWidth}
-            />
+            <Box sx={{ flexGrow: 1 }}>
+              <FileNameInput filename={props.filename} />
+            </Box>
           </Grid>
-        </Grid>
+        </Grid> */}
+        <div style={{ width: "100%" }}>
+          <Box sx={{ display: "flex" }}>
+            <Box>
+              <FormatBar toggleMark={toggleMark} doSave={doSave} />
+            </Box>
+            <Box sx={{ flexGrow: 1 }}>
+              <FileNameInput filename={props.filename} />
+            </Box>
+          </Box>
+        </div>
         {/* The 'Editable' is the part we can edit like a text editor. */}
         <Box sx={{ px: 2, height: editableBoxHeight }} id="editableBox">
           <Editable
