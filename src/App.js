@@ -3,6 +3,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import CssBaseline from "@mui/material/CssBaseline";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
+import { createEditor, Editor, Transforms } from "slate";
+import { Slate, Editable, withReact, ReactEditor } from "slate-react";
 import Cookies from "js-cookie";
 import axios from "axios";
 import SkySlateBox from "./components/SkySlateBox";
@@ -11,7 +13,7 @@ import Start from "./components/Start";
 import AppLogin from "./components/Login";
 import AppLogout from "./components/Logout";
 import AppDrawer from "./components/AppDrawer";
-import { drawerWidth } from "./components/utils/theme";
+import theme, { drawerWidth } from "./components/utils/theme";
 import { backendOrigin, inPath } from "./components/utils/navTools";
 
 const App = () => {
@@ -22,6 +24,7 @@ const App = () => {
   const [storageObjects, setStorageObjects] = useState([]);
   const [filename, setFilename] = useState("untitled");
   const [folderId, setFolderId] = useState(null);
+  const [editor, setEditor] = useState(null);
 
   function getUser() {
     axios
@@ -65,7 +68,28 @@ const App = () => {
             (token && (
               <>
                 <AppDrawer storageObjects={storageObjects} />
-                <SkySlateBox filename={filename} setFilename={setFilename} />
+                <div
+                  style={{
+                    backgroundColor: theme.primaryLightest,
+                    height: "100%",
+                  }}
+                  onClick={() => {
+                    ReactEditor.focus(editor);
+                    Transforms.select(editor, Editor.end(editor, []));
+                  }}
+                >
+                  <div
+                    onClick={(event) => {
+                      event.stopPropagation();
+                    }}
+                  >
+                    <SkySlateBox
+                      setEditor={setEditor}
+                      filename={filename}
+                      setFilename={setFilename}
+                    />
+                  </div>
+                </div>
               </>
             )) || <Start />
           }

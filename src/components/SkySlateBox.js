@@ -140,6 +140,7 @@ const SkySlateBox = (props) => {
       resizeEditorBox();
       resizeBlankDivHeight();
     });
+    props.setEditor(editor);
   }, []);
 
   // Do on every update
@@ -156,6 +157,7 @@ const SkySlateBox = (props) => {
 
   return (
     <Slate
+      id="slateComponent"
       editor={editor}
       value={value}
       onChange={(newValue) => {
@@ -170,39 +172,26 @@ const SkySlateBox = (props) => {
       }}
     >
       <Box
+        id="boxInSlate"
         sx={{
           backgroundColor: theme.primaryLightest,
-          height: "100%",
           ml: { sm: `${drawerWidth}px` },
         }}
       >
-        {/* <Grid
-          container
-          direction={{ xs: "column", sm: "row" }}
-          justifyContent="left"
-          alignItems="center"
-        >
-          <Grid item sx={{ width: { xs: "100%", sm: "auto" } }}>
-            <FormatBar toggleMark={toggleMark} doSave={doSave} />
-          </Grid>
-          <Grid item>
-            <Box sx={{ flexGrow: 1 }}>
-              <FileNameInput filename={props.filename} />
-            </Box>
-          </Grid>
-        </Grid> */}
         <div style={{ width: "100%" }}>
-          <Box sx={{ display: "flex" }}>
-            <Box>
+          <Box sx={{ display: { xs: "block", sm: "flex" } }}>
+            <Box sx={{ width: { xs: "100%", sm: "auto" } }}>
               <FormatBar toggleMark={toggleMark} doSave={doSave} />
             </Box>
-            <Box sx={{ flexGrow: 1 }}>
+            <Box
+              sx={{ width: { xs: "100%", sm: "auto" }, flexGrow: { sm: 1 } }}
+            >
               <FileNameInput filename={props.filename} />
             </Box>
           </Box>
         </div>
         {/* The 'Editable' is the part we can edit like a text editor. */}
-        <Box sx={{ px: 2, height: editableBoxHeight }} id="editableBox">
+        <Box sx={{ px: 2 }} id="editableBox">
           <Editable
             renderElement={renderElement}
             renderLeaf={renderLeaf}
@@ -224,13 +213,13 @@ const SkySlateBox = (props) => {
             id="sky-slate-editable"
             autoFocus
           />
-          <div
-            style={{ height: blankDivHeight }}
+          {/* <div
+            style={{ height: blankDivHeight, backgroundColor: "grey" }}
             onClick={() => {
               ReactEditor.focus(editor);
               Transforms.select(editor, Editor.end(editor, []));
             }}
-          />
+          /> */}
         </Box>
       </Box>
     </Slate>

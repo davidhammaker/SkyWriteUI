@@ -45,7 +45,6 @@ const FormatBar = (props) => {
   const [showMenuIcon, setShowMenuIcon] = useState(false);
 
   const resizeBar = () => {
-    const editableWidth = document.getElementById("editableBox").clientWidth;
     if (window.innerWidth >= sm) {
       setShowMenuIcon(false);
     } else {
@@ -67,6 +66,7 @@ const FormatBar = (props) => {
       variant="contained"
       sx={{
         boxShadow: 0,
+        width: { xs: "100%", sm: "auto" },
       }}
     >
       <Box
