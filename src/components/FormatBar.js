@@ -37,7 +37,7 @@ const FormatButton = ({ toggleMark, format }) => {
 
 const FormatBar = (props) => {
   const menuIcon = (
-    <IconButton>
+    <IconButton onClick={props.toggleFileDrawer}>
       <MenuIcon />
     </IconButton>
   );

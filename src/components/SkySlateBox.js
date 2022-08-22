@@ -148,7 +148,11 @@ const SkySlateBox = (props) => {
         <div style={{ width: "100%" }}>
           <Box sx={{ display: { xs: "block", sm: "flex" } }}>
             <Box sx={{ width: { xs: "100%", sm: "auto" } }}>
-              <FormatBar toggleMark={toggleMark} doSave={doSave} />
+              <FormatBar
+                toggleMark={toggleMark}
+                doSave={doSave}
+                toggleFileDrawer={props.toggleFileDrawer}
+              />
             </Box>
             <Box
               sx={{ width: { xs: "100%", sm: "auto" }, flexGrow: { sm: 1 } }}

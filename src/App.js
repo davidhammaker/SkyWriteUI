@@ -22,6 +22,11 @@ const App = () => {
   const [filename, setFilename] = useState("untitled");
   const [folderId, setFolderId] = useState(null);
   const [editor, setEditor] = useState(null);
+  const [fileDrawerOpen, setFileDrawerOpen] = useState(false);
+
+  const toggleFileDrawer = () => {
+    setFileDrawerOpen(!fileDrawerOpen);
+  };
 
   function getUser() {
     axios
@@ -64,7 +69,11 @@ const App = () => {
           element={
             (token && (
               <>
-                <AppDrawer storageObjects={storageObjects} />
+                <AppDrawer
+                  open={fileDrawerOpen}
+                  toggleFileDrawer={toggleFileDrawer}
+                  storageObjects={storageObjects}
+                />
                 <div
                   style={{
                     backgroundColor: theme.primaryLightest,
@@ -84,6 +93,7 @@ const App = () => {
                       setEditor={setEditor}
                       filename={filename}
                       setFilename={setFilename}
+                      toggleFileDrawer={toggleFileDrawer}
                     />
                   </div>
                 </div>

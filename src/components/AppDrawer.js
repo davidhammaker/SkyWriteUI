@@ -114,11 +114,6 @@ const makeList = (storageObjects, depth) => {
 };
 
 const AppDrawer = (props) => {
-  const [mobileOpen, setMobileOpen] = useState(false);
-
-  const toggleDrawer = () => {
-    setMobileOpen(!mobileOpen);
-  };
   const container =
     props.window !== undefined ? () => props.window().document.body : undefined;
 
@@ -136,8 +131,8 @@ const AppDrawer = (props) => {
     >
       <DrawerSliding
         container={container}
-        open={mobileOpen}
-        onClose={toggleDrawer}
+        open={props.open}
+        onClose={props.toggleFileDrawer}
         bgcolor={theme.primary}
       >
         {drawerContents}
