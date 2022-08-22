@@ -1,6 +1,6 @@
 import React, { useCallback, useState, useMemo, useEffect } from "react";
 import Box from "@mui/material/Box";
-import { createEditor, Editor } from "slate";
+import { createEditor, Editor, Transforms } from "slate";
 import { Slate, Editable, withReact } from "slate-react";
 import { withHistory } from "slate-history";
 import isHotkey from "is-hotkey";
@@ -22,6 +22,8 @@ const hotkeys = {
 
 const altHotkeys = {
   "mod+s": "save",
+  "mod+]": "increase",
+  "mod+[": "decrease",
 };
 
 /*************
@@ -46,21 +48,18 @@ function toggleMark(editor, format) {
   document.getElementById("sky-slate-editable").focus();
 }
 
-function handleAltHotkey(editor, action) {
-  if (action === "save") {
-    console.log(editor);
-    doSave(editor.children);
-  }
+// For toggling element types:
+function toggleElement(editor, elementType) {
+  const [match] = Editor.nodes(editor, {
+    match: (n) => n.type === elementType,
+  });
+  Transforms.setNodes(
+    editor,
+    { type: match ? "paragraph" : elementType },
+    { match: (n) => Editor.isBlock(editor, n) }
+  );
+  document.getElementById("sky-slate-editable").focus();
 }
-
-/*************
- *
- * Components
- *
- ************/
-const Element = ({ attributes, children, element }) => {
-  return <p {...attributes}>{children}</p>;
-};
 
 const SkySlateBox = (props) => {
   /*************
@@ -102,7 +101,28 @@ const SkySlateBox = (props) => {
       children = <u>{children}</u>;
     }
 
+    if (leaf.h1) {
+      children = <span style={{ fontSize: "xxx-large" }}>{children}</span>;
+    }
+
+    if (leaf.h2) {
+      children = <span style={{ fontSize: "xx-large" }}>{children}</span>;
+    }
+
+    if (leaf.h3) {
+      children = <span style={{ fontSize: "x-large" }}>{children}</span>;
+    }
+
     return <span {...attributes}>{children}</span>;
+  };
+
+  /*************
+   *
+   * Slate 'Element' component
+   *
+   ************/
+  const Element = ({ attributes, children, element }) => {
+    return <p {...attributes}>{children}</p>;
   };
 
   /*************
@@ -110,6 +130,45 @@ const SkySlateBox = (props) => {
    * Customization hooks and functions
    *
    ************/
+
+  const toggleIncrease = () => {
+    if (Editor.marks(editor) && Editor.marks(editor)["h3"]) {
+      toggleMark(editor, "h3");
+      toggleMark(editor, "h2");
+    } else if (Editor.marks(editor) && Editor.marks(editor)["h2"]) {
+      toggleMark(editor, "h2");
+      toggleMark(editor, "h1");
+    } else if (Editor.marks(editor) && Editor.marks(editor)["h1"]) {
+      document.getElementById("sky-slate-editable").focus();
+    } else {
+      toggleMark(editor, "h3");
+    }
+  };
+
+  const toggleDecrease = () => {
+    if (Editor.marks(editor) && Editor.marks(editor)["h1"]) {
+      toggleMark(editor, "h1");
+      toggleMark(editor, "h2");
+    } else if (Editor.marks(editor) && Editor.marks(editor)["h2"]) {
+      toggleMark(editor, "h2");
+      toggleMark(editor, "h3");
+    } else if (Editor.marks(editor) && Editor.marks(editor)["h3"]) {
+      toggleMark(editor, "h3");
+    } else {
+      document.getElementById("sky-slate-editable").focus();
+    }
+  };
+
+  function handleAltHotkey(editor, action) {
+    if (action === "save") {
+      console.log(editor);
+      doSave(editor.children);
+    } else if (action === "increase") {
+      toggleIncrease();
+    } else if (action === "decrease") {
+      toggleDecrease();
+    }
+  }
 
   // Do once
   useEffect(() => {
@@ -150,8 +209,12 @@ const SkySlateBox = (props) => {
             <Box sx={{ width: { xs: "100%", sm: "auto" } }}>
               <FormatBar
                 toggleMark={toggleMark}
+                toggleElement={toggleElement}
                 doSave={doSave}
                 toggleFileDrawer={props.toggleFileDrawer}
+                editor={editor}
+                toggleIncrease={toggleIncrease}
+                toggleDecrease={toggleDecrease}
               />
             </Box>
             <Box
@@ -171,6 +234,7 @@ const SkySlateBox = (props) => {
                 if (isHotkey(hotkey, event)) {
                   event.preventDefault();
                   toggleMark(editor, hotkeys[hotkey]);
+                  toggleElement(editor, hotkeys[hotkey]);
                 }
               }
               for (const hotkey in altHotkeys) {
