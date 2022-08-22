@@ -1,19 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import CssBaseline from "@mui/material/CssBaseline";
-import Box from "@mui/material/Box";
-import Paper from "@mui/material/Paper";
-import { createEditor, Editor, Transforms } from "slate";
-import { Slate, Editable, withReact, ReactEditor } from "slate-react";
+import { Editor, Transforms } from "slate";
+import { ReactEditor } from "slate-react";
 import Cookies from "js-cookie";
 import axios from "axios";
 import SkySlateBox from "./components/SkySlateBox";
-import NavBarAndDrawer from "./components/NavBarAndDrawer";
 import Start from "./components/Start";
 import AppLogin from "./components/Login";
 import AppLogout from "./components/Logout";
 import AppDrawer from "./components/AppDrawer";
-import theme, { drawerWidth } from "./components/utils/theme";
+import theme from "./components/utils/theme";
 import { backendOrigin, inPath } from "./components/utils/navTools";
 
 const App = () => {

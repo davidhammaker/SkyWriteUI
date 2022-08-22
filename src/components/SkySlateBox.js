@@ -1,13 +1,12 @@
 import React, { useCallback, useState, useMemo, useEffect } from "react";
-import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
-import { createEditor, Editor, Transforms } from "slate";
-import { Slate, Editable, withReact, ReactEditor } from "slate-react";
+import { createEditor, Editor } from "slate";
+import { Slate, Editable, withReact } from "slate-react";
 import { withHistory } from "slate-history";
 import isHotkey from "is-hotkey";
 import FormatBar from "./FormatBar";
 import FileNameInput from "./FileNameInput";
-import theme, { drawerWidth, xs, sm } from "./utils/theme";
+import theme, { drawerWidth } from "./utils/theme";
 import axios from "axios";
 
 /*************
@@ -112,42 +111,10 @@ const SkySlateBox = (props) => {
    *
    ************/
 
-  const [editableBoxHeight, setEditableBoxHeight] = useState("100%");
-  const resizeEditorBox = () => {
-    const buttonsHeight = document.getElementById("editorButtons").clientHeight;
-    if (window.innerWidth >= sm) {
-      setEditableBoxHeight(`${window.innerHeight - buttonsHeight - 32}px`);
-      console.log("x", editableBoxHeight);
-    } else {
-      setEditableBoxHeight(`${window.innerHeight - 2 * buttonsHeight - 32}px`);
-      console.log(editableBoxHeight);
-    }
-  };
-
-  const [blankDivHeight, setBlankDivHeight] = useState("100%");
-  const resizeBlankDivHeight = () => {
-    setBlankDivHeight(
-      `${
-        document.getElementById("editableBox").clientHeight -
-        document.getElementById("sky-slate-editable").clientHeight
-      }px`
-    );
-  };
-
   // Do once
   useEffect(() => {
-    window.addEventListener("resize", () => {
-      resizeEditorBox();
-      resizeBlankDivHeight();
-    });
     props.setEditor(editor);
   }, []);
-
-  // Do on every update
-  useEffect(() => {
-    resizeEditorBox();
-    resizeBlankDivHeight();
-  });
 
   /*************
    *
@@ -213,13 +180,6 @@ const SkySlateBox = (props) => {
             id="sky-slate-editable"
             autoFocus
           />
-          {/* <div
-            style={{ height: blankDivHeight, backgroundColor: "grey" }}
-            onClick={() => {
-              ReactEditor.focus(editor);
-              Transforms.select(editor, Editor.end(editor, []));
-            }}
-          /> */}
         </Box>
       </Box>
     </Slate>
