@@ -205,8 +205,8 @@ const SkySlateBox = (props) => {
         }}
       >
         <div style={{ width: "100%" }}>
-          <Box sx={{ display: { xs: "block", sm: "flex" } }}>
-            <Box sx={{ width: { xs: "100%", sm: "auto" } }}>
+          <Box sx={{ display: { sm: "block", md: "flex" } }}>
+            <Box sx={{ width: { sm: "100%", md: "auto" } }}>
               <FormatBar
                 toggleMark={toggleMark}
                 toggleElement={toggleElement}
@@ -218,7 +218,7 @@ const SkySlateBox = (props) => {
               />
             </Box>
             <Box
-              sx={{ width: { xs: "100%", sm: "auto" }, flexGrow: { sm: 1 } }}
+              sx={{ width: { sm: "100%", md: "auto" }, flexGrow: { md: 1 } }}
             >
               <FileNameInput filename={props.filename} />
             </Box>

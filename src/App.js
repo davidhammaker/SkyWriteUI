@@ -57,6 +57,7 @@ const App = () => {
     if (inPath("create-user")) {
       setAtCreateUser(true);
     }
+    document.getElementById("root").style.backgroundColor = theme.primary;
   }, [token]);
 
   return (

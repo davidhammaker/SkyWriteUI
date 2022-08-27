@@ -3,8 +3,7 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import Link from "@mui/material/Link";
-import Button from "@mui/material/Button";
-import theme from "./utils/theme";
+import CustomFormButton from "./CustomFormButton";
 
 const Start = () => {
   return (
@@ -35,17 +34,29 @@ const Start = () => {
           </Typography>
         </Grid>
         <Grid item sx={{ py: 2 }}>
-          <Link href="/create-user" underline="none" sx={{ px: 1 }}>
-            <Button variant="contained" sx={{ backgroundColor: theme.primary }}>
+          <Link
+            disabled
+            href="/create-user"
+            underline="none"
+            sx={{ px: 1 }}
+            onClick={(event) => {
+              event.preventDefault(); //for now
+              alert("In development. Not accepting new users.");
+            }}
+          >
+            <CustomFormButton
+              disabled // for now
+              variant="contained"
+            >
               <Typography sx={{ fontSize: "Larger" }}>Sign Up</Typography>
-            </Button>
+            </CustomFormButton>
           </Link>
         </Grid>
         <Grid item sx={{ py: 2 }}>
           <Link href="/login" underline="none" sx={{ px: 1 }}>
-            <Button variant="contained" sx={{ backgroundColor: theme.primary }}>
+            <CustomFormButton variant="contained">
               <Typography sx={{ fontSize: "Larger" }}>Log In</Typography>
-            </Button>
+            </CustomFormButton>
           </Link>
         </Grid>
       </Grid>

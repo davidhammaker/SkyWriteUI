@@ -3,12 +3,13 @@ import Grid from "@mui/material/Grid";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { backendOrigin, navigateTo } from "./utils/navTools";
 import { getFieldValue, onEnterKey } from "./utils/elementTools";
 import CustomTextField from "./CustomTextField";
+import CustomFormButton from "./CustomFormButton";
+import theme from "./utils/theme";
 
 export default function AppLogin(props) {
   const [usernameErrors, setUsernameErrors] = useState("");
@@ -67,7 +68,9 @@ export default function AppLogin(props) {
           <Grid container direction="row" justifyContent="center">
             <Grid item>
               <Box my={5}>
-                <Typography variant="h4">Log In</Typography>
+                <Typography variant="h4" color={theme.primaryLightest}>
+                  Log In
+                </Typography>
               </Box>
             </Grid>
           </Grid>
@@ -87,7 +90,9 @@ export default function AppLogin(props) {
                 />
                 <Grid container direction="row" justifyContent="center">
                   <Box my={2}>
-                    <Button onClick={doLogin}>Submit</Button>
+                    <CustomFormButton variant="contained" onClick={doLogin}>
+                      Submit
+                    </CustomFormButton>
                   </Box>
                 </Grid>
                 {otherErrors && (

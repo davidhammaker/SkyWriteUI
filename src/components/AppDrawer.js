@@ -1,23 +1,60 @@
 import React, { useState } from "react";
 import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
 import Divider from "@mui/material/Divider";
 import List from "@mui/material/List";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
+import IconButton from "@mui/material/IconButton";
 import FolderIcon from "@mui/icons-material/Folder";
 import ArticleIcon from "@mui/icons-material/Article";
+import EditIcon from "@mui/icons-material/Edit";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
+import Save from "@mui/icons-material/Save";
 import Collapse from "@mui/material/Collapse";
+import Modal from "@mui/material/Modal";
+import TextField from "@mui/material/TextField";
+import Cookies from "js-cookie";
+import axios from "axios";
 import DrawerSliding from "./DrawerSliding";
 import DrawerPermanent from "./DrawerPermanent";
+import { StyledTextField } from "./CustomTextField";
 import theme, { drawerWidth } from "./utils/theme";
 import { cutOffString } from "./utils/elementTools";
+import { backendOrigin, inPath } from "./utils/navTools";
 
 const SkyWriteFolder = ({ obj, depth }) => {
   const [open, setOpen] = useState(false);
-  const maxStringLength = 24 - depth * 2;
+  const [folderName, setFolderName] = useState(obj.name);
+  const [showEdit, setShowEdit] = useState(false);
+  const [editName, setEditName] = useState(false);
+  const [newName, setNewName] = useState(obj.name);
+  const maxStringLength = 30 - depth * 2;
+
+  function saveFolderName(name) {
+    axios
+      .patch(
+        `${backendOrigin}/storage_objects/${obj.id}/`,
+        { name: name },
+        {
+          headers: {
+            Authorization: `token ${Cookies.get("token")}`,
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      .then(function (response) {
+        setFolderName(response.data.name);
+        setEditName(false);
+      })
+      .catch(function (error) {
+        if (error.response) {
+          console.log(error.response.data);
+        }
+      });
+  }
 
   const makeNewList = () => {
     if (obj.folders.length !== 0) {
@@ -31,12 +68,45 @@ const SkyWriteFolder = ({ obj, depth }) => {
 
   return (
     <>
-      <ListItemButton onClick={() => setOpen(!open)} sx={{ pl: depth + 1 }}>
-        <ListItemIcon sx={{ color: theme.primaryDarkest }}>
-          <FolderIcon />
-        </ListItemIcon>
+      <ListItemButton
+        onClick={() => setOpen(!open)}
+        sx={{ pl: depth + 1 }}
+        onMouseEnter={() => setShowEdit(true)}
+        onMouseLeave={() => setShowEdit(false)}
+      >
+        {showEdit && (
+          <div
+            onClick={(event) => {
+              event.stopPropagation();
+              setEditName(true);
+            }}
+            style={{ paddingRight: "8px", marginLeft: "-2px" }}
+          >
+            <IconButton
+              onClick={(event) => {
+                event.preventDefault;
+                setEditName(true);
+              }}
+              sx={{
+                width: "24px",
+                height: "24px",
+                borderRadius: "12px",
+                color: theme.primaryLight,
+                backgroundColor: theme.primaryDark,
+                "&:hover": { backgroundColor: theme.primaryDarkest },
+              }}
+            >
+              <EditIcon fontSize="small" />
+            </IconButton>
+          </div>
+        )}
+        {showEdit || (
+          <ListItemIcon sx={{ minWidth: "30px", color: theme.primaryDark }}>
+            <FolderIcon fontSize="small" />
+          </ListItemIcon>
+        )}
         <ListItemText
-          primary={cutOffString(obj.name, maxStringLength)}
+          primary={cutOffString(folderName, maxStringLength)}
           primaryTypographyProps={{
             color: theme.primaryDarkest,
           }}
@@ -55,6 +125,70 @@ const SkyWriteFolder = ({ obj, depth }) => {
           />
         )}
       </ListItemButton>
+
+      <Modal
+        open={editName}
+        onClose={() => {
+          setEditName(false);
+        }}
+        sx={{
+          justifyContent: "center",
+        }}
+      >
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+          }}
+        >
+          <Grid
+            container
+            direction="row"
+            justifyContent="center"
+            alignItems="center"
+            spacing={2}
+          >
+            <Grid item>
+              <StyledTextField
+                defaultValue={newName}
+                placeholder="Folder name"
+                sx={{
+                  width: "300px",
+                  boxShadow: 5,
+                }}
+                onChange={(event) => {
+                  setNewName(event.target.value);
+                }}
+                onKeyDown={(event) => {
+                  if (event.code === "Enter" || event.code === "NumpadEnter") {
+                    saveFolderName(newName);
+                  }
+                }}
+              />
+            </Grid>
+            <Grid item>
+              <IconButton
+                sx={{
+                  backgroundColor: theme.primaryLight,
+                  color: theme.primaryDark,
+                  boxShadow: 5,
+                  "&:hover": {
+                    backgroundColor: theme.primary,
+                  },
+                }}
+              >
+                <Save
+                  onClick={() => {
+                    saveFolderName(newName);
+                  }}
+                />
+              </IconButton>
+            </Grid>
+          </Grid>
+        </Box>
+      </Modal>
       <Collapse in={open} timeout="auto" unmountOnExit>
         {makeNewList()}
       </Collapse>
@@ -63,12 +197,17 @@ const SkyWriteFolder = ({ obj, depth }) => {
 };
 
 const SkyWriteFile = ({ obj, depth }) => {
-  const maxStringLength = 24 - depth * 2;
+  const maxStringLength = 28 - depth * 2;
 
   return (
     <ListItemButton sx={{ pl: depth + 1 }}>
-      <ListItemIcon sx={{ color: theme.primaryDarkest }}>
-        <ArticleIcon />
+      <ListItemIcon
+        sx={{
+          minWidth: "30px",
+          color: theme.primaryDark,
+        }}
+      >
+        <ArticleIcon fontSize="small" />
       </ListItemIcon>
       <ListItemText
         primary={cutOffString(obj.name, maxStringLength)}

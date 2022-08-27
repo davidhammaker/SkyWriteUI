@@ -129,7 +129,7 @@ const FormatBar = (props) => {
       variant="contained"
       sx={{
         boxShadow: 0,
-        width: { xs: "100%", sm: "auto" },
+        width: { xs: "100%", sm: "100%", md: "auto" },
       }}
     >
       <Box
