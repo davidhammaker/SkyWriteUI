@@ -201,7 +201,7 @@ const SkySlateBox = (props) => {
         id="boxInSlate"
         sx={{
           backgroundColor: theme.primaryLightest,
-          ml: { sm: `${drawerWidth}px` },
+          ml: { md: `${drawerWidth}px` },
         }}
       >
         <div style={{ width: "100%" }}>

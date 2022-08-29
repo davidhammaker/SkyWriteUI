@@ -1,5 +1,5 @@
 import Drawer from "@mui/material/Drawer";
-import theme, { drawerWidth } from "./utils/theme";
+import { drawerWidth } from "./utils/theme";
 
 const DrawerSliding = (props) => {
   return (
@@ -16,7 +16,7 @@ const DrawerSliding = (props) => {
       onClose={props.onClose} // toggleDrawer
       ModalProps={{ keepMounted: true }}
       sx={{
-        display: { xs: "block", sm: "none" },
+        display: { xs: "block", md: "none" },
         "& .MuiDrawer-paper": {
           boxSizing: "border-box",
           width: drawerWidth,

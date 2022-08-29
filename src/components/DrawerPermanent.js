@@ -1,6 +1,6 @@
 import React from "react";
 import Drawer from "@mui/material/Drawer";
-import theme, { drawerWidth } from "./utils/theme";
+import { drawerWidth } from "./utils/theme";
 
 const DrawerPermanent = (props) => {
   return (
@@ -13,7 +13,7 @@ const DrawerPermanent = (props) => {
       }}
       variant="permanent"
       sx={{
-        display: { xs: "none", sm: "block" },
+        display: { xs: "none", md: "block" },
         "& .MuiDrawer-paper": {
           boxSizing: "border-box",
           width: drawerWidth,

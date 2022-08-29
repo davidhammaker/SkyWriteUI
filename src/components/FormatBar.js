@@ -12,7 +12,7 @@ import Box from "@mui/material/Box";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import { Editor } from "slate";
 import { useSlate } from "slate-react";
-import theme, { sm } from "./utils/theme";
+import theme, { md } from "./utils/theme";
 
 const FormatButton = ({ toggleMark, format }) => {
   const editor = useSlate();
@@ -108,7 +108,7 @@ const FormatBar = (props) => {
 
   const [showMenuIcon, setShowMenuIcon] = useState(false);
   const resizeBar = () => {
-    if (window.innerWidth >= sm) {
+    if (window.innerWidth >= md) {
       setShowMenuIcon(false);
     } else {
       setShowMenuIcon(true);
@@ -129,7 +129,7 @@ const FormatBar = (props) => {
       variant="contained"
       sx={{
         boxShadow: 0,
-        width: { xs: "100%", sm: "100%", md: "auto" },
+        width: { xs: "100%", md: "auto" },
       }}
     >
       <Box
@@ -140,7 +140,7 @@ const FormatBar = (props) => {
           borderStyle: "solid",
           flexWrap: "nowrap",
           width: { xs: "100%" },
-          display: { xs: "inline-block", sm: "flex" },
+          display: { xs: "inline-block", md: "flex" },
         }}
       >
         {showMenuIcon && menuIcon}
