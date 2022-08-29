@@ -36,6 +36,9 @@ export function onEnterKey(fn) {
  * @returns
  */
 export function cutOffString(s, characters) {
+  if (characters <= 3) {
+    return "...";
+  }
   if (s.length <= characters) {
     return s;
   }

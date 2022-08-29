@@ -3,6 +3,7 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Divider from "@mui/material/Divider";
 import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
@@ -15,7 +16,6 @@ import ExpandMore from "@mui/icons-material/ExpandMore";
 import Save from "@mui/icons-material/Save";
 import Collapse from "@mui/material/Collapse";
 import Modal from "@mui/material/Modal";
-import TextField from "@mui/material/TextField";
 import Cookies from "js-cookie";
 import axios from "axios";
 import DrawerSliding from "./DrawerSliding";
@@ -23,7 +23,7 @@ import DrawerPermanent from "./DrawerPermanent";
 import { StyledTextField } from "./CustomTextField";
 import theme, { drawerWidth } from "./utils/theme";
 import { cutOffString } from "./utils/elementTools";
-import { backendOrigin, inPath } from "./utils/navTools";
+import { backendOrigin } from "./utils/navTools";
 
 const SkyWriteFolder = ({ obj, depth }) => {
   const [open, setOpen] = useState(false);
@@ -31,7 +31,7 @@ const SkyWriteFolder = ({ obj, depth }) => {
   const [showEdit, setShowEdit] = useState(false);
   const [editName, setEditName] = useState(false);
   const [newName, setNewName] = useState(obj.name);
-  const maxStringLength = 30 - depth * 2;
+  const maxStringLength = 34 - depth * 2;
 
   function saveFolderName(name) {
     axios
@@ -68,63 +68,73 @@ const SkyWriteFolder = ({ obj, depth }) => {
 
   return (
     <>
-      <ListItemButton
+      <ListItem
         onClick={() => setOpen(!open)}
-        sx={{ pl: depth + 1 }}
+        sx={{
+          pl: depth + 1,
+          cursor: "pointer",
+        }}
         onMouseEnter={() => setShowEdit(true)}
         onMouseLeave={() => setShowEdit(false)}
       >
-        {showEdit && (
-          <div
-            onClick={(event) => {
-              event.stopPropagation();
-              setEditName(true);
+        <>
+          {showEdit && (
+            <>
+              <div
+                onClick={(event) => {
+                  event.stopPropagation();
+                  setEditName(true);
+                }}
+                style={{ paddingRight: "10px" }}
+              >
+                <IconButton
+                  onClick={(event) => {
+                    event.preventDefault;
+                    setEditName(true);
+                  }}
+                  sx={{
+                    width: "20px",
+                    height: "20px",
+                    borderRadius: "4px",
+                    color: theme.primaryLight,
+                    backgroundColor: theme.primaryDark,
+                    "&:hover": { backgroundColor: theme.primaryDarkest },
+                  }}
+                >
+                  <EditIcon fontSize="small" />
+                </IconButton>
+              </div>
+            </>
+          )}
+          {showEdit || (
+            <ListItemIcon sx={{ minWidth: "30px", color: theme.primaryDark }}>
+              <FolderIcon fontSize="small" />
+            </ListItemIcon>
+          )}
+          <ListItemText
+            primary={cutOffString(folderName, maxStringLength)}
+            primaryTypographyProps={{
+              color: theme.primaryDarkest,
+              fontFamily: "Ubuntu Mono,monospace",
+              fontSize: "small",
+              fontWeight: "bold",
             }}
-            style={{ paddingRight: "8px", marginLeft: "-2px" }}
-          >
-            <IconButton
-              onClick={(event) => {
-                event.preventDefault;
-                setEditName(true);
-              }}
+          />
+          {open ? (
+            <ExpandLess
               sx={{
-                width: "24px",
-                height: "24px",
-                borderRadius: "12px",
-                color: theme.primaryLight,
-                backgroundColor: theme.primaryDark,
-                "&:hover": { backgroundColor: theme.primaryDarkest },
+                color: theme.primaryDarkest,
               }}
-            >
-              <EditIcon fontSize="small" />
-            </IconButton>
-          </div>
-        )}
-        {showEdit || (
-          <ListItemIcon sx={{ minWidth: "30px", color: theme.primaryDark }}>
-            <FolderIcon fontSize="small" />
-          </ListItemIcon>
-        )}
-        <ListItemText
-          primary={cutOffString(folderName, maxStringLength)}
-          primaryTypographyProps={{
-            color: theme.primaryDarkest,
-          }}
-        />
-        {open ? (
-          <ExpandLess
-            sx={{
-              color: theme.primaryDarkest,
-            }}
-          />
-        ) : (
-          <ExpandMore
-            sx={{
-              color: theme.primaryDarkest,
-            }}
-          />
-        )}
-      </ListItemButton>
+            />
+          ) : (
+            <ExpandMore
+              sx={{
+                color: theme.primaryDarkest,
+              }}
+            />
+          )}
+        </>
+      </ListItem>
 
       <Modal
         open={editName}
@@ -178,12 +188,11 @@ const SkyWriteFolder = ({ obj, depth }) => {
                     backgroundColor: theme.primary,
                   },
                 }}
+                onClick={() => {
+                  saveFolderName(newName);
+                }}
               >
-                <Save
-                  onClick={() => {
-                    saveFolderName(newName);
-                  }}
-                />
+                <Save />
               </IconButton>
             </Grid>
           </Grid>
@@ -197,7 +206,7 @@ const SkyWriteFolder = ({ obj, depth }) => {
 };
 
 const SkyWriteFile = ({ obj, depth }) => {
-  const maxStringLength = 28 - depth * 2;
+  const maxStringLength = 38 - depth * 2;
 
   return (
     <ListItemButton sx={{ pl: depth + 1 }}>
@@ -213,6 +222,9 @@ const SkyWriteFile = ({ obj, depth }) => {
         primary={cutOffString(obj.name, maxStringLength)}
         primaryTypographyProps={{
           color: theme.primaryDarkest,
+          fontFamily: "Ubuntu Mono,monospace",
+          fontSize: "small",
+          fontWeight: "bold",
         }}
       />
     </ListItemButton>
