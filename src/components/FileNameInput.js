@@ -5,7 +5,8 @@ const FileNameInput = (props) => {
   return (
     <input
       id="filename"
-      defaultValue={props.filename}
+      value={props.filename}
+      onChange={(event) => props.setFilename(event.target.value)}
       placeholder="Type a file name here."
       style={{
         borderWidth: "1px",

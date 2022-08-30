@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Divider from "@mui/material/Divider";
@@ -25,13 +25,16 @@ import theme, { drawerWidth } from "./utils/theme";
 import { cutOffString } from "./utils/elementTools";
 import { backendOrigin } from "./utils/navTools";
 
-const SkyWriteFolder = ({ obj, depth }) => {
+const SkyWriteFolder = (props) => {
+  const obj = props.obj;
+  const depth = props.depth;
+  const path = [...props.currentPath, obj.id];
+
   const [open, setOpen] = useState(false);
   const [folderName, setFolderName] = useState(obj.name);
   const [showEdit, setShowEdit] = useState(false);
   const [editName, setEditName] = useState(false);
   const [newName, setNewName] = useState(obj.name);
-  const maxStringLength = 34 - depth * 2;
 
   function saveFolderName(name) {
     axios
@@ -41,7 +44,6 @@ const SkyWriteFolder = ({ obj, depth }) => {
         {
           headers: {
             Authorization: `token ${Cookies.get("token")}`,
-            "Content-Type": "application/json",
           },
         }
       )
@@ -58,9 +60,9 @@ const SkyWriteFolder = ({ obj, depth }) => {
 
   const makeNewList = () => {
     if (obj.folders.length !== 0) {
-      return makeList(obj.folders, depth);
+      return makeList(obj.folders, depth, props, path);
     } else if (obj.files.length !== 0) {
-      return makeList(obj.files, depth);
+      return makeList(obj.files, depth, props, path);
     } else {
       return <></>;
     }
@@ -107,17 +109,28 @@ const SkyWriteFolder = ({ obj, depth }) => {
             </>
           )}
           {showEdit || (
-            <ListItemIcon sx={{ minWidth: "30px", color: theme.primaryDark }}>
+            <ListItemIcon
+              sx={{
+                minWidth: "30px",
+                color: props.filePath.includes(obj.id)
+                  ? theme.primaryDarkest
+                  : theme.primaryDark,
+              }}
+            >
               <FolderIcon fontSize="small" />
             </ListItemIcon>
           )}
           <ListItemText
-            primary={cutOffString(folderName, maxStringLength)}
+            primary={folderName}
             primaryTypographyProps={{
-              color: theme.primaryDarkest,
-              fontFamily: "Ubuntu Mono,monospace",
-              fontSize: "small",
-              fontWeight: "bold",
+              sx: {
+                color: theme.primaryDarkest,
+                fontSize: "smaller",
+                fontWeight: props.filePath.includes(obj.id)
+                  ? "bold"
+                  : "inherit",
+                wordWrap: "break-word",
+              },
             }}
           />
           {open ? (
@@ -205,35 +218,47 @@ const SkyWriteFolder = ({ obj, depth }) => {
   );
 };
 
-const SkyWriteFile = ({ obj, depth }) => {
-  const maxStringLength = 38 - depth * 2;
+const SkyWriteFile = (props) => {
+  const obj = props.obj;
+  const depth = props.depth;
 
   return (
-    <ListItemButton sx={{ pl: depth + 1 }}>
+    <ListItemButton
+      sx={{ pl: depth + 1 }}
+      onClick={(event) => {
+        event.preventDefault;
+        props.setFilePath([...props.currentPath, obj.id]);
+        props.setFilename(obj.name);
+      }}
+    >
       <ListItemIcon
         sx={{
           minWidth: "30px",
-          color: theme.primaryDark,
+          color: props.filePath.includes(obj.id)
+            ? theme.primaryDarkest
+            : theme.primaryDark,
         }}
       >
         <ArticleIcon fontSize="small" />
       </ListItemIcon>
       <ListItemText
-        primary={cutOffString(obj.name, maxStringLength)}
+        primary={obj.name}
         primaryTypographyProps={{
-          color: theme.primaryDarkest,
-          fontFamily: "Ubuntu Mono,monospace",
-          fontSize: "small",
-          fontWeight: "bold",
+          sx: {
+            color: theme.primaryDarkest,
+            fontSize: "smaller",
+            fontWeight: props.filePath.includes(obj.id) ? "bold" : "inherit",
+            wordWrap: "break-word",
+          },
         }}
       />
     </ListItemButton>
   );
 };
 
-const makeList = (storageObjects, depth) => {
-  // const newWidth = drawerWidth - depth * 16;
+const makeList = (storageObjects, depth, drawerProps, path) => {
   const newDepth = depth + 1;
+  const currentPath = path === undefined ? [] : path;
 
   let folders = [];
   let files = [];
@@ -256,8 +281,26 @@ const makeList = (storageObjects, depth) => {
           disablePadding
         >
           <Divider sx={{ borderColor: theme.primary }} />
-          {!obj.is_file && <SkyWriteFolder obj={obj} depth={newDepth} />}
-          {obj.is_file && <SkyWriteFile obj={obj} depth={newDepth} />}
+          {!obj.is_file && (
+            <SkyWriteFolder
+              obj={obj}
+              depth={newDepth}
+              filePath={drawerProps.filePath}
+              setFilePath={drawerProps.setFilePath}
+              setFilename={drawerProps.setFilename}
+              currentPath={currentPath}
+            />
+          )}
+          {obj.is_file && (
+            <SkyWriteFile
+              obj={obj}
+              depth={newDepth}
+              filePath={drawerProps.filePath}
+              setFilePath={drawerProps.setFilePath}
+              setFilename={drawerProps.setFilename}
+              currentPath={currentPath}
+            />
+          )}
         </List>
       ))}
     </>
@@ -270,7 +313,7 @@ const AppDrawer = (props) => {
 
   const drawerContents = (
     <>
-      {makeList(props.storageObjects, 0)}
+      {makeList(props.storageObjects, 0, props)}
       <Divider sx={{ borderColor: theme.primary }} />
     </>
   );

@@ -3,6 +3,7 @@ import Box from "@mui/material/Box";
 import { createEditor, Editor, Transforms } from "slate";
 import { Slate, Editable, withReact } from "slate-react";
 import { withHistory } from "slate-history";
+import Cookies from "js-cookie";
 import isHotkey from "is-hotkey";
 import FormatBar from "./FormatBar";
 import FileNameInput from "./FileNameInput";
@@ -31,11 +32,56 @@ const altHotkeys = {
  * Functions
  *
  ************/
-function doSave(value) {
-  axios
-    .post("http://localhost:8000/", value)
-    .then((response) => console.log(`Response: ${response.data}`))
-    .catch((error) => console.log(error));
+function handleAltHotkey(editor, action, props) {
+  if (action === "save") {
+    console.log(editor);
+    doSave(editor.children, props.filename, props.fileId);
+  } else if (action === "increase") {
+    toggleIncrease();
+  } else if (action === "decrease") {
+    toggleDecrease();
+  }
+}
+
+function handleHotkeyEvent(event, editor, props) {
+  for (const hotkey in hotkeys) {
+    if (isHotkey(hotkey, event)) {
+      event.preventDefault();
+      toggleMark(editor, hotkeys[hotkey]);
+      toggleElement(editor, hotkeys[hotkey]);
+    }
+  }
+  for (const hotkey in altHotkeys) {
+    if (isHotkey(hotkey, event)) {
+      event.preventDefault();
+      handleAltHotkey(editor, altHotkeys[hotkey], props);
+    }
+  }
+}
+
+function doSave(value, filename, fileId) {
+  if (fileId !== null) {
+    axios
+      .patch(
+        `http://localhost:8000/storage_objects/${fileId}/`,
+        {
+          name: filename,
+        },
+        {
+          headers: {
+            Authorization: `token ${Cookies.get("token")}`,
+          },
+        }
+      )
+      .then((response) => console.log("Patched name.", response.data))
+      .catch((error) => console.log(error));
+  }
+  if (value !== null && value !== undefined) {
+    axios
+      .post("http://localhost:8000/", value)
+      .then((response) => console.log(`Response: ${response.data}`))
+      .catch((error) => console.log(error));
+  }
 }
 
 // For toggling text types:
@@ -159,21 +205,14 @@ const SkySlateBox = (props) => {
     }
   };
 
-  function handleAltHotkey(editor, action) {
-    if (action === "save") {
-      console.log(editor);
-      doSave(editor.children);
-    } else if (action === "increase") {
-      toggleIncrease();
-    } else if (action === "decrease") {
-      toggleDecrease();
-    }
-  }
-
   // Do once
   useEffect(() => {
     props.setEditor(editor);
   }, []);
+
+  useEffect(() => {
+    console.log("Naming...");
+  }, [props.filename]);
 
   /*************
    *
@@ -211,6 +250,9 @@ const SkySlateBox = (props) => {
                 toggleMark={toggleMark}
                 toggleElement={toggleElement}
                 doSave={doSave}
+                editorValue={value}
+                filename={props.filename}
+                fileId={props.fileId}
                 toggleFileDrawer={props.toggleFileDrawer}
                 editor={editor}
                 toggleIncrease={toggleIncrease}
@@ -220,7 +262,10 @@ const SkySlateBox = (props) => {
             <Box
               sx={{ width: { sm: "100%", md: "auto" }, flexGrow: { md: 1 } }}
             >
-              <FileNameInput filename={props.filename} />
+              <FileNameInput
+                filename={props.filename}
+                setFilename={props.setFilename}
+              />
             </Box>
           </Box>
         </div>
@@ -229,21 +274,7 @@ const SkySlateBox = (props) => {
           <Editable
             renderElement={renderElement}
             renderLeaf={renderLeaf}
-            onKeyDown={(event) => {
-              for (const hotkey in hotkeys) {
-                if (isHotkey(hotkey, event)) {
-                  event.preventDefault();
-                  toggleMark(editor, hotkeys[hotkey]);
-                  toggleElement(editor, hotkeys[hotkey]);
-                }
-              }
-              for (const hotkey in altHotkeys) {
-                if (isHotkey(hotkey, event)) {
-                  event.preventDefault();
-                  handleAltHotkey(editor, altHotkeys[hotkey]);
-                }
-              }
-            }}
+            onKeyDown={(event) => handleHotkeyEvent(event, editor, props)}
             placeholder="Type here."
             id="sky-slate-editable"
             autoFocus

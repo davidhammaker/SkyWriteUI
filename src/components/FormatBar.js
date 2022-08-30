@@ -144,7 +144,11 @@ const FormatBar = (props) => {
         }}
       >
         {showMenuIcon && menuIcon}
-        <IconButton onClick={() => props.doSave(value)}>
+        <IconButton
+          onClick={() =>
+            props.doSave(props.editorValue, props.filename, props.fileId)
+          }
+        >
           <Save sx={{ color: theme.secondary }} />
         </IconButton>
         <FormatButton toggleMark={props.toggleMark} format="bold" />

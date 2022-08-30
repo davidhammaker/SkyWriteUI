@@ -19,10 +19,12 @@ const App = () => {
   const [token, setToken] = useState("");
   const [username, setUsername] = useState("");
   const [storageObjects, setStorageObjects] = useState([]);
-  const [filename, setFilename] = useState("untitled");
-  const [folderId, setFolderId] = useState(null);
   const [editor, setEditor] = useState(null);
   const [fileDrawerOpen, setFileDrawerOpen] = useState(false);
+  const [filePath, setFilePath] = useState([]);
+  const [filename, setFilename] = useState("untitled");
+  const [fileId, setFileId] = useState(null);
+  const [currentValue, setCurrentValue] = useState(null);
 
   const toggleFileDrawer = () => {
     setFileDrawerOpen(!fileDrawerOpen);
@@ -60,6 +62,15 @@ const App = () => {
     document.getElementById("root").style.backgroundColor = theme.primary;
   }, [token]);
 
+  useEffect(() => {
+    if (filePath.length > 0) {
+      console.log(
+        "Note: Not currently saving editor content when switching..."
+      );
+      setFileId(filePath[filePath.length - 1]);
+    }
+  }, [filePath]);
+
   return (
     <BrowserRouter>
       <CssBaseline />
@@ -74,6 +85,9 @@ const App = () => {
                   open={fileDrawerOpen}
                   toggleFileDrawer={toggleFileDrawer}
                   storageObjects={storageObjects}
+                  filePath={filePath}
+                  setFilePath={setFilePath}
+                  setFilename={setFilename}
                 />
                 <div
                   style={{
@@ -95,6 +109,10 @@ const App = () => {
                       filename={filename}
                       setFilename={setFilename}
                       toggleFileDrawer={toggleFileDrawer}
+                      filePath={filePath}
+                      setFilePath={setFilePath}
+                      fileId={fileId}
+                      currentValue={currentValue}
                     />
                   </div>
                 </div>
