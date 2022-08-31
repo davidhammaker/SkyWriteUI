@@ -22,10 +22,10 @@ import DrawerSliding from "./DrawerSliding";
 import DrawerPermanent from "./DrawerPermanent";
 import { StyledTextField } from "./CustomTextField";
 import theme, { drawerWidth } from "./utils/theme";
-import { cutOffString } from "./utils/elementTools";
 import { backendOrigin } from "./utils/navTools";
 
 const SkyWriteFolder = (props) => {
+  const appState = props.appState;
   const obj = props.obj;
   const depth = props.depth;
   const path = [...props.currentPath, obj.id];
@@ -60,9 +60,9 @@ const SkyWriteFolder = (props) => {
 
   const makeNewList = () => {
     if (obj.folders.length !== 0) {
-      return makeList(obj.folders, depth, props, path);
+      return makeList(obj.folders, depth, appState, path);
     } else if (obj.files.length !== 0) {
-      return makeList(obj.files, depth, props, path);
+      return makeList(obj.files, depth, appState, path);
     } else {
       return <></>;
     }
@@ -112,7 +112,7 @@ const SkyWriteFolder = (props) => {
             <ListItemIcon
               sx={{
                 minWidth: "30px",
-                color: props.filePath.includes(obj.id)
+                color: appState.filePath.includes(obj.id)
                   ? theme.primaryDarkest
                   : theme.primaryDark,
               }}
@@ -126,7 +126,7 @@ const SkyWriteFolder = (props) => {
               sx: {
                 color: theme.primaryDarkest,
                 fontSize: "smaller",
-                fontWeight: props.filePath.includes(obj.id)
+                fontWeight: appState.filePath.includes(obj.id)
                   ? "bold"
                   : "inherit",
                 wordWrap: "break-word",
@@ -219,6 +219,7 @@ const SkyWriteFolder = (props) => {
 };
 
 const SkyWriteFile = (props) => {
+  const appState = props.appState;
   const obj = props.obj;
   const depth = props.depth;
 
@@ -227,14 +228,14 @@ const SkyWriteFile = (props) => {
       sx={{ pl: depth + 1 }}
       onClick={(event) => {
         event.preventDefault;
-        props.setFilePath([...props.currentPath, obj.id]);
-        props.setFilename(obj.name);
+        appState.setFilePath([...props.currentPath, obj.id]);
+        appState.setFilename(obj.name);
       }}
     >
       <ListItemIcon
         sx={{
           minWidth: "30px",
-          color: props.filePath.includes(obj.id)
+          color: appState.filePath.includes(obj.id)
             ? theme.primaryDarkest
             : theme.primaryDark,
         }}
@@ -247,7 +248,7 @@ const SkyWriteFile = (props) => {
           sx: {
             color: theme.primaryDarkest,
             fontSize: "smaller",
-            fontWeight: props.filePath.includes(obj.id) ? "bold" : "inherit",
+            fontWeight: appState.filePath.includes(obj.id) ? "bold" : "inherit",
             wordWrap: "break-word",
           },
         }}
@@ -256,7 +257,7 @@ const SkyWriteFile = (props) => {
   );
 };
 
-const makeList = (storageObjects, depth, drawerProps, path) => {
+const makeList = (storageObjects, depth, appState, path) => {
   const newDepth = depth + 1;
   const currentPath = path === undefined ? [] : path;
 
@@ -285,20 +286,16 @@ const makeList = (storageObjects, depth, drawerProps, path) => {
             <SkyWriteFolder
               obj={obj}
               depth={newDepth}
-              filePath={drawerProps.filePath}
-              setFilePath={drawerProps.setFilePath}
-              setFilename={drawerProps.setFilename}
               currentPath={currentPath}
+              appState={appState}
             />
           )}
           {obj.is_file && (
             <SkyWriteFile
               obj={obj}
               depth={newDepth}
-              filePath={drawerProps.filePath}
-              setFilePath={drawerProps.setFilePath}
-              setFilename={drawerProps.setFilename}
               currentPath={currentPath}
+              appState={appState}
             />
           )}
         </List>
@@ -308,12 +305,14 @@ const makeList = (storageObjects, depth, drawerProps, path) => {
 };
 
 const AppDrawer = (props) => {
+  const appState = props.appState;
+
   const container =
     props.window !== undefined ? () => props.window().document.body : undefined;
 
   const drawerContents = (
     <>
-      {makeList(props.storageObjects, 0, props)}
+      {makeList(appState.storageObjects, 0, appState)}
       <Divider sx={{ borderColor: theme.primary }} />
     </>
   );
@@ -325,7 +324,7 @@ const AppDrawer = (props) => {
     >
       <DrawerSliding
         container={container}
-        open={props.open}
+        open={appState.fileDrawerOpen}
         onClose={props.toggleFileDrawer}
         bgcolor={theme.primary}
       >

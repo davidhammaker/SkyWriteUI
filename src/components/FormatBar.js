@@ -100,6 +100,8 @@ const TextDecreaseButton = ({ toggleDecrease }) => {
 };
 
 const FormatBar = (props) => {
+  const appState = props.appState;
+
   const menuIcon = (
     <IconButton onClick={props.toggleFileDrawer}>
       <MenuIcon />
@@ -146,7 +148,7 @@ const FormatBar = (props) => {
         {showMenuIcon && menuIcon}
         <IconButton
           onClick={() =>
-            props.doSave(props.editorValue, props.filename, props.fileId)
+            props.doSave(props.editorValue, appState.filename, appState.fileId)
           }
         >
           <Save sx={{ color: theme.secondary }} />

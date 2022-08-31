@@ -2,11 +2,12 @@ import React from "react";
 import theme from "./utils/theme";
 
 const FileNameInput = (props) => {
+  const appState = props.appState;
   return (
     <input
       id="filename"
-      value={props.filename}
-      onChange={(event) => props.setFilename(event.target.value)}
+      value={appState.filename}
+      onChange={(event) => appState.setFilename(event.target.value)}
       placeholder="Type a file name here."
       style={{
         borderWidth: "1px",

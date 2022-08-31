@@ -32,10 +32,10 @@ const altHotkeys = {
  * Functions
  *
  ************/
-function handleAltHotkey(editor, action, props) {
+function handleAltHotkey(editor, action, appState) {
   if (action === "save") {
     console.log(editor);
-    doSave(editor.children, props.filename, props.fileId);
+    doSave(editor.children, appState.filename, appState.fileId);
   } else if (action === "increase") {
     toggleIncrease();
   } else if (action === "decrease") {
@@ -43,7 +43,7 @@ function handleAltHotkey(editor, action, props) {
   }
 }
 
-function handleHotkeyEvent(event, editor, props) {
+function handleHotkeyEvent(event, editor, appState) {
   for (const hotkey in hotkeys) {
     if (isHotkey(hotkey, event)) {
       event.preventDefault();
@@ -54,7 +54,7 @@ function handleHotkeyEvent(event, editor, props) {
   for (const hotkey in altHotkeys) {
     if (isHotkey(hotkey, event)) {
       event.preventDefault();
-      handleAltHotkey(editor, altHotkeys[hotkey], props);
+      handleAltHotkey(editor, altHotkeys[hotkey], appState);
     }
   }
 }
@@ -113,6 +113,7 @@ const SkySlateBox = (props) => {
    * Slate hooks and setup
    *
    ************/
+  const appState = props.appState;
 
   // We need an editor that doesn't change when we render.
   // ('withHistory' lets us undo with ctrl+z)
@@ -207,12 +208,12 @@ const SkySlateBox = (props) => {
 
   // Do once
   useEffect(() => {
-    props.setEditor(editor);
+    appState.setEditor(editor);
   }, []);
 
   useEffect(() => {
     console.log("Naming...");
-  }, [props.filename]);
+  }, [appState.filename]);
 
   /*************
    *
@@ -251,21 +252,17 @@ const SkySlateBox = (props) => {
                 toggleElement={toggleElement}
                 doSave={doSave}
                 editorValue={value}
-                filename={props.filename}
-                fileId={props.fileId}
                 toggleFileDrawer={props.toggleFileDrawer}
                 editor={editor}
                 toggleIncrease={toggleIncrease}
                 toggleDecrease={toggleDecrease}
+                appState={appState}
               />
             </Box>
             <Box
               sx={{ width: { sm: "100%", md: "auto" }, flexGrow: { md: 1 } }}
             >
-              <FileNameInput
-                filename={props.filename}
-                setFilename={props.setFilename}
-              />
+              <FileNameInput appState={appState} />
             </Box>
           </Box>
         </div>

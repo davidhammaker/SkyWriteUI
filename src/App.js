@@ -14,6 +14,11 @@ import theme from "./components/utils/theme";
 import { backendOrigin, inPath } from "./components/utils/navTools";
 
 const App = () => {
+  /*************
+   *
+   * State Hooks
+   *
+   ************/
   const [atLogin, setAtLogin] = useState(false);
   const [atCreateUser, setAtCreateUser] = useState(false);
   const [token, setToken] = useState("");
@@ -26,11 +31,41 @@ const App = () => {
   const [fileId, setFileId] = useState(null);
   const [currentValue, setCurrentValue] = useState(null);
 
+  const appState = {
+    atLogin,
+    setAtLogin,
+    atCreateUser,
+    setAtCreateUser,
+    token,
+    setToken,
+    username,
+    setUsername,
+    storageObjects,
+    setStorageObjects,
+    editor,
+    setEditor,
+    fileDrawerOpen,
+    setFileDrawerOpen,
+    filePath,
+    setFilePath,
+    filename,
+    setFilename,
+    fileId,
+    setFileId,
+    currentValue,
+    setCurrentValue,
+  };
+
+  /*************
+   *
+   * Functions
+   *
+   ************/
   const toggleFileDrawer = () => {
     setFileDrawerOpen(!fileDrawerOpen);
   };
 
-  function getUser() {
+  const getUser = () => {
     axios
       .get(`${backendOrigin}/me/`, {
         headers: { Authorization: `token ${Cookies.get("token")}` },
@@ -44,8 +79,13 @@ const App = () => {
           console.log(error.response.data);
         }
       });
-  }
+  };
 
+  /*************
+   *
+   * Effects
+   *
+   ************/
   useEffect(() => {
     setAtLogin(false);
     setAtCreateUser(false);
@@ -71,6 +111,11 @@ const App = () => {
     }
   }, [filePath]);
 
+  /*************
+   *
+   * Return
+   *
+   ************/
   return (
     <BrowserRouter>
       <CssBaseline />
@@ -82,12 +127,13 @@ const App = () => {
             (token && (
               <>
                 <AppDrawer
-                  open={fileDrawerOpen}
+                  // open={fileDrawerOpen}
                   toggleFileDrawer={toggleFileDrawer}
-                  storageObjects={storageObjects}
-                  filePath={filePath}
-                  setFilePath={setFilePath}
-                  setFilename={setFilename}
+                  // storageObjects={storageObjects}
+                  // filePath={filePath}
+                  // setFilePath={setFilePath}
+                  // setFilename={setFilename}
+                  appState={appState}
                 />
                 <div
                   style={{
@@ -105,14 +151,8 @@ const App = () => {
                     }}
                   >
                     <SkySlateBox
-                      setEditor={setEditor}
-                      filename={filename}
-                      setFilename={setFilename}
                       toggleFileDrawer={toggleFileDrawer}
-                      filePath={filePath}
-                      setFilePath={setFilePath}
-                      fileId={fileId}
-                      currentValue={currentValue}
+                      appState={appState}
                     />
                   </div>
                 </div>
