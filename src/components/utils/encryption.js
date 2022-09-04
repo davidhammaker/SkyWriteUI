@@ -129,18 +129,18 @@ export const decryptData = async (key, iv, ciphertext) => {
  * initial encryption. This implementation assumes that the IV and the cipher text
  * are both encoded as strings of bytes.
  *
+ * You may need to use ``window.atob(ivBytes)`` (and same for ``cyphertextBytes``)
+ * to get this decryption to work. It depends on how you've encoded things.
+ *
  * @param {*} key The Key that was used to encrypt the encoded string.
  * @param {*} iv The initialization vector from the encryption.
  * @param {*} ciphertext The encrypted encoding, to be decoded.
  * @returns The decoded string.
  */
 export const decryptDataFromBytes = async (key, ivBytes, ciphertextBytes) => {
-  console.log("ENTER DECRYPT");
-  console.log(key, ivBytes, ciphertextBytes);
   const ciphertext = stringToArray(ciphertextBytes);
   const iv = stringToArray(ivBytes);
 
-  console.log("DOING OK");
   const decrypted = await window.crypto.subtle.decrypt(
     {
       name: "AES-GCM",
@@ -149,7 +149,6 @@ export const decryptDataFromBytes = async (key, ivBytes, ciphertextBytes) => {
     key,
     ciphertext
   );
-  console.log("OK?");
   const decoder = new TextDecoder();
   return decoder.decode(decrypted);
 };

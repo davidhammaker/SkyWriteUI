@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
-import Grid from "@mui/material/Grid";
 import Divider from "@mui/material/Divider";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
@@ -13,16 +12,13 @@ import ArticleIcon from "@mui/icons-material/Article";
 import EditIcon from "@mui/icons-material/Edit";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
-import Save from "@mui/icons-material/Save";
 import Collapse from "@mui/material/Collapse";
-import Modal from "@mui/material/Modal";
 import Cookies from "js-cookie";
 import axios from "axios";
 import DrawerSliding from "./DrawerSliding";
 import DrawerPermanent from "./DrawerPermanent";
 import AddItems from "./AddItems";
 import FolderModal from "./FolderModal";
-import { StyledTextField } from "./CustomTextField";
 import theme, { drawerWidth } from "./utils/theme";
 import { backendOrigin } from "./utils/navTools";
 import { encryptDataToBytes, decryptDataFromBytes } from "./utils/encryption";
@@ -67,7 +63,7 @@ const SkyWriteFolder = (props) => {
     axios
       .patch(
         `${backendOrigin}/storage_objects/${obj.id}/`,
-        { name: ciphertext, name_iv: iv },
+        { name: window.btoa(ciphertext), name_iv: window.btoa(iv) },
         {
           headers: {
             Authorization: `token ${Cookies.get("token")}`,
@@ -79,9 +75,11 @@ const SkyWriteFolder = (props) => {
           appState.key,
           response.data.name_iv,
           response.data.name
-        ).then((ret) => {
-          setFolderName(ret);
-        });
+        )
+          .then((ret) => {
+            setFolderName(ret);
+          })
+          .catch((error) => {});
         setEditName(false);
       })
       .catch(function (error) {
@@ -101,26 +99,13 @@ const SkyWriteFolder = (props) => {
     }
   };
 
-  // useEffect(() => {
-  //   console.log(window.atob(obj.name_iv));
-  //   decryptDataFromBytes(
-  //     appState.key,
-  //     window.atob(obj.name_iv),
-  //     window.atob(obj.name)
-  //   )
-  //     .then((ret) => {
-  //       console.log(ret);
-  //       setFolderName(ret);
-  //     })
-  //     .catch((error) => console.log(error));
-  // });
-
   useEffect(() => {
     if (ciphertext !== null) {
       saveFolderName();
     }
   }, [ciphertext]);
 
+  // After the key has been set, decrypt the folder name.
   useEffect(() => {
     decryptDataFromBytes(
       appState.key,
@@ -128,10 +113,9 @@ const SkyWriteFolder = (props) => {
       window.atob(obj.name)
     )
       .then((decryptedFolderName) => {
-        console.log(decryptedFolderName);
         setFolderName(decryptedFolderName);
       })
-      .catch((error) => console.log(error));
+      .catch((error) => {});
   }, [appState.key]);
 
   return (

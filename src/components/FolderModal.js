@@ -1,29 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
-import Divider from "@mui/material/Divider";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
 import IconButton from "@mui/material/IconButton";
-import FolderIcon from "@mui/icons-material/Folder";
-import ArticleIcon from "@mui/icons-material/Article";
-import EditIcon from "@mui/icons-material/Edit";
-import ExpandLess from "@mui/icons-material/ExpandLess";
-import ExpandMore from "@mui/icons-material/ExpandMore";
 import Save from "@mui/icons-material/Save";
-import Collapse from "@mui/material/Collapse";
 import Modal from "@mui/material/Modal";
-import Cookies from "js-cookie";
-import axios from "axios";
-import DrawerSliding from "./DrawerSliding";
-import DrawerPermanent from "./DrawerPermanent";
-import AddItems from "./AddItems";
 import { StyledTextField } from "./CustomTextField";
-import theme, { drawerWidth } from "./utils/theme";
-import { backendOrigin } from "./utils/navTools";
+import theme from "./utils/theme";
 
 const FolderModal = (props) => {
   const folderState = props.folderState;
@@ -52,7 +34,7 @@ const FolderModal = (props) => {
         >
           <Grid item>
             <StyledTextField
-              defaultValue={folderState.newName}
+              defaultValue={folderState.folderName}
               placeholder="Folder name"
               sx={{
                 width: "300px",

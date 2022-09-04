@@ -23,9 +23,6 @@ export const StyledTextField = styled(TextField)({
 });
 
 export default function CustomTextField(props) {
-  useEffect(() => {
-    console.log(props.error ? 2 : 4);
-  });
   return (
     <Grid container direction="row">
       <Grid item md={12} sx={{ mb: props.error ? 2 : 4 }}>

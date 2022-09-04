@@ -15,6 +15,7 @@ const AddItems = (props) => {
   const [folderModalOpen, setFolderModalOpen] = useState(false);
   const [ciphertext, setCiphertext] = useState(null);
   const [iv, setIv] = useState(null);
+  const [saveFolder, setSaveFolder] = useState(false);
 
   const folderState = {
     newName,
@@ -28,11 +29,12 @@ const AddItems = (props) => {
   };
 
   const encryptFolderName = (name) => {
-    console.log(appState.key);
-    encryptDataToBytes(name, appState.key).then((ret) => {
-      setIv(ret.iv);
-      setCiphertext(ret.ciphertext);
-    });
+    encryptDataToBytes(name, appState.key)
+      .then((ret) => {
+        setIv(ret.iv);
+        setCiphertext(ret.ciphertext);
+      })
+      .then(() => setSaveFolder(true)); // When we set ``saveFolder`` to ``true``, we trigger its effect.
   };
 
   const saveNewFolder = () => {
@@ -57,7 +59,6 @@ const AddItems = (props) => {
           window.atob(response.name_iv),
           window.atob(response.name)
         ).then((ret) => {
-          console.log(ret);
           setNewName(ret);
         });
       })
@@ -69,11 +70,11 @@ const AddItems = (props) => {
   };
 
   useEffect(() => {
-    if (ciphertext !== null) {
+    if (saveFolder) {
+      setSaveFolder(false);
       saveNewFolder();
     }
-    console.log(newName);
-  });
+  }, [saveFolder]);
 
   return (
     <Box>

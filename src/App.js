@@ -75,11 +75,8 @@ const App = () => {
   };
 
   const getOrCreateKey = (encodedKey) => {
-    console.log("HERE??", encodedKey);
     if (encodedKey !== null) {
-      console.log("encoded exists", encodedKey);
       const keyToDecode = stringToArray(window.atob(encodedKey));
-      console.log("key to decode", keyToDecode);
       // Decode the key from the backend.
       window.crypto.subtle
         .importKey(
@@ -91,15 +88,10 @@ const App = () => {
         )
         .then((importedKey) => {
           // Set the decoded key
-          console.log("SETTING KEY", importedKey);
           setKey(importedKey);
         })
-        .catch((error) => {
-          console.log("ERROR??");
-          console.log(error);
-        });
+        .catch((error) => {});
     } else {
-      console.log("NO KEY");
       // Generate and store a new key.
       generateKey().then((newKey) => {
         // Set the key for use in this session.
@@ -123,7 +115,6 @@ const App = () => {
         });
       });
     }
-    console.log("umm...??");
   };
 
   const getUser = () => {
@@ -134,7 +125,6 @@ const App = () => {
       .then(function (response) {
         setUsername(response.data.username);
         setStorageObjects(response.data.storage_objects);
-        console.log("got the key...", response.data.encryption_key);
         getOrCreateKey(response.data.encryption_key);
       })
       .catch(function (error) {

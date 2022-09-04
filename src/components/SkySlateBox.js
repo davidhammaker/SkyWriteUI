@@ -211,10 +211,6 @@ const SkySlateBox = (props) => {
     appState.setEditor(editor);
   }, []);
 
-  useEffect(() => {
-    console.log("Naming...");
-  }, [appState.filename]);
-
   /*************
    *
    * Component return
