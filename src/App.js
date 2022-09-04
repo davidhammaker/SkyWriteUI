@@ -187,6 +187,7 @@ const App = () => {
                 <AppDrawer
                   toggleFileDrawer={toggleFileDrawer}
                   appState={appState}
+                  getUser={getUser}
                 />
                 <div
                   style={{

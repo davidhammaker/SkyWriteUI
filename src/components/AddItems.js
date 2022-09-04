@@ -53,16 +53,13 @@ const AddItems = (props) => {
         }
       )
       .then(function (response) {
+        // Close the modal
         setFolderModalOpen(false);
-        decryptDataFromBytes(
-          appState.key,
-          window.atob(response.name_iv),
-          window.atob(response.name)
-        ).then((ret) => {
-          setNewName(ret);
-        });
+        // Get storage objects again
+        props.getUser();
       })
       .catch(function (error) {
+        console.log("no there was an error");
         if (error.response) {
           console.log(error.response.data);
         }

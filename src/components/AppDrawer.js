@@ -30,12 +30,13 @@ const AppDrawer = (props) => {
         open={appState.fileDrawerOpen}
         onClose={props.toggleFileDrawer}
         bgcolor={theme.primary}
+        getUser={props.getUser}
       >
-        <AddItems appState={appState} />
+        <AddItems appState={appState} getUser={props.getUser} />
         {drawerContents}
       </DrawerSliding>
-      <DrawerPermanent bgcolor={theme.primary}>
-        <AddItems appState={appState} />
+      <DrawerPermanent bgcolor={theme.primary} getUser={props.getUser}>
+        <AddItems appState={appState} getUser={props.getUser} />
         {drawerContents}
       </DrawerPermanent>
     </Box>
