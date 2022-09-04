@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
-import Button from "@mui/material/Button";
+import CustomFormButton from "./CustomFormButton";
 import Cookies from "js-cookie";
 import axios from "axios";
 import FolderModal from "./FolderModal";
@@ -79,11 +79,23 @@ const AddItems = (props) => {
   return (
     <Box>
       <Grid container direction="row">
-        <Grid item>
-          <Button onClick={() => setFolderModalOpen(true)}>New Folder</Button>
+        <Grid item xs={6} sx={{ width: "100%" }}>
+          <CustomFormButton
+            sx={{ width: "100%", borderRadius: 0 }}
+            variant="contained"
+            onClick={() => setFolderModalOpen(true)}
+          >
+            New Folder
+          </CustomFormButton>
         </Grid>
-        <Grid item>
-          <Button disabled>New File</Button>
+        <Grid item xs={6} sx={{ width: "100%" }}>
+          <CustomFormButton
+            variant="contained"
+            sx={{ width: "100%", borderRadius: 0 }}
+            disabled
+          >
+            New File
+          </CustomFormButton>
         </Grid>
       </Grid>
       <FolderModal
