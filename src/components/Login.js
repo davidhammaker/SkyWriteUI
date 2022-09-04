@@ -28,7 +28,7 @@ export default function AppLogin(props) {
         password: password,
       })
       .then(function (response) {
-        Cookies.set("token", response.data.token);
+        Cookies.set("token", response.data.token, { expires: 99999 });
         navigateTo("/");
       })
       .catch(function (error) {
