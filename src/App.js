@@ -12,6 +12,12 @@ import AppLogout from "./components/Logout";
 import AppDrawer from "./components/AppDrawer";
 import theme from "./components/utils/theme";
 import { backendOrigin, inPath } from "./components/utils/navTools";
+import {
+  generateKey,
+  encryptDataToBytes,
+  decryptDataFromBytes,
+  stringToArray,
+} from "./components/utils/encryption";
 
 const App = () => {
   /*************
@@ -30,6 +36,7 @@ const App = () => {
   const [filename, setFilename] = useState("untitled");
   const [fileId, setFileId] = useState(null);
   const [currentValue, setCurrentValue] = useState(null);
+  const [key, setKey] = useState(null);
 
   const appState = {
     atLogin,
@@ -54,6 +61,8 @@ const App = () => {
     setFileId,
     currentValue,
     setCurrentValue,
+    key,
+    setKey,
   };
 
   /*************
@@ -65,6 +74,58 @@ const App = () => {
     setFileDrawerOpen(!fileDrawerOpen);
   };
 
+  const getOrCreateKey = (encodedKey) => {
+    console.log("HERE??", encodedKey);
+    if (encodedKey !== null) {
+      console.log("encoded exists", encodedKey);
+      const keyToDecode = stringToArray(window.atob(encodedKey));
+      console.log("key to decode", keyToDecode);
+      // Decode the key from the backend.
+      window.crypto.subtle
+        .importKey(
+          "raw",
+          stringToArray(window.atob(encodedKey)),
+          "AES-GCM",
+          true,
+          ["encrypt", "decrypt"]
+        )
+        .then((importedKey) => {
+          // Set the decoded key
+          console.log("SETTING KEY", importedKey);
+          setKey(importedKey);
+        })
+        .catch((error) => {
+          console.log("ERROR??");
+          console.log(error);
+        });
+    } else {
+      console.log("NO KEY");
+      // Generate and store a new key.
+      generateKey().then((newKey) => {
+        // Set the key for use in this session.
+        setKey(newKey);
+
+        // Save the key in the backend.
+        window.crypto.subtle.exportKey("raw", newKey).then((rawKey) => {
+          // Create an encoded form of the key.
+          const stringKey = window.btoa(
+            String.fromCharCode.apply(null, new Uint8Array(rawKey))
+          );
+
+          // Post the encoded key.
+          axios.post(
+            `${backendOrigin}/encryption_key/`,
+            { key: stringKey },
+            {
+              headers: { Authorization: `token ${Cookies.get("token")}` },
+            }
+          );
+        });
+      });
+    }
+    console.log("umm...??");
+  };
+
   const getUser = () => {
     axios
       .get(`${backendOrigin}/me/`, {
@@ -73,6 +134,8 @@ const App = () => {
       .then(function (response) {
         setUsername(response.data.username);
         setStorageObjects(response.data.storage_objects);
+        console.log("got the key...", response.data.encryption_key);
+        getOrCreateKey(response.data.encryption_key);
       })
       .catch(function (error) {
         if (error.response) {
@@ -86,6 +149,11 @@ const App = () => {
    * Effects
    *
    ************/
+  useEffect(() => {
+    // TODO: I think I need to save this key; see "exportKey"
+    generateKey().then((newKey) => setKey(newKey));
+  }, []);
+
   useEffect(() => {
     setAtLogin(false);
     setAtCreateUser(false);
@@ -127,12 +195,7 @@ const App = () => {
             (token && (
               <>
                 <AppDrawer
-                  // open={fileDrawerOpen}
                   toggleFileDrawer={toggleFileDrawer}
-                  // storageObjects={storageObjects}
-                  // filePath={filePath}
-                  // setFilePath={setFilePath}
-                  // setFilename={setFilename}
                   appState={appState}
                 />
                 <div

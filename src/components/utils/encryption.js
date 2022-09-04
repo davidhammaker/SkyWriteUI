@@ -1,3 +1,16 @@
+// /*
+// Convert a string into an ArrayBuffer
+// from https://developers.google.com/web/updates/2012/06/How-to-convert-ArrayBuffer-to-and-from-String
+// */
+// export function stringToArrayBuffer(str) {
+//   const buf = new ArrayBuffer(str.length);
+//   const bufView = new Uint8Array(buf);
+//   for (let i = 0, strLen = str.length; i < strLen; i++) {
+//     bufView[i] = str.charCodeAt(i);
+//   }
+//   return buf;
+// }
+
 /**
  * Generate an encryption key.
  * Use something like ``generateKey().then((newKey) => setKey(newkey));``
@@ -80,7 +93,7 @@ export const encryptDataToBytes = async (dataStr, key) => {
  * @param {String} bytesString A string of encrypted bytes.
  * @returns An ArrayBuffer representing the bytes.
  */
-const stringToArray = (bytesString) => {
+export const stringToArray = (bytesString) => {
   let newBytesBuffer = new ArrayBuffer(bytesString.length);
   let bytesBufferView = new Uint8Array(newBytesBuffer);
   for (let i = 0; i < bytesString.length; i++) {
@@ -122,9 +135,12 @@ export const decryptData = async (key, iv, ciphertext) => {
  * @returns The decoded string.
  */
 export const decryptDataFromBytes = async (key, ivBytes, ciphertextBytes) => {
+  console.log("ENTER DECRYPT");
+  console.log(key, ivBytes, ciphertextBytes);
   const ciphertext = stringToArray(ciphertextBytes);
   const iv = stringToArray(ivBytes);
 
+  console.log("DOING OK");
   const decrypted = await window.crypto.subtle.decrypt(
     {
       name: "AES-GCM",
@@ -133,6 +149,7 @@ export const decryptDataFromBytes = async (key, ivBytes, ciphertextBytes) => {
     key,
     ciphertext
   );
+  console.log("OK?");
   const decoder = new TextDecoder();
   return decoder.decode(decrypted);
 };

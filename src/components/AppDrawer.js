@@ -20,9 +20,12 @@ import Cookies from "js-cookie";
 import axios from "axios";
 import DrawerSliding from "./DrawerSliding";
 import DrawerPermanent from "./DrawerPermanent";
+import AddItems from "./AddItems";
+import FolderModal from "./FolderModal";
 import { StyledTextField } from "./CustomTextField";
 import theme, { drawerWidth } from "./utils/theme";
 import { backendOrigin } from "./utils/navTools";
+import { encryptDataToBytes, decryptDataFromBytes } from "./utils/encryption";
 
 const SkyWriteFolder = (props) => {
   const appState = props.appState;
@@ -31,16 +34,40 @@ const SkyWriteFolder = (props) => {
   const path = [...props.currentPath, obj.id];
 
   const [open, setOpen] = useState(false);
-  const [folderName, setFolderName] = useState(obj.name);
+  const [folderName, setFolderName] = useState("");
   const [showEdit, setShowEdit] = useState(false);
   const [editName, setEditName] = useState(false);
   const [newName, setNewName] = useState(obj.name);
+  const [ciphertext, setCiphertext] = useState(null);
+  const [iv, setIv] = useState(null);
 
-  function saveFolderName(name) {
+  const folderState = {
+    folderName,
+    setFolderName,
+    showEdit,
+    setShowEdit,
+    editName,
+    setEditName,
+    newName,
+    setNewName,
+    ciphertext,
+    setCiphertext,
+    iv,
+    setIv,
+  };
+
+  const encryptFolderName = (name) => {
+    encryptDataToBytes(name, appState.key).then((ret) => {
+      setIv(ret.iv);
+      setCiphertext(ret.ciphertext);
+    });
+  };
+
+  const saveFolderName = () => {
     axios
       .patch(
         `${backendOrigin}/storage_objects/${obj.id}/`,
-        { name: name },
+        { name: ciphertext, name_iv: iv },
         {
           headers: {
             Authorization: `token ${Cookies.get("token")}`,
@@ -48,7 +75,13 @@ const SkyWriteFolder = (props) => {
         }
       )
       .then(function (response) {
-        setFolderName(response.data.name);
+        decryptDataFromBytes(
+          appState.key,
+          response.data.name_iv,
+          response.data.name
+        ).then((ret) => {
+          setFolderName(ret);
+        });
         setEditName(false);
       })
       .catch(function (error) {
@@ -56,7 +89,7 @@ const SkyWriteFolder = (props) => {
           console.log(error.response.data);
         }
       });
-  }
+  };
 
   const makeNewList = () => {
     if (obj.folders.length !== 0) {
@@ -67,6 +100,39 @@ const SkyWriteFolder = (props) => {
       return <></>;
     }
   };
+
+  // useEffect(() => {
+  //   console.log(window.atob(obj.name_iv));
+  //   decryptDataFromBytes(
+  //     appState.key,
+  //     window.atob(obj.name_iv),
+  //     window.atob(obj.name)
+  //   )
+  //     .then((ret) => {
+  //       console.log(ret);
+  //       setFolderName(ret);
+  //     })
+  //     .catch((error) => console.log(error));
+  // });
+
+  useEffect(() => {
+    if (ciphertext !== null) {
+      saveFolderName();
+    }
+  }, [ciphertext]);
+
+  useEffect(() => {
+    decryptDataFromBytes(
+      appState.key,
+      window.atob(obj.name_iv),
+      window.atob(obj.name)
+    )
+      .then((decryptedFolderName) => {
+        console.log(decryptedFolderName);
+        setFolderName(decryptedFolderName);
+      })
+      .catch((error) => console.log(error));
+  }, [appState.key]);
 
   return (
     <>
@@ -149,68 +215,14 @@ const SkyWriteFolder = (props) => {
         </>
       </ListItem>
 
-      <Modal
+      <FolderModal
         open={editName}
         onClose={() => {
           setEditName(false);
         }}
-        sx={{
-          justifyContent: "center",
-        }}
-      >
-        <Box
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-          }}
-        >
-          <Grid
-            container
-            direction="row"
-            justifyContent="center"
-            alignItems="center"
-            spacing={2}
-          >
-            <Grid item>
-              <StyledTextField
-                defaultValue={newName}
-                placeholder="Folder name"
-                sx={{
-                  width: "300px",
-                  boxShadow: 5,
-                }}
-                onChange={(event) => {
-                  setNewName(event.target.value);
-                }}
-                onKeyDown={(event) => {
-                  if (event.code === "Enter" || event.code === "NumpadEnter") {
-                    saveFolderName(newName);
-                  }
-                }}
-              />
-            </Grid>
-            <Grid item>
-              <IconButton
-                sx={{
-                  backgroundColor: theme.primaryLight,
-                  color: theme.primaryDark,
-                  boxShadow: 5,
-                  "&:hover": {
-                    backgroundColor: theme.primary,
-                  },
-                }}
-                onClick={() => {
-                  saveFolderName(newName);
-                }}
-              >
-                <Save />
-              </IconButton>
-            </Grid>
-          </Grid>
-        </Box>
-      </Modal>
+        onSave={() => encryptFolderName(newName)}
+        folderState={folderState}
+      />
       <Collapse in={open} timeout="auto" unmountOnExit>
         {makeNewList()}
       </Collapse>
@@ -328,9 +340,11 @@ const AppDrawer = (props) => {
         onClose={props.toggleFileDrawer}
         bgcolor={theme.primary}
       >
+        <AddItems appState={appState} />
         {drawerContents}
       </DrawerSliding>
       <DrawerPermanent bgcolor={theme.primary}>
+        <AddItems appState={appState} />
         {drawerContents}
       </DrawerPermanent>
     </Box>
