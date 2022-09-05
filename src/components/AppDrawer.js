@@ -15,7 +15,12 @@ const AppDrawer = (props) => {
 
   const drawerContents = (
     <>
-      {DrawerFileList(appState.storageObjects, 0, appState)}
+      <DrawerFileList
+        storageObjects={appState.storageObjects}
+        depth={0}
+        appState={appState}
+        getUser={props.getUser}
+      />
       <Divider sx={{ borderColor: theme.primary }} />
     </>
   );

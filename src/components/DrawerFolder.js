@@ -64,16 +64,10 @@ const DrawerFolder = (props) => {
         }
       )
       .then(function (response) {
-        decryptDataFromBytes(
-          appState.key,
-          response.data.name_iv,
-          response.data.name
-        )
-          .then((ret) => {
-            setFolderName(ret);
-          })
-          .catch((error) => {});
+        // Close the modal
         setEditName(false);
+        // Get storage objects again
+        props.getUser();
       })
       .catch(function (error) {
         if (error.response) {
@@ -84,9 +78,25 @@ const DrawerFolder = (props) => {
 
   const makeNewList = () => {
     if (obj.folders.length !== 0) {
-      return DrawerFileList(obj.folders, depth, appState, path);
+      return (
+        <DrawerFileList
+          storageObjects={obj.folders}
+          depth={depth}
+          appState={appState}
+          path={path}
+          getUser={props.getUser}
+        />
+      );
     } else if (obj.files.length !== 0) {
-      return DrawerFileList(obj.files, depth, appState, path);
+      return (
+        <DrawerFileList
+          storageObjects={obj.files}
+          depth={depth}
+          appState={appState}
+          path={path}
+          getUser={props.getUser}
+        />
+      );
     } else {
       return <></>;
     }

@@ -59,7 +59,6 @@ const AddItems = (props) => {
         props.getUser();
       })
       .catch(function (error) {
-        console.log("no there was an error");
         if (error.response) {
           console.log(error.response.data);
         }

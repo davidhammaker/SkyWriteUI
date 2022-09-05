@@ -5,7 +5,11 @@ import DrawerFile from "./DrawerFile";
 import DrawerFolder from "./DrawerFolder";
 import theme, { drawerWidth } from "./utils/theme";
 
-const DrawerFileList = (storageObjects, depth, appState, path) => {
+const DrawerFileList = (props) => {
+  const storageObjects = props.storageObjects;
+  const depth = props.depth;
+  const appState = props.appState;
+  const path = props.path;
   const newDepth = depth + 1;
   const currentPath = path === undefined ? [] : path;
 
@@ -36,6 +40,7 @@ const DrawerFileList = (storageObjects, depth, appState, path) => {
               depth={newDepth}
               currentPath={currentPath}
               appState={appState}
+              getUser={props.getUser}
             />
           )}
           {obj.is_file && (
@@ -44,6 +49,7 @@ const DrawerFileList = (storageObjects, depth, appState, path) => {
               depth={newDepth}
               currentPath={currentPath}
               appState={appState}
+              getUser={props.getUser}
             />
           )}
         </List>
