@@ -10,6 +10,8 @@ import TextIncreaseIcon from "@mui/icons-material/TextIncrease";
 import TextDecreaseIcon from "@mui/icons-material/TextDecrease";
 import Box from "@mui/material/Box";
 import ButtonGroup from "@mui/material/ButtonGroup";
+import Grid from "@mui/material/Grid";
+import SettingsButton from "./SettingsButton";
 import { Editor } from "slate";
 import { useSlate } from "slate-react";
 import theme, { md } from "./utils/theme";
@@ -145,19 +147,33 @@ const FormatBar = (props) => {
           display: { xs: "inline-block", md: "flex" },
         }}
       >
-        {showMenuIcon && menuIcon}
-        <IconButton
-          onClick={() =>
-            props.doSave(props.editorValue, appState.filename, appState.fileId)
-          }
+        <Grid
+          container
+          direction="row"
+          justifyContent="space-between"
+          alignItems="center"
         >
-          <Save sx={{ color: theme.secondary }} />
-        </IconButton>
-        <FormatButton toggleMark={props.toggleMark} format="bold" />
-        <FormatButton toggleMark={props.toggleMark} format="italic" />
-        <FormatButton toggleMark={props.toggleMark} format="underline" />
-        <TextDecreaseButton toggleDecrease={props.toggleDecrease} />
-        <TextIncreaseButton toggleIncrease={props.toggleIncrease} />
+          <Grid item>
+            {showMenuIcon && menuIcon}
+            <IconButton
+              onClick={() =>
+                props.doSave(
+                  props.editorValue,
+                  appState.filename,
+                  appState.fileId
+                )
+              }
+            >
+              <Save sx={{ color: theme.secondary }} />
+            </IconButton>
+            <FormatButton toggleMark={props.toggleMark} format="bold" />
+            <FormatButton toggleMark={props.toggleMark} format="italic" />
+            <FormatButton toggleMark={props.toggleMark} format="underline" />
+            <TextDecreaseButton toggleDecrease={props.toggleDecrease} />
+            <TextIncreaseButton toggleIncrease={props.toggleIncrease} />
+          </Grid>
+          <Grid item>{showMenuIcon && <SettingsButton />}</Grid>
+        </Grid>
       </Box>
     </ButtonGroup>
   );

@@ -7,6 +7,7 @@ import Cookies from "js-cookie";
 import isHotkey from "is-hotkey";
 import FormatBar from "./FormatBar";
 import FileNameInput from "./FileNameInput";
+import SettingsButtonGroup from "./SettingsButtonGroup";
 import theme, { drawerWidth } from "./utils/theme";
 import axios from "axios";
 
@@ -259,6 +260,14 @@ const SkySlateBox = (props) => {
               sx={{ width: { sm: "100%", md: "auto" }, flexGrow: { md: 1 } }}
             >
               <FileNameInput appState={appState} />
+            </Box>
+            <Box
+              sx={{
+                width: { sm: "100%", md: "auto" },
+                display: { xs: "none", md: "inherit" },
+              }}
+            >
+              <SettingsButtonGroup />
             </Box>
           </Box>
         </div>
