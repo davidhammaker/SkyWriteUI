@@ -13,15 +13,48 @@ import Box from "@mui/material/Box";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import { Editor } from "slate";
 import { useSlate } from "slate-react";
+import Cookies from "js-cookie";
+import axios from "axios";
+import SettingsModal from "./SettingsModal";
 import theme, { md } from "./utils/theme";
+import { backendOrigin, inPath } from "./utils/navTools";
 
 const SettingsButton = (props) => {
   const appState = props.appState;
 
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [dropboxUrl, setDropboxUrl] = useState("");
+
+  useEffect(() => {
+    if (settingsOpen) {
+      axios
+        .get(`${backendOrigin}/dropbox_auth/`, {
+          headers: { Authorization: `token ${Cookies.get("token")}` },
+        })
+        .then(function (response) {
+          setDropboxUrl(response.data.detail);
+        })
+        .catch(function (error) {
+          if (error.response) {
+            console.log(error.response.data);
+          }
+        });
+    }
+  }, [settingsOpen]);
+
   return (
-    <IconButton>
-      <SettingsIcon sx={{ color: theme.secondary }} />
-    </IconButton>
+    <>
+      <IconButton onClick={() => setSettingsOpen(true)}>
+        <SettingsIcon sx={{ color: theme.secondary }} />
+      </IconButton>
+      <SettingsModal
+        dropboxUrl={dropboxUrl}
+        open={settingsOpen}
+        onClose={() => {
+          setSettingsOpen(false);
+        }}
+      />
+    </>
   );
 };
 export default SettingsButton;
