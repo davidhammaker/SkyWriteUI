@@ -15,11 +15,11 @@ const oldTheme = {
 };
 
 const theme = {
-  primaryDarkest: "#334",
-  primaryDark: "#778",
-  primary: "#aab",
-  primaryLight: "#ccd",
-  primaryLightest: "#fff",
+  primaryDarkest: "#333344",
+  primaryDark: "#777788",
+  primary: "#aaaabb",
+  primaryLight: "#ccccdd",
+  primaryLightest: "#ffffff",
   secondaryDark: "#2d4d5c",
   secondary: "#6e8a99",
   secondaryLight: "#afc6d5",

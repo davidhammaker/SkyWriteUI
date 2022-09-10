@@ -1,15 +1,21 @@
 import React from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
-import IconButton from "@mui/material/IconButton";
-import Save from "@mui/icons-material/Save";
 import Modal from "@mui/material/Modal";
 import Button from "@mui/material/Button";
-import { StyledTextField } from "./CustomTextField";
+import Switch from "@mui/material/Switch";
+import Typography from "@mui/material/Typography";
 import theme from "./utils/theme";
 import Dropbox_Tab_32 from "../Dropbox_Tab_32.svg";
 
 const SettingsModal = (props) => {
+  const dropboxConnected =
+    props.dropboxAccess !== null ? props.dropboxAccess.connected : false;
+  const useDropbox =
+    props.dropboxAccess !== null ? props.dropboxAccess.use_dropbox : false;
+  const authUrl =
+    props.dropboxAccess !== null ? props.dropboxAccess.auth_url : false;
+
   return (
     <Modal
       open={props.open}
@@ -24,6 +30,10 @@ const SettingsModal = (props) => {
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
+          backgroundColor: theme.primaryLightest,
+          padding: 2,
+          boxShadow: 5,
+          borderRadius: 4,
         }}
       >
         <Grid
@@ -42,15 +52,34 @@ const SettingsModal = (props) => {
               sx={{
                 backgroundColor: theme.primaryLight,
                 color: theme.primaryDark,
-                boxShadow: 5,
                 "&:hover": {
                   backgroundColor: theme.primary,
                 },
               }}
-              href={props.dropboxUrl}
+              href={authUrl}
+              disabled={dropboxConnected}
             >
-              Connect Dropbox
+              {dropboxConnected && <>Dropbox Connected</>}
+              {dropboxConnected || <>Connect Dropbox</>}
             </Button>
+          </Grid>
+          <Grid item>
+            <Grid
+              container
+              direction="row"
+              justifyContent="center"
+              alignItems="center"
+            >
+              <Grid item>
+                <Switch checked={useDropbox} />
+              </Grid>
+              <Grid item>
+                <Typography>
+                  {useDropbox && "Using Dropbox"}
+                  {useDropbox || "Not using Dropbox"}
+                </Typography>
+              </Grid>
+            </Grid>
           </Grid>
         </Grid>
       </Box>
