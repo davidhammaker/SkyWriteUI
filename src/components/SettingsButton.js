@@ -11,16 +11,20 @@ const SettingsButton = (props) => {
   const appState = props.appState;
 
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const [dropboxAccess, setDropboxAccess] = useState(null);
+  const [config, setConfig] = useState({
+    dropbox_auth_url: "",
+    default_storage: "",
+    dropbox_connected: false,
+  });
 
   useEffect(() => {
     if (settingsOpen) {
       axios
-        .get(`${backendOrigin}/dropbox_auth/`, {
+        .get(`${backendOrigin}/config/`, {
           headers: { Authorization: `token ${Cookies.get("token")}` },
         })
         .then(function (response) {
-          setDropboxAccess(response.data);
+          setConfig(response.data);
         })
         .catch(function (error) {
           if (error.response) {
@@ -36,7 +40,8 @@ const SettingsButton = (props) => {
         <SettingsIcon sx={{ color: theme.secondary }} />
       </IconButton>
       <SettingsModal
-        dropboxAccess={dropboxAccess}
+        config={config}
+        setConfig={setConfig}
         open={settingsOpen}
         onClose={() => {
           setSettingsOpen(false);

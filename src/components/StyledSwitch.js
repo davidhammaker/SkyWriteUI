@@ -6,7 +6,7 @@ const StyledSwitch = styled(Switch)(() => ({
   "& .MuiSwitch-switchBase.Mui-checked": {
     color: theme.secondary,
     "&:hover": {
-      backgroundColor: `${theme.secondaryLight}66`,
+      backgroundColor: `${theme.secondaryLight}44`,
     },
   },
   "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {

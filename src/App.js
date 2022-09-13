@@ -76,7 +76,6 @@ const App = () => {
 
   const getOrCreateKey = (encodedKey) => {
     if (encodedKey !== null) {
-      const keyToDecode = stringToArray(window.atob(encodedKey));
       // Decode the key from the backend.
       window.crypto.subtle
         .importKey(
@@ -107,7 +106,7 @@ const App = () => {
           // Post the encoded key.
           axios.post(
             `${backendOrigin}/encryption_key/`,
-            { key: stringKey },
+            { encryption_key: stringKey },
             {
               headers: { Authorization: `token ${Cookies.get("token")}` },
             }
