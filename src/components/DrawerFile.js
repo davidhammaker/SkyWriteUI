@@ -6,6 +6,7 @@ import ArticleIcon from "@mui/icons-material/Article";
 import theme from "./utils/theme";
 
 const DrawerFile = (props) => {
+  // TODO: Decrypt filename
   const appState = props.appState;
   const obj = props.obj;
   const depth = props.depth;

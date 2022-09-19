@@ -101,6 +101,7 @@ const AddItems = (props) => {
         }}
         onSave={() => encryptFolderName(newName)}
         folderState={folderState}
+        newFolder={true}
       />
     </Box>
   );

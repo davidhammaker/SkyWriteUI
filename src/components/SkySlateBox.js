@@ -5,11 +5,12 @@ import { Slate, Editable, withReact } from "slate-react";
 import { withHistory } from "slate-history";
 import Cookies from "js-cookie";
 import isHotkey from "is-hotkey";
+import axios from "axios";
 import FormatBar from "./FormatBar";
 import FileNameInput from "./FileNameInput";
 import SettingsButtonGroup from "./SettingsButtonGroup";
 import theme, { drawerWidth } from "./utils/theme";
-import axios from "axios";
+import { encryptDataToBytes } from "./utils/encryption";
 
 /*************
  *
@@ -33,57 +34,6 @@ const altHotkeys = {
  * Functions
  *
  ************/
-function handleAltHotkey(editor, action, appState) {
-  if (action === "save") {
-    console.log(editor);
-    doSave(editor.children, appState.filename, appState.fileId);
-  } else if (action === "increase") {
-    toggleIncrease();
-  } else if (action === "decrease") {
-    toggleDecrease();
-  }
-}
-
-function handleHotkeyEvent(event, editor, appState) {
-  for (const hotkey in hotkeys) {
-    if (isHotkey(hotkey, event)) {
-      event.preventDefault();
-      toggleMark(editor, hotkeys[hotkey]);
-      toggleElement(editor, hotkeys[hotkey]);
-    }
-  }
-  for (const hotkey in altHotkeys) {
-    if (isHotkey(hotkey, event)) {
-      event.preventDefault();
-      handleAltHotkey(editor, altHotkeys[hotkey], appState);
-    }
-  }
-}
-
-function doSave(value, filename, fileId) {
-  if (fileId !== null) {
-    axios
-      .patch(
-        `http://localhost:8000/storage_objects/${fileId}/`,
-        {
-          name: filename,
-        },
-        {
-          headers: {
-            Authorization: `token ${Cookies.get("token")}`,
-          },
-        }
-      )
-      .then((response) => console.log("Patched name.", response.data))
-      .catch((error) => console.log(error));
-  }
-  if (value !== null && value !== undefined) {
-    axios
-      .post("http://localhost:8000/", value)
-      .then((response) => console.log(`Response: ${response.data}`))
-      .catch((error) => console.log(error));
-  }
-}
 
 // For toggling text types:
 function toggleMark(editor, format) {
@@ -172,6 +122,99 @@ const SkySlateBox = (props) => {
   const Element = ({ attributes, children, element }) => {
     return <p {...attributes}>{children}</p>;
   };
+
+  /*************
+   *
+   * Editor functions
+   *
+   ************/
+
+  function handleAltHotkey(editor, action, appState) {
+    if (action === "save") {
+      console.log(editor);
+      doSave(editor.children, appState.filename, appState.fileId);
+    } else if (action === "increase") {
+      toggleIncrease();
+    } else if (action === "decrease") {
+      toggleDecrease();
+    }
+  }
+
+  function handleHotkeyEvent(event, editor, appState) {
+    for (const hotkey in hotkeys) {
+      if (isHotkey(hotkey, event)) {
+        event.preventDefault();
+        toggleMark(editor, hotkeys[hotkey]);
+        toggleElement(editor, hotkeys[hotkey]);
+      }
+    }
+    for (const hotkey in altHotkeys) {
+      if (isHotkey(hotkey, event)) {
+        event.preventDefault();
+        handleAltHotkey(editor, altHotkeys[hotkey], appState);
+      }
+    }
+  }
+
+  function doSave(value, filename, fileId) {
+    // TODO: fileId isn't getting through yet
+
+    const content = JSON.stringify(value);
+
+    // Encode content
+    encryptDataToBytes(content, appState.key)
+      .then((contentRet) => {
+        const contentCiphertext = window.btoa(contentRet.ciphertext);
+        const contentIv = window.btoa(contentRet.iv);
+
+        // Encode filename
+        encryptDataToBytes(filename, appState.key)
+          .then((filenameRet) => {
+            const filenameCiphertext = window.btoa(filenameRet.ciphertext);
+            const filenameIv = window.btoa(filenameRet.iv);
+
+            // Put everything in a request body object
+            const requestBody = {
+              name: filenameCiphertext,
+              name_iv: filenameIv,
+              content: contentCiphertext,
+              content_iv: contentIv,
+              is_file: true,
+              // TODO: folder_id
+            };
+
+            // PATCH existing file
+            if (fileId !== null && fileId !== undefined) {
+              axios
+                .patch(
+                  `http://localhost:8000/storage_objects/${fileId}/`,
+                  requestBody,
+                  {
+                    headers: {
+                      Authorization: `token ${Cookies.get("token")}`,
+                    },
+                  }
+                )
+                .then((response) => console.log("Patched name.", response.data))
+                .catch((error) => console.log(error));
+            }
+
+            // POST new data if this is a new file
+            if (value !== null && value !== undefined) {
+              axios
+                .post("http://localhost:8000/storage_objects/", requestBody, {
+                  headers: {
+                    Authorization: `token ${Cookies.get("token")}`,
+                  },
+                })
+                .then((response) => console.log(`Response: ${response.data}`))
+                .catch((error) => console.log(error));
+            }
+          })
+          .catch((error) => {});
+      })
+      .catch((error) => {});
+  }
 
   /*************
    *
