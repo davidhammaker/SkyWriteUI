@@ -24,7 +24,6 @@ const DrawerFolder = (props) => {
 
   const [open, setOpen] = useState(false);
   const [folderName, setFolderName] = useState("");
-  const [showEdit, setShowEdit] = useState(false);
   const [editName, setEditName] = useState(false);
   const [newName, setNewName] = useState(obj.name);
   const [ciphertext, setCiphertext] = useState(null);
@@ -33,8 +32,6 @@ const DrawerFolder = (props) => {
   const folderState = {
     folderName,
     setFolderName,
-    showEdit,
-    setShowEdit,
     editName,
     setEditName,
     newName,
@@ -129,50 +126,18 @@ const DrawerFolder = (props) => {
           pl: depth + 1,
           cursor: "pointer",
         }}
-        onMouseEnter={() => setShowEdit(true)}
-        onMouseLeave={() => setShowEdit(false)}
       >
         <>
-          {showEdit && (
-            <>
-              <div
-                onClick={(event) => {
-                  event.stopPropagation();
-                  setEditName(true);
-                }}
-                style={{ paddingRight: "10px" }}
-              >
-                <IconButton
-                  onClick={(event) => {
-                    event.preventDefault;
-                    setEditName(true);
-                  }}
-                  sx={{
-                    width: "20px",
-                    height: "20px",
-                    borderRadius: "4px",
-                    color: theme.primaryLight,
-                    backgroundColor: theme.primaryDark,
-                    "&:hover": { backgroundColor: theme.primaryDarkest },
-                  }}
-                >
-                  <EditIcon fontSize="small" />
-                </IconButton>
-              </div>
-            </>
-          )}
-          {showEdit || (
-            <ListItemIcon
-              sx={{
-                minWidth: "30px",
-                color: appState.filePath.includes(obj.id)
-                  ? theme.primaryDarkest
-                  : theme.primaryDark,
-              }}
-            >
-              <FolderIcon fontSize="small" />
-            </ListItemIcon>
-          )}
+          <ListItemIcon
+            sx={{
+              minWidth: "30px",
+              color: appState.filePath.includes(obj.id)
+                ? theme.primaryDarkest
+                : theme.primaryDark,
+            }}
+          >
+            <FolderIcon fontSize="small" />
+          </ListItemIcon>
           <ListItemText
             primary={folderName}
             primaryTypographyProps={{
@@ -186,6 +151,32 @@ const DrawerFolder = (props) => {
               },
             }}
           />
+          <div
+            onClick={(event) => {
+              event.stopPropagation();
+              setEditName(true);
+            }}
+            style={{ paddingRight: "10px", paddingLeft: "10px" }}
+          >
+            <IconButton
+              onClick={(event) => {
+                event.preventDefault;
+                setEditName(true);
+              }}
+              sx={{
+                width: "20px",
+                height: "20px",
+                borderRadius: "4px",
+                color: theme.primaryDark,
+                "&:hover": {
+                  color: theme.primaryDarkest,
+                  backgroundColor: theme.primaryLight,
+                },
+              }}
+            >
+              <EditIcon fontSize="small" />
+            </IconButton>
+          </div>
           {open ? (
             <ExpandLess
               sx={{
@@ -201,7 +192,6 @@ const DrawerFolder = (props) => {
           )}
         </>
       </ListItem>
-
       <FolderModal
         open={editName}
         onClose={() => {
@@ -209,6 +199,7 @@ const DrawerFolder = (props) => {
         }}
         onSave={() => encryptFolderName(newName)}
         folderState={folderState}
+        newFolder={false}
       />
       <Collapse in={open} timeout="auto" unmountOnExit>
         {makeNewList()}
