@@ -1,7 +1,7 @@
 import React, { useCallback, useState, useMemo, useEffect } from "react";
 import Box from "@mui/material/Box";
 import { createEditor, Editor, Transforms } from "slate";
-import { Slate, Editable, withReact } from "slate-react";
+import { Slate, Editable, withReact, ReactEditor } from "slate-react";
 import { withHistory } from "slate-history";
 import Cookies from "js-cookie";
 import isHotkey from "is-hotkey";
@@ -10,6 +10,7 @@ import FormatBar from "./FormatBar";
 import FileNameInput from "./FileNameInput";
 import SettingsButtonGroup from "./SettingsButtonGroup";
 import theme, { drawerWidth } from "./utils/theme";
+import { backendOrigin } from "./utils/navTools";
 import { encryptDataToBytes } from "./utils/encryption";
 
 /*************
@@ -42,7 +43,7 @@ function toggleMark(editor, format) {
   } else {
     Editor.removeMark(editor, format);
   }
-  document.getElementById("sky-slate-editable").focus();
+  ReactEditor.focus(editor);
 }
 
 // For toggling element types:
@@ -55,7 +56,7 @@ function toggleElement(editor, elementType) {
     { type: match ? "paragraph" : elementType },
     { match: (n) => Editor.isBlock(editor, n) }
   );
-  document.getElementById("sky-slate-editable").focus();
+  ReactEditor.focus(editor);
 }
 
 const SkySlateBox = (props) => {
@@ -74,11 +75,6 @@ const SkySlateBox = (props) => {
   // types. These will help us do that.
   const renderElement = useCallback((props) => <Element {...props} />, []);
   const renderLeaf = useCallback((props) => <Leaf {...props} />, []);
-
-  // This hook handles the value inside the Slate element.
-  const defaultChild = { text: "" };
-  const defaultValue = [{ type: "paragraph", children: [defaultChild] }];
-  const [value, setValue] = useState(defaultValue);
 
   /*************
    *
@@ -187,7 +183,7 @@ const SkySlateBox = (props) => {
             if (fileId !== null && fileId !== undefined) {
               axios
                 .patch(
-                  `http://localhost:8000/storage_objects/${fileId}/`,
+                  `${backendOrigin}/storage_objects/${fileId}/`,
                   requestBody,
                   {
                     headers: {
@@ -202,7 +198,7 @@ const SkySlateBox = (props) => {
             // POST new data if this is a new file
             if (value !== null && value !== undefined) {
               axios
-                .post("http://localhost:8000/storage_objects/", requestBody, {
+                .post(`${backendOrigin}/storage_objects/`, requestBody, {
                   headers: {
                     Authorization: `token ${Cookies.get("token")}`,
                   },
@@ -230,7 +226,7 @@ const SkySlateBox = (props) => {
       toggleMark(editor, "h2");
       toggleMark(editor, "h1");
     } else if (Editor.marks(editor) && Editor.marks(editor)["h1"]) {
-      document.getElementById("sky-slate-editable").focus();
+      ReactEditor.focus(editor);
     } else {
       toggleMark(editor, "h3");
     }
@@ -246,7 +242,7 @@ const SkySlateBox = (props) => {
     } else if (Editor.marks(editor) && Editor.marks(editor)["h3"]) {
       toggleMark(editor, "h3");
     } else {
-      document.getElementById("sky-slate-editable").focus();
+      ReactEditor.focus(editor);
     }
   };
 
@@ -254,6 +250,13 @@ const SkySlateBox = (props) => {
   useEffect(() => {
     appState.setEditor(editor);
   }, []);
+
+  // Other effects
+  useEffect(() => {
+    // TODO: This is only barely working. User must click editor to see loaded file.
+    editor.children = appState.value;
+    ReactEditor.focus(editor);
+  }, [appState.value]);
 
   /*************
    *
@@ -265,9 +268,9 @@ const SkySlateBox = (props) => {
     <Slate
       id="slateComponent"
       editor={editor}
-      value={value}
+      value={appState.value}
       onChange={(newValue) => {
-        setValue(newValue);
+        appState.setValue(newValue);
         if (
           window.innerHeight <
           document.getElementById("sky-slate-editable").clientHeight
@@ -291,7 +294,7 @@ const SkySlateBox = (props) => {
                 toggleMark={toggleMark}
                 toggleElement={toggleElement}
                 doSave={doSave}
-                editorValue={value}
+                editorValue={appState.value}
                 toggleFileDrawer={props.toggleFileDrawer}
                 editor={editor}
                 toggleIncrease={toggleIncrease}

@@ -38,6 +38,11 @@ const App = () => {
   const [currentValue, setCurrentValue] = useState(null);
   const [key, setKey] = useState(null);
 
+  // This hook handles the value inside the Slate element.
+  const defaultChild = { text: "" };
+  const defaultValue = [{ type: "paragraph", children: [defaultChild] }];
+  const [value, setValue] = useState(defaultValue);
+
   const appState = {
     atLogin,
     setAtLogin,
@@ -63,6 +68,8 @@ const App = () => {
     setCurrentValue,
     key,
     setKey,
+    value,
+    setValue,
   };
 
   /*************
