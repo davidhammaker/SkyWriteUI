@@ -25,15 +25,6 @@ const SelectDefaultStorage = (props) => {
       });
   }, []);
 
-  useEffect(() => {
-    console.log(storageOptions);
-    if (storageOptions) {
-      Object.keys(storageOptions).map((storageOptionKey) => {
-        console.log(storageOptions[storageOptionKey], storageOptionKey);
-      });
-    }
-  }, [storageOptions]);
-
   const handleSelectStorage = (event) => {
     axios
       .patch(

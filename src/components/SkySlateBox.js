@@ -71,6 +71,11 @@ const SkySlateBox = (props) => {
   // ('withHistory' lets us undo with ctrl+z)
   const editor = useMemo(() => withReact(withHistory(createEditor())), []);
 
+  // This hook handles the value inside the Slate element.
+  const defaultChild = { text: "" };
+  const defaultValue = [{ type: "paragraph", children: [defaultChild] }];
+  const [value, setValue] = useState(defaultValue);
+
   // We need a way to tell Slate how to render our different text
   // types. These will help us do that.
   const renderElement = useCallback((props) => <Element {...props} />, []);
@@ -127,7 +132,6 @@ const SkySlateBox = (props) => {
 
   function handleAltHotkey(editor, action, appState) {
     if (action === "save") {
-      console.log(editor);
       doSave(editor.children, appState.filename, appState.fileId);
     } else if (action === "increase") {
       toggleIncrease();
@@ -153,8 +157,6 @@ const SkySlateBox = (props) => {
   }
 
   function doSave(value, filename, fileId) {
-    // TODO: fileId isn't getting through yet
-
     const content = JSON.stringify(value);
 
     // Encode content
@@ -196,7 +198,7 @@ const SkySlateBox = (props) => {
             }
 
             // POST new data if this is a new file
-            if (value !== null && value !== undefined) {
+            else if (value !== null && value !== undefined) {
               axios
                 .post(`${backendOrigin}/storage_objects/`, requestBody, {
                   headers: {
@@ -205,6 +207,11 @@ const SkySlateBox = (props) => {
                 })
                 .then((response) => console.log(`Response: ${response.data}`))
                 .catch((error) => console.log(error));
+            }
+
+            // There's a problem if we get here...
+            else {
+              console.log("ERROR!");
             }
           })
           .catch((error) => {});
@@ -253,10 +260,21 @@ const SkySlateBox = (props) => {
 
   // Other effects
   useEffect(() => {
-    // TODO: This is only barely working. User must click editor to see loaded file.
-    editor.children = appState.value;
+    if (appState.editorValue === null) {
+      return;
+    }
+    if (editor.children.length > 0) {
+      Transforms.delete(editor, {
+        at: {
+          anchor: Editor.start(editor, []),
+          focus: Editor.end(editor, []),
+        },
+      });
+      Transforms.removeNodes(editor, { at: [0] });
+    }
+    Transforms.insertNodes(editor, appState.editorValue);
     ReactEditor.focus(editor);
-  }, [appState.value]);
+  }, [appState.editorValue]);
 
   /*************
    *
@@ -268,9 +286,9 @@ const SkySlateBox = (props) => {
     <Slate
       id="slateComponent"
       editor={editor}
-      value={appState.value}
+      value={value}
       onChange={(newValue) => {
-        appState.setValue(newValue);
+        setValue(newValue);
         if (
           window.innerHeight <
           document.getElementById("sky-slate-editable").clientHeight
@@ -294,7 +312,7 @@ const SkySlateBox = (props) => {
                 toggleMark={toggleMark}
                 toggleElement={toggleElement}
                 doSave={doSave}
-                editorValue={appState.value}
+                editorValue={value}
                 toggleFileDrawer={props.toggleFileDrawer}
                 editor={editor}
                 toggleIncrease={toggleIncrease}
@@ -322,7 +340,7 @@ const SkySlateBox = (props) => {
           <Editable
             renderElement={renderElement}
             renderLeaf={renderLeaf}
-            onKeyDown={(event) => handleHotkeyEvent(event, editor, props)}
+            onKeyDown={(event) => handleHotkeyEvent(event, editor, appState)}
             placeholder="Type here."
             id="sky-slate-editable"
             autoFocus

@@ -48,7 +48,7 @@ const DrawerFile = (props) => {
           window.atob(response.data.content_iv),
           window.atob(response.data.content)
         ).then((decryptedContent) => {
-          appState.setValue(JSON.parse(decryptedContent));
+          appState.setEditorValue(JSON.parse(decryptedContent));
         });
       });
   };

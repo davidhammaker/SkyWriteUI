@@ -31,17 +31,13 @@ const App = () => {
   const [username, setUsername] = useState("");
   const [storageObjects, setStorageObjects] = useState([]);
   const [editor, setEditor] = useState(null);
+  const [editorValue, setEditorValue] = useState(null);
   const [fileDrawerOpen, setFileDrawerOpen] = useState(false);
   const [filePath, setFilePath] = useState([]);
   const [filename, setFilename] = useState("untitled");
   const [fileId, setFileId] = useState(null);
   const [currentValue, setCurrentValue] = useState(null);
   const [key, setKey] = useState(null);
-
-  // This hook handles the value inside the Slate element.
-  const defaultChild = { text: "" };
-  const defaultValue = [{ type: "paragraph", children: [defaultChild] }];
-  const [value, setValue] = useState(defaultValue);
 
   const appState = {
     atLogin,
@@ -56,6 +52,8 @@ const App = () => {
     setStorageObjects,
     editor,
     setEditor,
+    editorValue,
+    setEditorValue,
     fileDrawerOpen,
     setFileDrawerOpen,
     filePath,
@@ -68,8 +66,6 @@ const App = () => {
     setCurrentValue,
     key,
     setKey,
-    value,
-    setValue,
   };
 
   /*************
