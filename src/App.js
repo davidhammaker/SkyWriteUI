@@ -209,6 +209,7 @@ const App = () => {
                     <SkySlateBox
                       toggleFileDrawer={toggleFileDrawer}
                       appState={appState}
+                      getUser={getUser}
                     />
                   </div>
                 </div>

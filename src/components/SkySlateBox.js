@@ -193,7 +193,10 @@ const SkySlateBox = (props) => {
                     },
                   }
                 )
-                .then((response) => console.log("Patched name.", response.data))
+                .then((response) => {
+                  props.getUser();
+                  appState.setFileId(response.data.id);
+                })
                 .catch((error) => console.log(error));
             }
 
@@ -205,7 +208,10 @@ const SkySlateBox = (props) => {
                     Authorization: `token ${Cookies.get("token")}`,
                   },
                 })
-                .then((response) => console.log(`Response: ${response.data}`))
+                .then((response) => {
+                  props.getUser();
+                  appState.setFileId(response.data.id);
+                })
                 .catch((error) => console.log(error));
             }
 

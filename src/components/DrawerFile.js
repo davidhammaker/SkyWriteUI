@@ -30,6 +30,13 @@ const DrawerFile = (props) => {
       .catch((error) => {});
   }, [appState.key]);
 
+  useEffect(() => {
+    if (appState.fileId === obj.id) {
+      appState.setFilePath([...props.currentPath, obj.id]);
+      appState.setFilename(drawerFilename);
+    }
+  }, [appState.fileId]);
+
   /**
    * Set the filename in the editor's filename box and load/decrypt file content.
    */
