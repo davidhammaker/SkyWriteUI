@@ -12,6 +12,7 @@ import SettingsButtonGroup from "./SettingsButtonGroup";
 import theme, { drawerWidth } from "./utils/theme";
 import { backendOrigin } from "./utils/navTools";
 import { encryptDataToBytes } from "./utils/encryption";
+import { defaultEditorValue } from "../settings";
 
 /*************
  *
@@ -72,9 +73,7 @@ const SkySlateBox = (props) => {
   const editor = useMemo(() => withReact(withHistory(createEditor())), []);
 
   // This hook handles the value inside the Slate element.
-  const defaultChild = { text: "" };
-  const defaultValue = [{ type: "paragraph", children: [defaultChild] }];
-  const [value, setValue] = useState(defaultValue);
+  const [value, setValue] = useState(defaultEditorValue);
 
   // We need a way to tell Slate how to render our different text
   // types. These will help us do that.
@@ -132,7 +131,7 @@ const SkySlateBox = (props) => {
 
   function handleAltHotkey(editor, action, appState) {
     if (action === "save") {
-      doSave(editor.children, appState.filename, appState.fileId);
+      appState.setSaving(true);
     } else if (action === "increase") {
       toggleIncrease();
     } else if (action === "decrease") {
@@ -154,75 +153,6 @@ const SkySlateBox = (props) => {
         handleAltHotkey(editor, altHotkeys[hotkey], appState);
       }
     }
-  }
-
-  function doSave(value, filename, fileId) {
-    const content = JSON.stringify(value);
-
-    // Encode content
-    encryptDataToBytes(content, appState.key)
-      .then((contentRet) => {
-        const contentCiphertext = window.btoa(contentRet.ciphertext);
-        const contentIv = window.btoa(contentRet.iv);
-
-        // Encode filename
-        encryptDataToBytes(filename, appState.key)
-          .then((filenameRet) => {
-            const filenameCiphertext = window.btoa(filenameRet.ciphertext);
-            const filenameIv = window.btoa(filenameRet.iv);
-
-            // Put everything in a request body object
-            const requestBody = {
-              name: filenameCiphertext,
-              name_iv: filenameIv,
-              content: contentCiphertext,
-              content_iv: contentIv,
-              is_file: true,
-              // TODO: folder_id
-            };
-
-            // PATCH existing file
-            if (fileId !== null && fileId !== undefined) {
-              axios
-                .patch(
-                  `${backendOrigin}/storage_objects/${fileId}/`,
-                  requestBody,
-                  {
-                    headers: {
-                      Authorization: `token ${Cookies.get("token")}`,
-                    },
-                  }
-                )
-                .then((response) => {
-                  props.getUser();
-                  appState.setFileId(response.data.id);
-                })
-                .catch((error) => console.log(error));
-            }
-
-            // POST new data if this is a new file
-            else if (value !== null && value !== undefined) {
-              axios
-                .post(`${backendOrigin}/storage_objects/`, requestBody, {
-                  headers: {
-                    Authorization: `token ${Cookies.get("token")}`,
-                  },
-                })
-                .then((response) => {
-                  props.getUser();
-                  appState.setFileId(response.data.id);
-                })
-                .catch((error) => console.log(error));
-            }
-
-            // There's a problem if we get here...
-            else {
-              console.log("ERROR!");
-            }
-          })
-          .catch((error) => {});
-      })
-      .catch((error) => {});
   }
 
   /*************
@@ -259,28 +189,121 @@ const SkySlateBox = (props) => {
     }
   };
 
-  // Do once
+  /**
+   * Set editor in state
+   */
   useEffect(() => {
     appState.setEditor(editor);
   }, []);
 
-  // Other effects
+  /**
+   * Update editor after loading
+   */
   useEffect(() => {
-    if (appState.editorValue === null) {
+    // If the value is null, don't try to load that into the editor!
+    if (appState.editorValue === null || editor.children.length === 0) {
       return;
     }
-    if (editor.children.length > 0) {
-      Transforms.delete(editor, {
-        at: {
-          anchor: Editor.start(editor, []),
-          focus: Editor.end(editor, []),
-        },
-      });
-      Transforms.removeNodes(editor, { at: [0] });
-    }
+    // Delete everything, leaving only one node.
+    Transforms.delete(editor, {
+      at: {
+        anchor: Editor.start(editor, []),
+        focus: Editor.end(editor, []),
+      },
+    });
+    // Remove the remaining node, giving us a clean editor.
+    Transforms.removeNodes(editor, { at: [0] });
+    // Insert the new editor value.
     Transforms.insertNodes(editor, appState.editorValue);
+    // Switch focus to the editor.
     ReactEditor.focus(editor);
   }, [appState.editorValue]);
+
+  /**
+   * Save a file (PATCH existing or POST new)
+   */
+  useEffect(() => {
+    if (!appState.saving) {
+      return;
+    }
+
+    const content = JSON.stringify(appState.editor.children);
+    const filename = appState.filename;
+
+    // Encode content
+    encryptDataToBytes(content, appState.key)
+      .then((contentRet) => {
+        const contentCiphertext = window.btoa(contentRet.ciphertext);
+        const contentIv = window.btoa(contentRet.iv);
+
+        // Encode filename
+        encryptDataToBytes(filename, appState.key)
+          .then((filenameRet) => {
+            const filenameCiphertext = window.btoa(filenameRet.ciphertext);
+            const filenameIv = window.btoa(filenameRet.iv);
+
+            // Put everything in a request body object
+            const requestBody = {
+              name: filenameCiphertext,
+              name_iv: filenameIv,
+              content: contentCiphertext,
+              content_iv: contentIv,
+              is_file: true,
+              // TODO: folder_id
+            };
+
+            // PATCH existing file
+            if (appState.fileId !== null && appState.fileId !== undefined) {
+              axios
+                .patch(
+                  `${backendOrigin}/storage_objects/${appState.fileId}/`,
+                  requestBody,
+                  {
+                    headers: {
+                      Authorization: `token ${Cookies.get("token")}`,
+                    },
+                  }
+                )
+                .then((response) => {
+                  props.getUser();
+                  appState.setFileId(response.data.id);
+                })
+                .catch((error) => console.log(error))
+                .finally(() => {
+                  appState.setSaving(false);
+                });
+            }
+
+            // POST new data if this is a new file
+            else if (
+              appState.editor.children !== null &&
+              appState.editor.children !== undefined
+            ) {
+              axios
+                .post(`${backendOrigin}/storage_objects/`, requestBody, {
+                  headers: {
+                    Authorization: `token ${Cookies.get("token")}`,
+                  },
+                })
+                .then((response) => {
+                  props.getUser();
+                  appState.setFileId(response.data.id);
+                })
+                .catch((error) => console.log(error))
+                .finally(() => {
+                  appState.setSaving(false);
+                });
+            }
+
+            // There's a problem if we get here...
+            else {
+              console.log("ERROR!");
+            }
+          })
+          .catch((error) => {});
+      })
+      .catch((error) => {});
+  }, [appState.saving]);
 
   /*************
    *
@@ -317,7 +340,6 @@ const SkySlateBox = (props) => {
               <FormatBar
                 toggleMark={toggleMark}
                 toggleElement={toggleElement}
-                doSave={doSave}
                 editorValue={value}
                 toggleFileDrawer={props.toggleFileDrawer}
                 editor={editor}

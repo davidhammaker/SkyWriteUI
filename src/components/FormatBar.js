@@ -5,6 +5,7 @@ import FormatBold from "@mui/icons-material/FormatBold";
 import FormatItalic from "@mui/icons-material/FormatItalic";
 import FormatUnderlinedIcon from "@mui/icons-material/FormatUnderlined";
 import Save from "@mui/icons-material/Save";
+import AutorenewIcon from "@mui/icons-material/Autorenew";
 import MenuIcon from "@mui/icons-material/Menu";
 import TextIncreaseIcon from "@mui/icons-material/TextIncrease";
 import TextDecreaseIcon from "@mui/icons-material/TextDecrease";
@@ -110,6 +111,18 @@ const FormatBar = (props) => {
     </IconButton>
   );
 
+  const saveButton = (
+    <IconButton onClick={() => appState.setSaving(true)}>
+      <Save sx={{ color: theme.secondary }} />
+    </IconButton>
+  );
+
+  const savingSpinner = (
+    <IconButton id="saving-spinner" disabled>
+      <AutorenewIcon sx={{ color: theme.secondary }} />
+    </IconButton>
+  );
+
   const [showMenuIcon, setShowMenuIcon] = useState(false);
   const resizeBar = () => {
     if (window.innerWidth >= md) {
@@ -155,17 +168,8 @@ const FormatBar = (props) => {
         >
           <Grid item>
             {showMenuIcon && menuIcon}
-            <IconButton
-              onClick={() =>
-                props.doSave(
-                  props.editorValue,
-                  appState.filename,
-                  appState.fileId
-                )
-              }
-            >
-              <Save sx={{ color: theme.secondary }} />
-            </IconButton>
+            {!appState.saving && saveButton}
+            {appState.saving && savingSpinner}
             <FormatButton toggleMark={props.toggleMark} format="bold" />
             <FormatButton toggleMark={props.toggleMark} format="italic" />
             <FormatButton toggleMark={props.toggleMark} format="underline" />

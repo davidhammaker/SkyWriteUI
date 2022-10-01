@@ -7,6 +7,7 @@ import axios from "axios";
 import FolderModal from "./FolderModal";
 import { backendOrigin } from "./utils/navTools";
 import { encryptDataToBytes, decryptDataFromBytes } from "./utils/encryption";
+import { defaultFilename, defaultEditorValue } from "../settings";
 
 const AddItems = (props) => {
   const appState = props.appState;
@@ -88,7 +89,12 @@ const AddItems = (props) => {
           <CustomFormButton
             variant="contained"
             sx={{ width: "100%", borderRadius: 0 }}
-            disabled
+            onClick={() => {
+              appState.setEditorValue(defaultEditorValue);
+              appState.setFileId(null);
+              appState.setFilename(defaultFilename);
+              appState.setFilePath([]);
+            }}
           >
             New File
           </CustomFormButton>

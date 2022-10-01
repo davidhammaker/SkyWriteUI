@@ -33,7 +33,9 @@ const DrawerFile = (props) => {
   useEffect(() => {
     if (appState.fileId === obj.id) {
       appState.setFilePath([...props.currentPath, obj.id]);
-      appState.setFilename(drawerFilename);
+      if (drawerFilename !== "") {
+        appState.setFilename(drawerFilename);
+      }
     }
   }, [appState.fileId]);
 

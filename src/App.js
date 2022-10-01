@@ -18,6 +18,7 @@ import {
   decryptDataFromBytes,
   stringToArray,
 } from "./components/utils/encryption";
+import { defaultFilename } from "./settings";
 
 const App = () => {
   /*************
@@ -34,8 +35,9 @@ const App = () => {
   const [editorValue, setEditorValue] = useState(null);
   const [fileDrawerOpen, setFileDrawerOpen] = useState(false);
   const [filePath, setFilePath] = useState([]);
-  const [filename, setFilename] = useState("untitled");
+  const [filename, setFilename] = useState(defaultFilename);
   const [fileId, setFileId] = useState(null);
+  const [saving, setSaving] = useState(false);
   const [currentValue, setCurrentValue] = useState(null);
   const [key, setKey] = useState(null);
 
@@ -62,6 +64,8 @@ const App = () => {
     setFilename,
     fileId,
     setFileId,
+    saving,
+    setSaving,
     currentValue,
     setCurrentValue,
     key,

@@ -7,7 +7,9 @@ const FileNameInput = (props) => {
     <input
       id="filename"
       value={appState.filename}
-      onChange={(event) => appState.setFilename(event.target.value)}
+      onChange={(event) => {
+        appState.setFilename(event.target.value);
+      }}
       placeholder="Type a file name here."
       style={{
         borderWidth: "1px",
