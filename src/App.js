@@ -33,11 +33,13 @@ const App = () => {
   const [storageObjects, setStorageObjects] = useState([]);
   const [editor, setEditor] = useState(null);
   const [editorValue, setEditorValue] = useState(null);
+  const [editorVisibility, setEditorVisibility] = useState("visible");
   const [fileDrawerOpen, setFileDrawerOpen] = useState(false);
   const [filePath, setFilePath] = useState([]);
   const [filename, setFilename] = useState(defaultFilename);
   const [fileId, setFileId] = useState(null);
   const [saving, setSaving] = useState(false);
+  const [loadId, setLoadId] = useState(null);
   const [currentValue, setCurrentValue] = useState(null);
   const [key, setKey] = useState(null);
 
@@ -56,6 +58,8 @@ const App = () => {
     setEditor,
     editorValue,
     setEditorValue,
+    editorVisibility,
+    setEditorVisibility,
     fileDrawerOpen,
     setFileDrawerOpen,
     filePath,
@@ -66,6 +70,8 @@ const App = () => {
     setFileId,
     saving,
     setSaving,
+    loadId,
+    setLoadId,
     currentValue,
     setCurrentValue,
     key,
@@ -175,6 +181,27 @@ const App = () => {
     }
   }, [filePath]);
 
+  useEffect(() => {
+    if (appState.loadId !== null) {
+      axios
+        .get(`${backendOrigin}/storage_objects/${appState.loadId}/`, {
+          headers: {
+            Authorization: `token ${Cookies.get("token")}`,
+          },
+        })
+        .then((response) => {
+          decryptDataFromBytes(
+            appState.key,
+            window.atob(response.data.content_iv),
+            window.atob(response.data.content)
+          ).then((decryptedContent) => {
+            appState.setEditorValue(JSON.parse(decryptedContent));
+          });
+        })
+        .finally(() => appState.setLoadId(null));
+    }
+  }, [appState.loadId]);
+
   /*************
    *
    * Return
@@ -196,6 +223,7 @@ const App = () => {
                   getUser={getUser}
                 />
                 <div
+                  id="editor-background"
                   style={{
                     backgroundColor: theme.primaryLightest,
                     height: "100%",

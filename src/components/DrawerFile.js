@@ -45,21 +45,8 @@ const DrawerFile = (props) => {
   const loadFile = () => {
     appState.setFilePath([...props.currentPath, obj.id]);
     appState.setFilename(drawerFilename);
-    axios
-      .get(`${backendOrigin}/storage_objects/${obj.id}/`, {
-        headers: {
-          Authorization: `token ${Cookies.get("token")}`,
-        },
-      })
-      .then((response) => {
-        decryptDataFromBytes(
-          appState.key,
-          window.atob(response.data.content_iv),
-          window.atob(response.data.content)
-        ).then((decryptedContent) => {
-          appState.setEditorValue(JSON.parse(decryptedContent));
-        });
-      });
+    appState.setEditorVisibility("hidden"); // To prevent old content from flashing before new content
+    appState.setLoadId(obj.id);
   };
 
   return (

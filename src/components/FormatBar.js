@@ -118,7 +118,7 @@ const FormatBar = (props) => {
   );
 
   const savingSpinner = (
-    <IconButton id="saving-spinner" disabled>
+    <IconButton className="saving-spinner" disabled>
       <AutorenewIcon sx={{ color: theme.secondary }} />
     </IconButton>
   );

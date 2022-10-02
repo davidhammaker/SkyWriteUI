@@ -1,5 +1,6 @@
 import React, { useCallback, useState, useMemo, useEffect } from "react";
 import Box from "@mui/material/Box";
+import AutorenewIcon from "@mui/icons-material/Autorenew";
 import { createEditor, Editor, Transforms } from "slate";
 import { Slate, Editable, withReact, ReactEditor } from "slate-react";
 import { withHistory } from "slate-history";
@@ -215,6 +216,7 @@ const SkySlateBox = (props) => {
     Transforms.removeNodes(editor, { at: [0] });
     // Insert the new editor value.
     Transforms.insertNodes(editor, appState.editorValue);
+    appState.setEditorVisibility("visible");
     // Switch focus to the editor.
     ReactEditor.focus(editor);
   }, [appState.editorValue]);
@@ -318,12 +320,14 @@ const SkySlateBox = (props) => {
       value={value}
       onChange={(newValue) => {
         setValue(newValue);
-        if (
-          window.innerHeight <
-          document.getElementById("sky-slate-editable").clientHeight
-        ) {
-          setBlankDivHeight("0px");
-          setEditableBoxHeight("inherit");
+        if (document.getElementById("sky-slate-editable") !== null) {
+          if (
+            window.innerHeight <
+            document.getElementById("sky-slate-editable").clientHeight
+          ) {
+            setBlankDivHeight("0px");
+            setEditableBoxHeight("inherit");
+          }
         }
       }}
     >
@@ -363,16 +367,42 @@ const SkySlateBox = (props) => {
             </Box>
           </Box>
         </div>
-        {/* The 'Editable' is the part we can edit like a text editor. */}
         <Box sx={{ px: 2 }} id="editableBox">
-          <Editable
-            renderElement={renderElement}
-            renderLeaf={renderLeaf}
-            onKeyDown={(event) => handleHotkeyEvent(event, editor, appState)}
-            placeholder="Type here."
-            id="sky-slate-editable"
-            autoFocus
-          />
+          {/* Loading spinner */}
+          {appState.loadId !== null && (
+            <div
+              style={{
+                position: "relative",
+                top: `${
+                  (document.getElementById("editor-background") ||
+                    document.getElementById("root"))["clientHeight"] / 3
+                }px`,
+                textAlign: "center",
+                height: "100%",
+              }}
+            >
+              <AutorenewIcon
+                className="saving-spinner"
+                sx={{ fontSize: 100, color: theme.secondary }}
+              />
+            </div>
+          )}
+          {/* Editor */}
+          {appState.loadId === null && (
+            <div style={{ visibility: appState.editorVisibility }}>
+              {/* The 'Editable' is the part we can edit like a text editor. */}
+              <Editable
+                renderElement={renderElement}
+                renderLeaf={renderLeaf}
+                onKeyDown={(event) =>
+                  handleHotkeyEvent(event, editor, appState)
+                }
+                placeholder="Type here."
+                id="sky-slate-editable"
+                autoFocus
+              />
+            </div>
+          )}
         </Box>
       </Box>
     </Slate>
