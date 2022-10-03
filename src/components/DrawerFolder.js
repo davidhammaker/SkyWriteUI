@@ -30,6 +30,8 @@ const DrawerFolder = (props) => {
   const [iv, setIv] = useState(null);
 
   const folderState = {
+    open,
+    setOpen,
     folderName,
     setFolderName,
     editName,
@@ -198,8 +200,10 @@ const DrawerFolder = (props) => {
           setEditName(false);
         }}
         onSave={() => encryptFolderName(newName)}
+        appState={appState}
         folderState={folderState}
         newFolder={false}
+        obj={obj}
       />
       <Collapse in={open} timeout="auto" unmountOnExit>
         {makeNewList()}

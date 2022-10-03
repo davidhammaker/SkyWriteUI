@@ -6,8 +6,8 @@ import Cookies from "js-cookie";
 import axios from "axios";
 import FolderModal from "./FolderModal";
 import { backendOrigin } from "./utils/navTools";
-import { encryptDataToBytes, decryptDataFromBytes } from "./utils/encryption";
-import { defaultFilename, defaultEditorValue } from "../settings";
+import { encryptDataToBytes } from "./utils/encryption";
+import { setUpNewFile } from "./utils/skyWriteUtils";
 
 const AddItems = (props) => {
   const appState = props.appState;
@@ -90,10 +90,7 @@ const AddItems = (props) => {
             variant="contained"
             sx={{ width: "100%", borderRadius: 0 }}
             onClick={() => {
-              appState.setEditorValue(defaultEditorValue);
-              appState.setFileId(null);
-              appState.setFilename(defaultFilename);
-              appState.setFilePath([]);
+              setUpNewFile(appState);
             }}
           >
             New File
@@ -106,6 +103,7 @@ const AddItems = (props) => {
           setFolderModalOpen(false);
         }}
         onSave={() => encryptFolderName(newName)}
+        appState={appState}
         folderState={folderState}
         newFolder={true}
       />

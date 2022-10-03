@@ -10,8 +10,11 @@ import Modal from "@mui/material/Modal";
 import { StyledTextField } from "./CustomTextField";
 import CustomFormButton from "./CustomFormButton";
 import theme from "./utils/theme";
+import { setUpNewFile } from "./utils/skyWriteUtils";
 
 const FolderModal = (props) => {
+  const obj = props.obj;
+  const appState = props.appState;
   const folderState = props.folderState;
   return (
     <Modal
@@ -97,7 +100,13 @@ const FolderModal = (props) => {
                     },
                   }}
                   onClick={() => {
-                    // props.onSave();
+                    setUpNewFile(appState);
+                    if (obj !== undefined && obj !== null) {
+                      appState.setFilePath([obj.id, null]); // Here, `obj.id` is the folder ID for the POST request.
+                      folderState.setOpen(true);
+                    }
+                    appState.setSaving(true);
+                    folderState.setEditName(false);
                   }}
                   startIcon={<NoteAddIcon />}
                 >

@@ -14,11 +14,10 @@ import theme from "./components/utils/theme";
 import { backendOrigin, inPath } from "./components/utils/navTools";
 import {
   generateKey,
-  encryptDataToBytes,
   decryptDataFromBytes,
   stringToArray,
 } from "./components/utils/encryption";
-import { defaultFilename } from "./settings";
+import { defaultEditorValue, defaultFilename } from "./settings";
 
 const App = () => {
   /*************
@@ -195,7 +194,12 @@ const App = () => {
             window.atob(response.data.content_iv),
             window.atob(response.data.content)
           ).then((decryptedContent) => {
-            appState.setEditorValue(JSON.parse(decryptedContent));
+            const content = JSON.parse(decryptedContent);
+            if (content.length === 0) {
+              appState.setEditorValue(defaultEditorValue);
+            } else {
+              appState.setEditorValue(JSON.parse(decryptedContent));
+            }
           });
         })
         .finally(() => appState.setLoadId(null));
@@ -230,7 +234,9 @@ const App = () => {
                   }}
                   onClick={() => {
                     ReactEditor.focus(editor);
-                    Transforms.select(editor, Editor.end(editor, []));
+                    if (editor.children.length >= 1) {
+                      Transforms.select(editor, Editor.end(editor, []));
+                    }
                   }}
                 >
                   <div

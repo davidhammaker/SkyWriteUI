@@ -219,6 +219,7 @@ const SkySlateBox = (props) => {
     appState.setEditorVisibility("visible");
     // Switch focus to the editor.
     ReactEditor.focus(editor);
+    appState.setEditorValue(null);
   }, [appState.editorValue]);
 
   /**
@@ -231,6 +232,14 @@ const SkySlateBox = (props) => {
 
     const content = JSON.stringify(appState.editor.children);
     const filename = appState.filename;
+
+    const path = appState.filePath;
+    let folderId;
+    if (path.length > 1) {
+      folderId = path[path.length - 2];
+    } else {
+      folderId = null;
+    }
 
     // Encode content
     encryptDataToBytes(content, appState.key)
@@ -251,7 +260,7 @@ const SkySlateBox = (props) => {
               content: contentCiphertext,
               content_iv: contentIv,
               is_file: true,
-              // TODO: folder_id
+              folder_id: folderId,
             };
 
             // PATCH existing file
