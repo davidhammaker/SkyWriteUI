@@ -1,4 +1,3 @@
-export const drawerWidth = 300;
 export const xs = 0;
 export const sm = 600;
 export const md = 900;

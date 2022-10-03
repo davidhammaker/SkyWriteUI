@@ -3,7 +3,8 @@ import Divider from "@mui/material/Divider";
 import List from "@mui/material/List";
 import DrawerFile from "./DrawerFile";
 import DrawerFolder from "./DrawerFolder";
-import theme, { drawerWidth } from "./utils/theme";
+import theme from "./utils/theme";
+import { drawerWidth } from "../settings";
 
 const DrawerFileList = (props) => {
   const storageObjects = props.storageObjects;

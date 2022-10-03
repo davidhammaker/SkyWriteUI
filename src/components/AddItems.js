@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
+import NoteAddIcon from "@mui/icons-material/NoteAdd";
+import CreateNewFolderIcon from "@mui/icons-material/CreateNewFolder";
 import CustomFormButton from "./CustomFormButton";
 import Cookies from "js-cookie";
 import axios from "axios";
@@ -74,13 +76,19 @@ const AddItems = (props) => {
   }, [saveFolder]);
 
   return (
-    <Box>
+    <Box sx={{ height: "42px" }}>
       <Grid container direction="row">
         <Grid item xs={6} sx={{ width: "100%" }}>
           <CustomFormButton
-            sx={{ width: "100%", borderRadius: 0 }}
+            sx={{
+              width: "100%",
+              height: "42px",
+              borderRadius: 0,
+              fontSize: "small",
+            }}
             variant="contained"
             onClick={() => setFolderModalOpen(true)}
+            startIcon={<CreateNewFolderIcon />}
           >
             New Folder
           </CustomFormButton>
@@ -88,10 +96,17 @@ const AddItems = (props) => {
         <Grid item xs={6} sx={{ width: "100%" }}>
           <CustomFormButton
             variant="contained"
-            sx={{ width: "100%", borderRadius: 0 }}
+            sx={{
+              width: "100%",
+              height: "42px",
+              borderRadius: 0,
+              borderBottomWidth: "1px",
+              fontSize: "small",
+            }}
             onClick={() => {
               setUpNewFile(appState);
             }}
+            startIcon={<NoteAddIcon />}
           >
             New File
           </CustomFormButton>

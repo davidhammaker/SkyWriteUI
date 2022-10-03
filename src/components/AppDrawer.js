@@ -5,7 +5,8 @@ import DrawerSliding from "./DrawerSliding";
 import DrawerPermanent from "./DrawerPermanent";
 import AddItems from "./AddItems";
 import DrawerFileList from "./DrawerFileList";
-import theme, { drawerWidth } from "./utils/theme";
+import theme from "./utils/theme";
+import { drawerWidth } from "../settings";
 
 const AppDrawer = (props) => {
   const appState = props.appState;

@@ -1,5 +1,5 @@
 import Drawer from "@mui/material/Drawer";
-import { drawerWidth } from "./utils/theme";
+import { drawerWidth } from "../settings";
 
 const DrawerSliding = (props) => {
   return (

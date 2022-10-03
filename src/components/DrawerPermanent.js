@@ -1,6 +1,6 @@
 import React from "react";
 import Drawer from "@mui/material/Drawer";
-import { drawerWidth } from "./utils/theme";
+import { drawerWidth } from "../settings";
 
 const DrawerPermanent = (props) => {
   return (
