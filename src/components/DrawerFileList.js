@@ -1,9 +1,8 @@
-import React from "react";
-import Divider from "@mui/material/Divider";
+import React, { useState } from "react";
 import List from "@mui/material/List";
 import DrawerFile from "./DrawerFile";
 import DrawerFolder from "./DrawerFolder";
-import theme from "./utils/theme";
+import Draggable from "react-draggable";
 import { drawerWidth } from "../settings";
 
 const DrawerFileList = (props) => {
@@ -30,29 +29,48 @@ const DrawerFileList = (props) => {
       {sortedObjects.map((obj) => (
         <List
           key={obj.id}
-          sx={{ width: `${drawerWidth}px`, bgcolor: theme.primaryLight }}
+          sx={{
+            width: `${drawerWidth}px`,
+          }}
           component="div"
           disablePadding
         >
-          <Divider sx={{ borderColor: theme.primary }} />
-          {!obj.is_file && (
-            <DrawerFolder
-              obj={obj}
-              depth={newDepth}
-              currentPath={currentPath}
-              appState={appState}
-              getUser={props.getUser}
-            />
-          )}
-          {obj.is_file && (
-            <DrawerFile
-              obj={obj}
-              depth={newDepth}
-              currentPath={currentPath}
-              appState={appState}
-              getUser={props.getUser}
-            />
-          )}
+          <Draggable
+            axis="y"
+            handle={`#drag-handle-${obj.id}`}
+            onStart={() => {
+              appState.setFileDragging(obj.id);
+            }}
+            onStop={() => {
+              appState.setFileDragging(null);
+            }}
+          >
+            <div
+              style={{
+                pointerEvents:
+                  appState.fileDragging === obj.id ? "none" : "auto",
+              }}
+            >
+              {!obj.is_file && (
+                <DrawerFolder
+                  obj={obj}
+                  depth={newDepth}
+                  currentPath={currentPath}
+                  appState={appState}
+                  getUser={props.getUser}
+                />
+              )}
+              {obj.is_file && (
+                <DrawerFile
+                  obj={obj}
+                  depth={newDepth}
+                  currentPath={currentPath}
+                  appState={appState}
+                  getUser={props.getUser}
+                />
+              )}
+            </div>
+          </Draggable>
         </List>
       ))}
     </>

@@ -5,6 +5,7 @@ import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import Save from "@mui/icons-material/Save";
+import CreateNewFolderIcon from "@mui/icons-material/CreateNewFolder";
 import NoteAddIcon from "@mui/icons-material/NoteAdd";
 import Modal from "@mui/material/Modal";
 import { StyledTextField } from "./CustomTextField";
@@ -16,6 +17,7 @@ const FolderModal = (props) => {
   const obj = props.obj;
   const appState = props.appState;
   const folderState = props.folderState;
+
   return (
     <Modal
       open={props.open}
@@ -88,7 +90,37 @@ const FolderModal = (props) => {
         </Grid>
         {!props.newFolder && (
           <Grid container justifyContent="center">
-            <Grid item xs={12} sx={{ textAlign: "center" }}>
+            <Grid
+              item
+              xs={12}
+              sm={4}
+              sx={{ textAlign: "center", mb: { xs: 2 } }}
+            >
+              <Tooltip title="Add New Folder inside this Folder">
+                <CustomFormButton
+                  sx={{
+                    backgroundColor: theme.primaryLight,
+                    color: theme.primaryDark,
+                    boxShadow: 5,
+                    "&:hover": {
+                      backgroundColor: theme.primary,
+                    },
+                  }}
+                  onClick={() => {
+                    /* Need to open a new modal to save a new folder; pass along obj.id for folder_id value */
+                  }}
+                  startIcon={<CreateNewFolderIcon />}
+                >
+                  Add New Folder
+                </CustomFormButton>
+              </Tooltip>
+            </Grid>
+            <Grid
+              item
+              xs={12}
+              sm={4}
+              sx={{ textAlign: "center", mb: { xs: 2 } }}
+            >
               <Tooltip title="Add New File to this Folder">
                 <CustomFormButton
                   sx={{

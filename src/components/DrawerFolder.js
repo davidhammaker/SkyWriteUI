@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import ListItem from "@mui/material/ListItem";
+import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import IconButton from "@mui/material/IconButton";
@@ -7,6 +7,7 @@ import FolderIcon from "@mui/icons-material/Folder";
 import EditIcon from "@mui/icons-material/Edit";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
+import UnfoldMoreIcon from "@mui/icons-material/UnfoldMore";
 import Collapse from "@mui/material/Collapse";
 import Cookies from "js-cookie";
 import axios from "axios";
@@ -122,11 +123,18 @@ const DrawerFolder = (props) => {
 
   return (
     <>
-      <ListItem
-        onClick={() => setOpen(!open)}
+      <ListItemButton
+        id={`folder-${obj.id}`}
+        className="drawer-object"
+        objid={obj.id}
+        onClick={() => {
+          if (!appState.fileDragging) {
+            setOpen(!open);
+          }
+        }}
         sx={{
-          pl: depth + 1,
           cursor: "pointer",
+          pr: 3,
         }}
       >
         <>
@@ -140,6 +148,23 @@ const DrawerFolder = (props) => {
           >
             <FolderIcon fontSize="small" />
           </ListItemIcon>
+          {open ? (
+            <ExpandLess
+              fontSize="small"
+              sx={{
+                color: theme.primaryLight,
+                ml: -3.7,
+              }}
+            />
+          ) : (
+            <ExpandMore
+              fontSize="small"
+              sx={{
+                color: theme.primaryLight,
+                ml: -3.7,
+              }}
+            />
+          )}
           <ListItemText
             primary={folderName}
             primaryTypographyProps={{
@@ -150,25 +175,23 @@ const DrawerFolder = (props) => {
                   ? "bold"
                   : "inherit",
                 wordWrap: "break-word",
+                pl: 1.5,
               },
             }}
           />
           <div
             onClick={(event) => {
               event.stopPropagation();
-              setEditName(true);
+              if (!appState.fileDragging) {
+                setEditName(true);
+              }
             }}
             style={{ paddingRight: "10px", paddingLeft: "10px" }}
           >
             <IconButton
-              onClick={(event) => {
-                event.preventDefault;
-                setEditName(true);
-              }}
               sx={{
                 width: "20px",
                 height: "20px",
-                borderRadius: "4px",
                 color: theme.primaryDark,
                 "&:hover": {
                   color: theme.primaryDarkest,
@@ -179,21 +202,21 @@ const DrawerFolder = (props) => {
               <EditIcon fontSize="small" />
             </IconButton>
           </div>
-          {open ? (
-            <ExpandLess
-              sx={{
-                color: theme.primaryDarkest,
-              }}
-            />
-          ) : (
-            <ExpandMore
-              sx={{
-                color: theme.primaryDarkest,
-              }}
-            />
-          )}
+          <div
+            onClick={(event) => {
+              event.stopPropagation();
+            }}
+            style={{
+              width: "20px",
+              height: "20px",
+            }}
+          >
+            <ListItemIcon id={`drag-handle-${obj.id}`}>
+              <UnfoldMoreIcon />
+            </ListItemIcon>
+          </div>
         </>
-      </ListItem>
+      </ListItemButton>
       <FolderModal
         open={editName}
         onClose={() => {

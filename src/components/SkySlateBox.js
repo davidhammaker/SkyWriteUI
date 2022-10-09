@@ -330,15 +330,6 @@ const SkySlateBox = (props) => {
       value={value}
       onChange={(newValue) => {
         setValue(newValue);
-        if (document.getElementById("sky-slate-editable") !== null) {
-          if (
-            window.innerHeight <
-            document.getElementById("sky-slate-editable").clientHeight
-          ) {
-            setBlankDivHeight("0px");
-            setEditableBoxHeight("inherit");
-          }
-        }
       }}
     >
       <Box

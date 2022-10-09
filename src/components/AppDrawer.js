@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
-import Divider from "@mui/material/Divider";
+import ListItem from "@mui/material/ListItem";
+import ListItemText from "@mui/material/ListItemText";
 import DrawerSliding from "./DrawerSliding";
 import DrawerPermanent from "./DrawerPermanent";
 import AddItems from "./AddItems";
@@ -11,8 +12,26 @@ import { drawerWidth } from "../settings";
 const AppDrawer = (props) => {
   const appState = props.appState;
 
+  const [draggingOver, setDraggingOver] = useState(false);
+
+  useEffect(() => {
+    setDraggingOver(false);
+  }, [appState.fileDragging]);
+
   const container =
     props.window !== undefined ? () => props.window().document.body : undefined;
+
+  // Dragging style
+  let borderObj;
+  if (draggingOver) {
+    borderObj = {
+      borderTopWidth: "3px",
+      borderTopStyle: "solid",
+      borderTopColor: theme.primaryDark,
+    };
+  } else {
+    borderObj = {};
+  }
 
   const drawerContents = (
     <>
@@ -22,7 +41,21 @@ const AppDrawer = (props) => {
         appState={appState}
         getUser={props.getUser}
       />
-      <Divider sx={{ borderColor: theme.primary }} />
+      <ListItem
+        sx={{ ...borderObj }}
+        onPointerEnter={() => {
+          if (appState.fileDragging !== null) {
+            setDraggingOver(true);
+          }
+        }}
+        onPointerLeave={() => {
+          if (appState.fileDragging !== null) {
+            setDraggingOver(false);
+          }
+        }}
+      >
+        <ListItemText />
+      </ListItem>
     </>
   );
 
@@ -41,7 +74,7 @@ const AppDrawer = (props) => {
         <AddItems appState={appState} getUser={props.getUser} />
         {drawerContents}
       </DrawerSliding>
-      <DrawerPermanent bgcolor={theme.primary} getUser={props.getUser}>
+      <DrawerPermanent getUser={props.getUser}>
         <AddItems appState={appState} getUser={props.getUser} />
         {drawerContents}
       </DrawerPermanent>

@@ -34,6 +34,8 @@ const App = () => {
   const [editorValue, setEditorValue] = useState(null);
   const [editorVisibility, setEditorVisibility] = useState("visible");
   const [fileDrawerOpen, setFileDrawerOpen] = useState(false);
+  const [fileDragging, setFileDragging] = useState(null);
+  const [fileDragTo, setFileDragTo] = useState(null);
   const [filePath, setFilePath] = useState([]);
   const [filename, setFilename] = useState(defaultFilename);
   const [fileId, setFileId] = useState(null);
@@ -61,6 +63,10 @@ const App = () => {
     setEditorVisibility,
     fileDrawerOpen,
     setFileDrawerOpen,
+    fileDragging,
+    setFileDragging,
+    fileDragTo,
+    setFileDragTo,
     filePath,
     setFilePath,
     filename,
@@ -193,16 +199,17 @@ const App = () => {
             appState.key,
             window.atob(response.data.content_iv),
             window.atob(response.data.content)
-          ).then((decryptedContent) => {
-            const content = JSON.parse(decryptedContent);
-            if (content.length === 0) {
-              appState.setEditorValue(defaultEditorValue);
-            } else {
-              appState.setEditorValue(JSON.parse(decryptedContent));
-            }
-          });
-        })
-        .finally(() => appState.setLoadId(null));
+          )
+            .then((decryptedContent) => {
+              const content = JSON.parse(decryptedContent);
+              if (content.length === 0) {
+                appState.setEditorValue(defaultEditorValue);
+              } else {
+                appState.setEditorValue(JSON.parse(decryptedContent));
+              }
+            })
+            .finally(() => appState.setLoadId(null));
+        });
     }
   }, [appState.loadId]);
 

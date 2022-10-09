@@ -76,11 +76,13 @@ const AddItems = (props) => {
   }, [saveFolder]);
 
   return (
-    <Box sx={{ height: "42px" }}>
+    <Box sx={{ height: "42px" }} id="add-items">
       <Grid container direction="row">
         <Grid item xs={6} sx={{ width: "100%" }}>
           <CustomFormButton
             sx={{
+              boxShadow: 0,
+              borderStyle: "solid",
               width: "100%",
               height: "42px",
               borderRadius: 0,
@@ -97,10 +99,11 @@ const AddItems = (props) => {
           <CustomFormButton
             variant="contained"
             sx={{
+              boxShadow: 0,
+              borderStyle: "solid",
               width: "100%",
               height: "42px",
               borderRadius: 0,
-              borderBottomWidth: "1px",
               fontSize: "small",
             }}
             onClick={() => {

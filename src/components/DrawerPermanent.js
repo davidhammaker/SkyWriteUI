@@ -1,13 +1,14 @@
 import React from "react";
 import Drawer from "@mui/material/Drawer";
 import { drawerWidth } from "../settings";
+import theme from "./utils/theme";
 
 const DrawerPermanent = (props) => {
   return (
     <Drawer
       PaperProps={{
         sx: {
-          backgroundColor: props.bgcolor,
+          backgroundColor: theme.primaryLight,
           border: 0,
         },
       }}
@@ -17,6 +18,7 @@ const DrawerPermanent = (props) => {
         "& .MuiDrawer-paper": {
           boxSizing: "border-box",
           width: drawerWidth,
+          overflowX: "hidden",
         },
       }}
       open

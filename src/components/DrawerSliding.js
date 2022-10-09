@@ -20,6 +20,7 @@ const DrawerSliding = (props) => {
         "& .MuiDrawer-paper": {
           boxSizing: "border-box",
           width: drawerWidth,
+          overflowX: "hidden",
         },
       }}
     >
