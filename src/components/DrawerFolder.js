@@ -95,6 +95,7 @@ const DrawerFolder = (props) => {
           appState={appState}
           path={path}
           getUser={props.getUser}
+          folderId={obj.id}
         />
       );
     } else {

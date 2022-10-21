@@ -6,7 +6,7 @@ import Draggable from "react-draggable";
 import { drawerWidth } from "../settings";
 
 const DrawerFileList = (props) => {
-  const storageObjects = props.storageObjects;
+  const storageObjects = props.storageObjects ? props.storageObjects : [];
   const depth = props.depth;
   const appState = props.appState;
   const path = props.path;
@@ -58,6 +58,7 @@ const DrawerFileList = (props) => {
                   currentPath={currentPath}
                   appState={appState}
                   getUser={props.getUser}
+                  folderId={props.folderId}
                 />
               )}
               {obj.is_file && (
@@ -67,6 +68,7 @@ const DrawerFileList = (props) => {
                   currentPath={currentPath}
                   appState={appState}
                   getUser={props.getUser}
+                  folderId={props.folderId}
                 />
               )}
             </div>

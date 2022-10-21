@@ -213,6 +213,30 @@ const App = () => {
     }
   }, [appState.loadId]);
 
+  useEffect(() => {
+    if (fileDragTo === null) {
+      return;
+    }
+    setFileDragTo(null);
+
+    axios
+      .patch(`${backendOrigin}/re_order/`, fileDragTo, {
+        headers: {
+          Authorization: `token ${Cookies.get("token")}`,
+        },
+      })
+      .then((response) => {
+        setStorageObjects(null);
+      })
+      .catch(() => {});
+  }, [fileDragTo]);
+
+  useEffect(() => {
+    if (storageObjects === null) {
+      getUser();
+    }
+  }, [storageObjects]);
+
   /*************
    *
    * Return

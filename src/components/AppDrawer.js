@@ -12,10 +12,21 @@ import { drawerWidth } from "../settings";
 const AppDrawer = (props) => {
   const appState = props.appState;
 
-  const [draggingOver, setDraggingOver] = useState(false);
+  const [draggingObjId, setDraggingObjId] = useState(null);
 
   useEffect(() => {
-    setDraggingOver(false);
+    setDraggingObjId(null);
+  }, [appState.fileDragging]);
+
+  useEffect(() => {
+    if (draggingObjId !== null) {
+      setDraggingObjId(null);
+      appState.setFileDragTo({
+        from_id: draggingObjId,
+        to_id: null,
+        folder_id: null,
+      });
+    }
   }, [appState.fileDragging]);
 
   const container =
@@ -23,7 +34,7 @@ const AppDrawer = (props) => {
 
   // Dragging style
   let borderObj;
-  if (draggingOver) {
+  if (draggingObjId !== null) {
     borderObj = {
       borderTopWidth: "3px",
       borderTopStyle: "solid",
@@ -45,12 +56,12 @@ const AppDrawer = (props) => {
         sx={{ ...borderObj }}
         onPointerEnter={() => {
           if (appState.fileDragging !== null) {
-            setDraggingOver(true);
+            setDraggingObjId(appState.fileDragging);
           }
         }}
         onPointerLeave={() => {
           if (appState.fileDragging !== null) {
-            setDraggingOver(false);
+            setDraggingObjId(null);
           }
         }}
       >

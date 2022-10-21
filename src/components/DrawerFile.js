@@ -11,9 +11,10 @@ const DrawerFile = (props) => {
   const appState = props.appState;
   const obj = props.obj;
   const depth = props.depth;
+  const parentFolderId = props.folderId ? props.folderId : null;
 
   const [drawerFilename, setDrawerFilename] = useState("");
-  const [draggingOver, setDraggingOver] = useState(false);
+  const [draggingObjId, setDraggingObjId] = useState(null);
 
   // After the key has been set, decrypt the file name.
   useEffect(() => {
@@ -44,7 +45,14 @@ const DrawerFile = (props) => {
   }, [appState.filename]);
 
   useEffect(() => {
-    setDraggingOver(false);
+    if (draggingObjId !== null) {
+      appState.setFileDragTo({
+        from_id: draggingObjId,
+        to_id: obj.id,
+        folder_id: parentFolderId,
+      });
+      setDraggingObjId(null);
+    }
   }, [appState.fileDragging]);
 
   /**
@@ -59,11 +67,12 @@ const DrawerFile = (props) => {
 
   // Dragging style
   let borderObj;
-  if (draggingOver) {
+  if (draggingObjId !== null) {
     borderObj = {
       borderTopWidth: "3px",
       borderTopStyle: "solid",
       borderTopColor: theme.primaryDark,
+      marginTop: "-3px",
     };
   } else {
     borderObj = {};
@@ -82,14 +91,12 @@ const DrawerFile = (props) => {
       }}
       onPointerEnter={() => {
         if (appState.fileDragging !== null) {
-          setDraggingOver(true);
-          // TODO: Set an appState object that stores all this files properties (file ID, folder ID, etc.), so we can update the moved object.
-          //       Also, save the file when we stop dragging!
+          setDraggingObjId(appState.fileDragging);
         }
       }}
       onPointerLeave={() => {
         if (appState.fileDragging !== null) {
-          setDraggingOver(false);
+          setDraggingObjId(null);
         }
       }}
     >
@@ -123,6 +130,7 @@ const DrawerFile = (props) => {
         style={{
           width: "20px",
           height: "20px",
+          cursor: "ns-resize",
         }}
       >
         <ListItemIcon id={`drag-handle-${obj.id}`}>
