@@ -117,6 +117,7 @@ const DrawerFolder = (props) => {
     )
       .then((decryptedFolderName) => {
         setFolderName(decryptedFolderName);
+        setNewName(decryptedFolderName);
       })
       .catch((error) => {});
   }, [appState.key]);
