@@ -80,17 +80,7 @@ const DrawerFolder = (props) => {
   };
 
   const makeNewList = () => {
-    if (obj.folders.length !== 0) {
-      return (
-        <DrawerFileList
-          storageObjects={obj.folders}
-          depth={depth}
-          appState={appState}
-          path={path}
-          getUser={props.getUser}
-        />
-      );
-    } else if (obj.files.length !== 0) {
+    if (obj.files.length !== 0) {
       return (
         <DrawerFileList
           storageObjects={obj.files}
@@ -105,6 +95,12 @@ const DrawerFolder = (props) => {
       return <></>;
     }
   };
+
+  useEffect(() => {
+    if (appState.filePath.includes(obj.id)) {
+      setOpen(true);
+    }
+  }, []);
 
   useEffect(() => {
     if (ciphertext !== null) {
@@ -161,7 +157,7 @@ const DrawerFolder = (props) => {
           }
         }}
         sx={{
-          cursor: "pointer",
+          pl: depth * 1.5 + 1,
           pr: 3,
           ...borderObj,
         }}

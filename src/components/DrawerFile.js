@@ -82,7 +82,7 @@ const DrawerFile = (props) => {
     <ListItemButton
       className="drawer-object"
       objid={obj.id}
-      sx={{ pl: depth + 1, pr: 3, position: "relative", ...borderObj }}
+      sx={{ pl: depth * 1.5 + 1, pr: 3, ...borderObj }}
       onClick={(event) => {
         event.preventDefault;
         if (!appState.fileDragging) {
