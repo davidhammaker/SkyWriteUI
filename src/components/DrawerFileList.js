@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import List from "@mui/material/List";
 import DrawerFile from "./DrawerFile";
 import DrawerFolder from "./DrawerFolder";
@@ -13,20 +13,9 @@ const DrawerFileList = (props) => {
   const newDepth = depth + 1;
   const currentPath = path === undefined ? [] : path;
 
-  let folders = [];
-  let files = [];
-  for (let i = 0; i < storageObjects.length; i++) {
-    if (storageObjects[i].is_file) {
-      folders.push(storageObjects[i]);
-    } else {
-      files.push(storageObjects[i]);
-    }
-  }
-  let sortedObjects = [...files, ...folders];
-
   return (
     <>
-      {sortedObjects.map((obj) => (
+      {storageObjects.map((obj) => (
         <List
           key={obj.id}
           sx={{
