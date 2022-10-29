@@ -264,9 +264,9 @@ const App = () => {
                     height: "100%",
                   }}
                   onClick={() => {
-                    ReactEditor.focus(editor);
                     if (editor.children.length >= 1) {
                       Transforms.select(editor, Editor.end(editor, []));
+                      ReactEditor.focus(editor);
                     }
                   }}
                 >

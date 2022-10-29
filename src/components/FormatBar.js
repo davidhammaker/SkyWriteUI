@@ -7,8 +7,9 @@ import FormatUnderlinedIcon from "@mui/icons-material/FormatUnderlined";
 import Save from "@mui/icons-material/Save";
 import AutorenewIcon from "@mui/icons-material/Autorenew";
 import MenuIcon from "@mui/icons-material/Menu";
-import TextIncreaseIcon from "@mui/icons-material/TextIncrease";
-import TextDecreaseIcon from "@mui/icons-material/TextDecrease";
+import LooksOneIcon from "@mui/icons-material/LooksOne";
+import LooksTwoIcon from "@mui/icons-material/LooksTwo";
+import CodeIcon from "@mui/icons-material/Code";
 import Box from "@mui/material/Box";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import Grid from "@mui/material/Grid";
@@ -53,51 +54,39 @@ const FormatButton = ({ toggleMark, format }) => {
   );
 };
 
-const TextIncreaseButton = ({ toggleIncrease }) => {
+const ElementButton = ({ toggleElement, format }) => {
   const editor = useSlate();
-
+  const icon = {
+    head1: (
+      <Tooltip title="Header 1">
+        <LooksOneIcon />
+      </Tooltip>
+    ),
+    head2: (
+      <Tooltip title="Header 2">
+        <LooksTwoIcon />
+      </Tooltip>
+    ),
+    code: (
+      <Tooltip title="Code Block">
+        <CodeIcon />
+      </Tooltip>
+    ),
+  }[format];
+  const [match] = Editor.nodes(editor, {
+    match: (n) => n.type === format,
+  });
   return (
     <IconButton
       sx={{
-        color:
-          !Editor.marks(editor) || !Editor.marks(editor)["h1"]
-            ? theme.secondary
-            : theme.primaryLight,
+        color: match ? theme.secondaryDark : theme.secondaryLight,
       }}
       onClick={(event) => {
         event.preventDefault();
-        toggleIncrease();
+        toggleElement(editor, format);
       }}
     >
-      <Tooltip title="Bigger Text">
-        <TextIncreaseIcon />
-      </Tooltip>
-    </IconButton>
-  );
-};
-
-const TextDecreaseButton = ({ toggleDecrease }) => {
-  const editor = useSlate();
-
-  return (
-    <IconButton
-      sx={{
-        color:
-          Editor.marks(editor) &&
-          (Editor.marks(editor)["h1"] ||
-            Editor.marks(editor)["h2"] ||
-            Editor.marks(editor)["h3"])
-            ? theme.secondary
-            : theme.primaryLight,
-      }}
-      onClick={(event) => {
-        event.preventDefault();
-        toggleDecrease();
-      }}
-    >
-      <Tooltip title="Smaller Text">
-        <TextDecreaseIcon />
-      </Tooltip>
+      {icon}
     </IconButton>
   );
 };
@@ -173,8 +162,9 @@ const FormatBar = (props) => {
             <FormatButton toggleMark={props.toggleMark} format="bold" />
             <FormatButton toggleMark={props.toggleMark} format="italic" />
             <FormatButton toggleMark={props.toggleMark} format="underline" />
-            <TextDecreaseButton toggleDecrease={props.toggleDecrease} />
-            <TextIncreaseButton toggleIncrease={props.toggleIncrease} />
+            <ElementButton toggleElement={props.toggleElement} format="head1" />
+            <ElementButton toggleElement={props.toggleElement} format="head2" />
+            <ElementButton toggleElement={props.toggleElement} format="code" />
           </Grid>
           <Grid item>{showMenuIcon && <SettingsButton />}</Grid>
         </Grid>

@@ -29,8 +29,6 @@ const hotkeys = {
 
 const altHotkeys = {
   "mod+s": "save",
-  "mod+]": "increase",
-  "mod+[": "decrease",
 };
 
 /*************
@@ -101,18 +99,6 @@ const SkySlateBox = (props) => {
       children = <u>{children}</u>;
     }
 
-    if (leaf.h1) {
-      children = <span style={{ fontSize: "xxx-large" }}>{children}</span>;
-    }
-
-    if (leaf.h2) {
-      children = <span style={{ fontSize: "xx-large" }}>{children}</span>;
-    }
-
-    if (leaf.h3) {
-      children = <span style={{ fontSize: "x-large" }}>{children}</span>;
-    }
-
     return <span {...attributes}>{children}</span>;
   };
 
@@ -122,7 +108,29 @@ const SkySlateBox = (props) => {
    *
    ************/
   const Element = ({ attributes, children, element }) => {
-    return <p {...attributes}>{children}</p>;
+    console.log(element);
+    switch (element.type) {
+      case "head1":
+        return <h1 {...attributes}>{children}</h1>;
+      case "head2":
+        return <h2 {...attributes}>{children}</h2>;
+      case "code":
+        return (
+          <pre
+            style={{
+              backgroundColor: theme.secondaryLightest,
+              color: theme.secondaryDark,
+              padding: "2px 7px 2px 7px",
+              margin: 0,
+            }}
+            {...attributes}
+          >
+            <code>{children}</code>
+          </pre>
+        );
+      default:
+        return <p {...attributes}>{children}</p>;
+    }
   };
 
   /*************
@@ -134,10 +142,6 @@ const SkySlateBox = (props) => {
   function handleAltHotkey(editor, action, appState) {
     if (action === "save") {
       appState.setSaving(true);
-    } else if (action === "increase") {
-      toggleIncrease();
-    } else if (action === "decrease") {
-      toggleDecrease();
     }
   }
 
@@ -156,40 +160,6 @@ const SkySlateBox = (props) => {
       }
     }
   }
-
-  /*************
-   *
-   * Customization hooks and functions
-   *
-   ************/
-
-  const toggleIncrease = () => {
-    if (Editor.marks(editor) && Editor.marks(editor)["h3"]) {
-      toggleMark(editor, "h3");
-      toggleMark(editor, "h2");
-    } else if (Editor.marks(editor) && Editor.marks(editor)["h2"]) {
-      toggleMark(editor, "h2");
-      toggleMark(editor, "h1");
-    } else if (Editor.marks(editor) && Editor.marks(editor)["h1"]) {
-      ReactEditor.focus(editor);
-    } else {
-      toggleMark(editor, "h3");
-    }
-  };
-
-  const toggleDecrease = () => {
-    if (Editor.marks(editor) && Editor.marks(editor)["h1"]) {
-      toggleMark(editor, "h1");
-      toggleMark(editor, "h2");
-    } else if (Editor.marks(editor) && Editor.marks(editor)["h2"]) {
-      toggleMark(editor, "h2");
-      toggleMark(editor, "h3");
-    } else if (Editor.marks(editor) && Editor.marks(editor)["h3"]) {
-      toggleMark(editor, "h3");
-    } else {
-      ReactEditor.focus(editor);
-    }
-  };
 
   /**
    * Set editor in state
@@ -339,7 +309,7 @@ const SkySlateBox = (props) => {
           ml: { md: `${drawerWidth}px` },
         }}
       >
-        <div style={{ width: "100%" }}>
+        <div style={{ width: "100%", marginBottom: "1em" }}>
           <Box sx={{ display: { sm: "block", md: "flex" } }}>
             <Box sx={{ width: { sm: "100%", md: "auto" } }}>
               <FormatBar
@@ -348,8 +318,6 @@ const SkySlateBox = (props) => {
                 editorValue={value}
                 toggleFileDrawer={props.toggleFileDrawer}
                 editor={editor}
-                toggleIncrease={toggleIncrease}
-                toggleDecrease={toggleDecrease}
                 appState={appState}
               />
             </Box>
