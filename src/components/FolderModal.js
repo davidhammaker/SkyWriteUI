@@ -96,31 +96,6 @@ const FolderModal = (props) => {
               sm={4}
               sx={{ textAlign: "center", mb: { xs: 2 } }}
             >
-              <Tooltip title="Add New Folder inside this Folder">
-                <CustomFormButton
-                  sx={{
-                    backgroundColor: theme.primaryLight,
-                    color: theme.primaryDark,
-                    boxShadow: 5,
-                    "&:hover": {
-                      backgroundColor: theme.primary,
-                    },
-                  }}
-                  onClick={() => {
-                    /* Need to open a new modal to save a new folder; pass along obj.id for folder_id value */
-                  }}
-                  startIcon={<CreateNewFolderIcon />}
-                >
-                  Add New Folder
-                </CustomFormButton>
-              </Tooltip>
-            </Grid>
-            <Grid
-              item
-              xs={12}
-              sm={4}
-              sx={{ textAlign: "center", mb: { xs: 2 } }}
-            >
               <Tooltip title="Add New File to this Folder">
                 <CustomFormButton
                   sx={{
