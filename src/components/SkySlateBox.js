@@ -108,12 +108,19 @@ const SkySlateBox = (props) => {
    *
    ************/
   const Element = ({ attributes, children, element }) => {
-    console.log(element);
     switch (element.type) {
       case "head1":
-        return <h1 {...attributes}>{children}</h1>;
+        return (
+          <h1 style={{ fontWeight: "normal" }} {...attributes}>
+            {children}
+          </h1>
+        );
       case "head2":
-        return <h2 {...attributes}>{children}</h2>;
+        return (
+          <h2 style={{ fontWeight: "normal" }} {...attributes}>
+            {children}
+          </h2>
+        );
       case "code":
         return (
           <pre
@@ -310,8 +317,8 @@ const SkySlateBox = (props) => {
         }}
       >
         <div style={{ width: "100%", marginBottom: "1em" }}>
-          <Box sx={{ display: { sm: "block", md: "flex" } }}>
-            <Box sx={{ width: { sm: "100%", md: "auto" } }}>
+          <Box sx={{ display: { sm: "block", lg: "flex" } }}>
+            <Box sx={{ width: { sm: "100%", lg: "auto" } }}>
               <FormatBar
                 toggleMark={toggleMark}
                 toggleElement={toggleElement}
@@ -322,17 +329,17 @@ const SkySlateBox = (props) => {
               />
             </Box>
             <Box
-              sx={{ width: { sm: "100%", md: "auto" }, flexGrow: { md: 1 } }}
+              sx={{ width: { sm: "100%", lg: "auto" }, flexGrow: { lg: 1 } }}
             >
               <FileNameInput appState={appState} />
             </Box>
             <Box
               sx={{
-                width: { sm: "100%", md: "auto" },
-                display: { xs: "none", md: "inherit" },
+                width: { sm: "100%", lg: "auto" },
+                display: { xs: "none", lg: "inherit" },
               }}
             >
-              <SettingsButtonGroup />
+              <SettingsButtonGroup appState={appState} />
             </Box>
           </Box>
         </div>

@@ -3,12 +3,13 @@ import Grid from "@mui/material/Grid";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
 import axios from "axios";
 import Cookies from "js-cookie";
-import { backendOrigin, navigateTo } from "../utils/navTools";
-import { getFieldValue, onEnterKey } from "../utils/elementTools";
+import { backendOrigin, navigateTo } from "./utils/navTools";
+import { getFieldValue, onEnterKey } from "./utils/elementTools";
 import CustomTextField from "./CustomTextField";
+import CustomFormButton from "./CustomFormButton";
+import theme from "./utils/theme";
 
 export default function AppLogin(props) {
   const [usernameErrors, setUsernameErrors] = useState("");
@@ -39,14 +40,21 @@ export default function AppLogin(props) {
       setPasswordRetypeErrors(message);
     } else {
       axios
-        .post(`${backendOrigin}/create-user/`, {
+        .post(`${backendOrigin}/create_user/`, {
           username: username,
           email: email,
           password: password,
         })
         .then(function (response) {
-          Cookies.set("token", response.data.token);
-          navigateTo("/");
+          axios
+            .post(`${backendOrigin}/api-token-auth/`, {
+              username: username,
+              password: password,
+            })
+            .then(function (response) {
+              Cookies.set("token", response.data.token, { expires: 99999 });
+              navigateTo("/");
+            });
         })
         .catch(function (error) {
           if (error.response) {
@@ -72,10 +80,8 @@ export default function AppLogin(props) {
     if (Cookies.get("token")) {
       navigateTo("/");
     }
-    props.setAtCreateUser(true);
     const enterKeyCleanup = onEnterKey(doCreateUser);
     function cleanup() {
-      props.setAtCreateUser(false);
       enterKeyCleanup();
     }
     return cleanup;
@@ -88,7 +94,9 @@ export default function AppLogin(props) {
           <Grid container direction="row" justifyContent="center">
             <Grid item>
               <Box my={5}>
-                <Typography variant="h4">Create a New User</Typography>
+                <Typography variant="h4" color={theme.primaryLightest}>
+                  Create a New User
+                </Typography>
               </Box>
             </Grid>
           </Grid>
@@ -119,7 +127,12 @@ export default function AppLogin(props) {
                 />
                 <Grid container direction="row" justifyContent="center">
                   <Box my={2}>
-                    <Button onClick={doCreateUser}>Submit</Button>
+                    <CustomFormButton
+                      variant="contained"
+                      onClick={doCreateUser}
+                    >
+                      Submit
+                    </CustomFormButton>
                   </Box>
                 </Grid>
                 {otherErrors && (

@@ -8,6 +8,8 @@ import axios from "axios";
 import { backendOrigin } from "./utils/navTools";
 
 const SelectDefaultStorage = (props) => {
+  const appState = props.appState;
+
   const [storageOptions, setStorageOptions] = useState(null);
 
   useEffect(() => {
@@ -36,12 +38,13 @@ const SelectDefaultStorage = (props) => {
           headers: { Authorization: `token ${Cookies.get("token")}` },
         }
       )
-      .then(
+      .then(() => {
         props.setConfig({
           ...props.config,
           default_storage: event.target.value,
-        })
-      )
+        });
+        appState.setNeedStorage(false);
+      })
       .catch((error) => console.log(error));
   };
 

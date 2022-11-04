@@ -7,6 +7,7 @@ import Cookies from "js-cookie";
 import axios from "axios";
 import SkySlateBox from "./components/SkySlateBox";
 import Start from "./components/Start";
+import AppCreateUser from "./components/CreateUser";
 import AppLogin from "./components/Login";
 import AppLogout from "./components/Logout";
 import AppDrawer from "./components/AppDrawer";
@@ -43,6 +44,7 @@ const App = () => {
   const [loadId, setLoadId] = useState(null);
   const [currentValue, setCurrentValue] = useState(null);
   const [key, setKey] = useState(null);
+  const [needStorage, setNeedStorage] = useState(false);
 
   const appState = {
     atLogin,
@@ -81,6 +83,8 @@ const App = () => {
     setCurrentValue,
     key,
     setKey,
+    needStorage,
+    setNeedStorage,
   };
 
   /*************
@@ -149,6 +153,21 @@ const App = () => {
           console.log(error.response.data);
         }
       });
+    axios
+      .get(`${backendOrigin}/config/`, {
+        headers: { Authorization: `token ${Cookies.get("token")}` },
+      })
+      .then(function (response) {
+        const defaultStorage = response.data.default_storage;
+        if (defaultStorage === "" || defaultStorage === null) {
+          setNeedStorage(true);
+        }
+      })
+      .catch(function (error) {
+        if (error.response) {
+          console.log(error.response.data);
+        }
+      });
   };
 
   /*************
@@ -157,7 +176,6 @@ const App = () => {
    *
    ************/
   useEffect(() => {
-    // TODO: I think I need to save this key; see "exportKey"
     generateKey().then((newKey) => setKey(newKey));
   }, []);
 
@@ -195,20 +213,25 @@ const App = () => {
           },
         })
         .then((response) => {
-          decryptDataFromBytes(
-            appState.key,
-            window.atob(response.data.content_iv),
-            window.atob(response.data.content)
-          )
-            .then((decryptedContent) => {
-              const content = JSON.parse(decryptedContent);
-              if (content.length === 0) {
-                appState.setEditorValue(defaultEditorValue);
-              } else {
-                appState.setEditorValue(JSON.parse(decryptedContent));
-              }
-            })
-            .finally(() => appState.setLoadId(null));
+          if (response.data.content === null) {
+            appState.setEditorValue(defaultEditorValue);
+            appState.setLoadId(null);
+          } else {
+            decryptDataFromBytes(
+              appState.key,
+              window.atob(response.data.content_iv),
+              window.atob(response.data.content)
+            )
+              .then((decryptedContent) => {
+                const content = JSON.parse(decryptedContent);
+                if (content.length === 0) {
+                  appState.setEditorValue(defaultEditorValue);
+                } else {
+                  appState.setEditorValue(JSON.parse(decryptedContent));
+                }
+              })
+              .finally(() => appState.setLoadId(null));
+          }
         });
     }
   }, [appState.loadId]);
@@ -286,6 +309,7 @@ const App = () => {
             )) || <Start />
           }
         />
+        <Route path="/create-user" element={<AppCreateUser />} />
         <Route path="/login" element={<AppLogin setAtLogin={setAtLogin} />} />
         <Route path="/logout" element={<AppLogout />} />
       </Routes>

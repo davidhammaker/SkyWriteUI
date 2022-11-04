@@ -34,20 +34,8 @@ const Start = () => {
           </Typography>
         </Grid>
         <Grid item sx={{ py: 2 }}>
-          <Link
-            disabled
-            href="/create-user"
-            underline="none"
-            sx={{ px: 1 }}
-            onClick={(event) => {
-              event.preventDefault(); //for now
-              alert("In development. Not accepting new users.");
-            }}
-          >
-            <CustomFormButton
-              disabled // for now
-              variant="contained"
-            >
+          <Link href="/create-user" underline="none" sx={{ px: 1 }}>
+            <CustomFormButton variant="contained">
               <Typography sx={{ fontSize: "Larger" }}>Sign Up</Typography>
             </CustomFormButton>
           </Link>

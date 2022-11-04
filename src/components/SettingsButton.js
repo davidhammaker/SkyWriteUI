@@ -34,12 +34,19 @@ const SettingsButton = (props) => {
     }
   }, [settingsOpen]);
 
+  useEffect(() => {
+    if (appState.needStorage && props.validatesStorage) {
+      setSettingsOpen(true);
+    }
+  }, [appState.needStorage]);
+
   return (
     <>
       <IconButton onClick={() => setSettingsOpen(true)}>
         <SettingsIcon sx={{ color: theme.secondary }} />
       </IconButton>
       <SettingsModal
+        appState={appState}
         config={config}
         setConfig={setConfig}
         open={settingsOpen}
