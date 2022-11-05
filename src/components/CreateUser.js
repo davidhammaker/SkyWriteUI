@@ -9,7 +9,7 @@ import { backendOrigin, navigateTo } from "./utils/navTools";
 import { getFieldValue, onEnterKey } from "./utils/elementTools";
 import CustomTextField from "./CustomTextField";
 import CustomFormButton from "./CustomFormButton";
-import theme from "./utils/theme";
+import theme, { skyButtonStyle } from "./utils/theme";
 
 export default function AppLogin(props) {
   const [usernameErrors, setUsernameErrors] = useState("");
@@ -130,6 +130,7 @@ export default function AppLogin(props) {
                     <CustomFormButton
                       variant="contained"
                       onClick={doCreateUser}
+                      sx={skyButtonStyle}
                     >
                       Submit
                     </CustomFormButton>

@@ -26,3 +26,8 @@ const theme = {
 };
 
 export default theme;
+
+export const skyButtonStyle = {
+  backgroundColor: "#acf",
+  "&:hover": { backgroundColor: "#8ad" },
+};

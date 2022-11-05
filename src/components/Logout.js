@@ -6,7 +6,7 @@ import Box from "@mui/material/Box";
 import Cookies from "js-cookie";
 import { navigateTo } from "./utils/navTools";
 import CustomFormButton from "./CustomFormButton";
-import theme from "./utils/theme";
+import theme, { skyButtonStyle } from "./utils/theme";
 
 export default function AppLogout() {
   function doLogout() {
@@ -30,7 +30,11 @@ export default function AppLogout() {
         <Grid item md={4}>
           <Grid container justifyContent="center">
             <Grid item>
-              <CustomFormButton variant="contained" onClick={doLogout}>
+              <CustomFormButton
+                variant="contained"
+                onClick={doLogout}
+                sx={skyButtonStyle}
+              >
                 <Typography variant="h5">Yes</Typography>
               </CustomFormButton>
             </Grid>
@@ -42,6 +46,7 @@ export default function AppLogout() {
               <CustomFormButton
                 variant="contained"
                 onClick={() => navigateTo("/")}
+                sx={skyButtonStyle}
               >
                 <Typography variant="h5">No</Typography>
               </CustomFormButton>

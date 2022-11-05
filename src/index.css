@@ -10,6 +10,10 @@ html,
   height: 100%;
 }
 
+#root {
+  background-image: linear-gradient(0deg, #fff, #acf);
+}
+
 .saving-spinner {
   animation-name: saveButtonAnimation;
   animation-timing-function: linear;

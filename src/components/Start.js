@@ -4,6 +4,7 @@ import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import Link from "@mui/material/Link";
 import CustomFormButton from "./CustomFormButton";
+import { skyButtonStyle } from "./utils/theme";
 
 const Start = () => {
   return (
@@ -35,14 +36,14 @@ const Start = () => {
         </Grid>
         <Grid item sx={{ py: 2 }}>
           <Link href="/create-user" underline="none" sx={{ px: 1 }}>
-            <CustomFormButton variant="contained">
+            <CustomFormButton variant="contained" sx={skyButtonStyle}>
               <Typography sx={{ fontSize: "Larger" }}>Sign Up</Typography>
             </CustomFormButton>
           </Link>
         </Grid>
         <Grid item sx={{ py: 2 }}>
           <Link href="/login" underline="none" sx={{ px: 1 }}>
-            <CustomFormButton variant="contained">
+            <CustomFormButton variant="contained" sx={skyButtonStyle}>
               <Typography sx={{ fontSize: "Larger" }}>Log In</Typography>
             </CustomFormButton>
           </Link>
