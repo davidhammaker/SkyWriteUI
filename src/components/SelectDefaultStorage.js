@@ -10,7 +10,8 @@ import { backendOrigin } from "./utils/navTools";
 const SelectDefaultStorage = (props) => {
   const appState = props.appState;
 
-  const [storageOptions, setStorageOptions] = useState(null);
+  const [storageOptions, setStorageOptions] = useState({});
+  const [finalOptions, setFinalOptions] = useState({});
 
   useEffect(() => {
     axios
@@ -26,6 +27,16 @@ const SelectDefaultStorage = (props) => {
         }
       });
   }, []);
+
+  useEffect(() => {
+    let newOptions = {};
+    Object.keys(storageOptions).forEach((storageOption) => {
+      if (storageOptions[storageOption] !== null && storageOption !== null) {
+        newOptions[storageOption] = storageOptions[storageOption];
+      }
+    });
+    setFinalOptions(newOptions);
+  }, [storageOptions]);
 
   const handleSelectStorage = (event) => {
     axios
@@ -62,19 +73,21 @@ const SelectDefaultStorage = (props) => {
         {storageOptions && (
           <Select
             value={
-              props.config.default_storage === ""
+              props.config.default_storage === "" ||
+              props.config.default_storage === null
                 ? "placeholderValue"
                 : props.config.default_storage
             }
             onChange={handleSelectStorage}
           >
-            {props.config.default_storage === "" && (
+            {(props.config.default_storage === "" ||
+              props.config.default_storage === null) && (
               <MenuItem value="placeholderValue">
                 (Select Default Storage)
               </MenuItem>
             )}
             {storageOptions &&
-              Object.keys(storageOptions).map((storageOptionKey) => (
+              Object.keys(finalOptions).map((storageOptionKey) => (
                 <MenuItem
                   key={storageOptions[storageOptionKey]}
                   value={storageOptions[storageOptionKey]}

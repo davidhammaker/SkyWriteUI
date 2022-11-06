@@ -25,8 +25,8 @@ const SettingsModal = (props) => {
         justifyContent: "center",
       }}
     >
-      <Box
-        sx={{
+      <div
+        style={{
           position: "absolute",
           top: "50%",
           left: "50%",
@@ -58,7 +58,7 @@ const SettingsModal = (props) => {
                   Storage Settings must be configured, or files cannot be saved!
                 </Typography>
               )}
-              <Typography>File Storage</Typography>
+              <Typography sx={{ fontStyle: "italic" }}>File Storage</Typography>
               <Divider />
             </Grid>
             <Grid item xs={12} sx={{ textAlign: "center" }}>
@@ -87,10 +87,14 @@ const SettingsModal = (props) => {
               />
             </Grid>
             <Grid item xs={12} sx={{ textAlign: "center" }}>
-              <Typography>Account</Typography>
+              <Typography sx={{ fontStyle: "italic" }}>Account</Typography>
               <Divider />
             </Grid>
             <Grid item xs={12} sx={{ textAlign: "center" }}>
+              <Typography sx={{ mb: 1 }}>
+                <span>Logged in as </span>
+                <span style={{ fontWeight: "bold" }}>{appState.username}</span>
+              </Typography>
               <Link href="/logout" underline="none" sx={{ px: 1 }}>
                 <CustomFormButton variant="contained">
                   <Typography sx={{ fontSize: "Larger" }}>Log Out</Typography>
@@ -99,7 +103,7 @@ const SettingsModal = (props) => {
             </Grid>
           </Grid>
         </Box>
-      </Box>
+      </div>
     </Modal>
   );
 };
