@@ -31,6 +31,7 @@ const SettingsModal = (props) => {
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
+          outline: "none",
         }}
       >
         <Typography fontSize={"Larger"} color={theme.primaryLightest}>
