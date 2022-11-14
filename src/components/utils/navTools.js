@@ -1,5 +1,7 @@
 // Variables
-export const backendOrigin = process.env.REACT_APP_BACKEND_URI;
+export const backendOrigin = process.env.REACT_APP_BACKEND_URI
+  ? process.env.REACT_APP_BACKEND_URI
+  : "http://localhost:8000";
 
 /**
  * Parses the current window location and returns the result in an object.
