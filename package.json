@@ -1,6 +1,17 @@
 {
   "name": "sky-write",
-  "version": "0.1.0",
+  "description": "An online note-taking application accessible in the browser.",
+  "homepage": "https://sky-write.app",
+  "keywords": [
+    "journal",
+    "note",
+    "notepad",
+    "browser",
+    "cloud"
+  ],
+  "author": "David Hammaker <davidjhammaker@gmail.com>",
+  "contributors": [],
+  "version": "0.2.0",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.8.1",
