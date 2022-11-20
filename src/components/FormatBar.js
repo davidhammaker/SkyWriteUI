@@ -16,7 +16,7 @@ import Grid from "@mui/material/Grid";
 import SettingsButton from "./SettingsButton";
 import { Editor } from "slate";
 import { useSlate } from "slate-react";
-import theme, { lg } from "./utils/theme";
+import theme, { lg, md } from "./utils/theme";
 
 const FormatButton = ({ toggleMark, format }) => {
   const editor = useSlate();
@@ -128,11 +128,17 @@ const FormatBar = (props) => {
   );
 
   const [showMenuIcon, setShowMenuIcon] = useState(false);
+  const [showSettingsIcon, setShowSettingsIcon] = useState(false);
   const resizeBar = () => {
-    if (window.innerWidth >= lg) {
+    if (window.innerWidth >= md) {
       setShowMenuIcon(false);
     } else {
       setShowMenuIcon(true);
+    }
+    if (window.innerWidth >= lg) {
+      setShowSettingsIcon(false);
+    } else {
+      setShowSettingsIcon(true);
     }
   };
 
@@ -182,7 +188,7 @@ const FormatBar = (props) => {
             <ElementButton toggleElement={props.toggleElement} format="code" />
           </Grid>
           <Grid item>
-            {showMenuIcon && <SettingsButton appState={appState} />}
+            {showSettingsIcon && <SettingsButton appState={appState} />}
           </Grid>
         </Grid>
       </Box>
