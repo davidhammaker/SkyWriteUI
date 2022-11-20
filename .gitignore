@@ -12,7 +12,10 @@
 # misc
 .DS_Store
 .env
+build.env
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 Practice.js
+build.py
+/builds
