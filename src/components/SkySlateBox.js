@@ -288,6 +288,8 @@ const SkySlateBox = (props) => {
             else {
               console.log("ERROR!");
             }
+
+            appState.setUnsaved(false);
           })
           .catch((error) => {});
       })
@@ -306,6 +308,11 @@ const SkySlateBox = (props) => {
       editor={editor}
       value={value}
       onChange={(newValue) => {
+        if (appState.loading) {
+          appState.setLoading(false);
+        } else if (value !== newValue) {
+          appState.setUnsaved(true);
+        }
         setValue(newValue);
       }}
     >
@@ -370,9 +377,9 @@ const SkySlateBox = (props) => {
               <Editable
                 renderElement={renderElement}
                 renderLeaf={renderLeaf}
-                onKeyDown={(event) =>
-                  handleHotkeyEvent(event, editor, appState)
-                }
+                onKeyDown={(event) => {
+                  handleHotkeyEvent(event, editor, appState);
+                }}
                 placeholder="Type here."
                 id="sky-slate-editable"
                 autoFocus

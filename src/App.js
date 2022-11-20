@@ -34,6 +34,7 @@ const App = () => {
   const [editor, setEditor] = useState(null);
   const [editorValue, setEditorValue] = useState(null);
   const [editorVisibility, setEditorVisibility] = useState("visible");
+  const [unsaved, setUnsaved] = useState(false);
   const [fileDrawerOpen, setFileDrawerOpen] = useState(false);
   const [fileDragging, setFileDragging] = useState(null);
   const [fileDragTo, setFileDragTo] = useState(null);
@@ -42,6 +43,7 @@ const App = () => {
   const [fileId, setFileId] = useState(null);
   const [saving, setSaving] = useState(false);
   const [loadId, setLoadId] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [currentValue, setCurrentValue] = useState(null);
   const [key, setKey] = useState(null);
   const [needStorage, setNeedStorage] = useState(false);
@@ -63,6 +65,8 @@ const App = () => {
     setEditorValue,
     editorVisibility,
     setEditorVisibility,
+    unsaved,
+    setUnsaved,
     fileDrawerOpen,
     setFileDrawerOpen,
     fileDragging,
@@ -79,6 +83,8 @@ const App = () => {
     setSaving,
     loadId,
     setLoadId,
+    loading,
+    setLoading,
     currentValue,
     setCurrentValue,
     key,
@@ -196,9 +202,6 @@ const App = () => {
 
   useEffect(() => {
     if (filePath.length > 0) {
-      console.log(
-        "Note: Not currently saving editor content when switching..."
-      );
       setFileId(filePath[filePath.length - 1]);
     }
   }, [filePath]);

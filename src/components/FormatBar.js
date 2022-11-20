@@ -100,10 +100,25 @@ const FormatBar = (props) => {
     </IconButton>
   );
 
+  let saveStyle = {};
+  if (appState.unsaved) {
+    saveStyle.marginRight = "-10px";
+  }
   const saveButton = (
-    <IconButton onClick={() => appState.setSaving(true)}>
-      <Save sx={{ color: theme.secondary }} />
-    </IconButton>
+    <span>
+      <IconButton onClick={() => appState.setSaving(true)} style={saveStyle}>
+        <Save sx={{ color: theme.secondary }} />
+      </IconButton>
+      {appState.unsaved && (
+        <svg
+          width="10"
+          height="10"
+          style={{ position: "relative", left: "-8px", top: "-6px" }}
+        >
+          <circle cx="5" cy="5" r="5" fill="#0000ff" />
+        </svg>
+      )}
+    </span>
   );
 
   const savingSpinner = (

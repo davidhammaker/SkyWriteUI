@@ -63,6 +63,20 @@ const DrawerFile = (props) => {
     appState.setFilename(drawerFilename);
     appState.setEditorVisibility("hidden"); // To prevent old content from flashing before new content
     appState.setLoadId(obj.id);
+    appState.setLoading(true);
+  };
+
+  /**
+   * Confirm loading a file before actually loading it.
+   */
+  const confirmLoad = () => {
+    const continueLoad = window.confirm(
+      "You have unsaved changes. Are you sure you want to switch files?"
+    );
+    if (continueLoad) {
+      appState.setUnsaved(false);
+      loadFile();
+    }
   };
 
   // Dragging style
@@ -86,7 +100,11 @@ const DrawerFile = (props) => {
       onClick={(event) => {
         event.preventDefault;
         if (!appState.fileDragging) {
-          loadFile();
+          if (!appState.unsaved) {
+            loadFile();
+          } else {
+            confirmLoad();
+          }
         }
       }}
       onPointerEnter={() => {
