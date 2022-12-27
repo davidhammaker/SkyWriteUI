@@ -3,10 +3,13 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import NoteAddIcon from "@mui/icons-material/NoteAdd";
 import CreateNewFolderIcon from "@mui/icons-material/CreateNewFolder";
+import Tooltip from "@mui/material/Tooltip";
+import LowPriorityIcon from "@mui/icons-material/LowPriority";
 import CustomFormButton from "./CustomFormButton";
 import Cookies from "js-cookie";
 import axios from "axios";
 import FolderModal from "./FolderModal";
+import ReorderModal from "./ReorderModal";
 import { backendOrigin } from "./utils/navTools";
 import { encryptDataToBytes } from "./utils/encryption";
 import { setUpNewFile } from "./utils/skyWriteUtils";
@@ -16,6 +19,8 @@ const AddItems = (props) => {
 
   const [newName, setNewName] = useState("");
   const [folderModalOpen, setFolderModalOpen] = useState(false);
+  const [reorderModalOpen, setReorderModalOpen] = useState(false);
+  const [reorderDisabled, setReorderDisabled] = useState(true);
   const [ciphertext, setCiphertext] = useState(null);
   const [iv, setIv] = useState(null);
   const [saveFolder, setSaveFolder] = useState(false);
@@ -78,41 +83,61 @@ const AddItems = (props) => {
   return (
     <Box sx={{ height: "42px" }} id="add-items">
       <Grid container direction="row">
-        <Grid item xs={6} sx={{ width: "100%" }}>
-          <CustomFormButton
-            sx={{
-              boxShadow: 0,
-              borderStyle: "solid",
-              width: "100%",
-              height: "42px",
-              borderRadius: 0,
-              fontSize: "small",
-            }}
-            variant="contained"
-            onClick={() => setFolderModalOpen(true)}
-            startIcon={<CreateNewFolderIcon />}
-          >
-            New Folder
-          </CustomFormButton>
+        <Grid item xs={4} sx={{ width: "100%" }}>
+          <Tooltip title="New Folder">
+            <CustomFormButton
+              sx={{
+                boxShadow: 0,
+                borderStyle: "solid",
+                width: "100%",
+                height: "42px",
+                borderRadius: 0,
+                fontSize: "small",
+              }}
+              variant="contained"
+              onClick={() => setFolderModalOpen(true)}
+              startIcon={<CreateNewFolderIcon />}
+            ></CustomFormButton>
+          </Tooltip>
         </Grid>
-        <Grid item xs={6} sx={{ width: "100%" }}>
-          <CustomFormButton
-            variant="contained"
-            sx={{
-              boxShadow: 0,
-              borderStyle: "solid",
-              width: "100%",
-              height: "42px",
-              borderRadius: 0,
-              fontSize: "small",
-            }}
-            onClick={() => {
-              setUpNewFile(appState);
-            }}
-            startIcon={<NoteAddIcon />}
-          >
-            New File
-          </CustomFormButton>
+        <Grid item xs={4} sx={{ width: "100%" }}>
+          <Tooltip title="New File">
+            <CustomFormButton
+              variant="contained"
+              sx={{
+                boxShadow: 0,
+                borderStyle: "solid",
+                width: "100%",
+                height: "42px",
+                borderRadius: 0,
+                fontSize: "small",
+              }}
+              onClick={() => {
+                setUpNewFile(appState);
+              }}
+              startIcon={<NoteAddIcon />}
+            ></CustomFormButton>
+          </Tooltip>
+        </Grid>
+        <Grid item xs={4} sx={{ width: "100%" }}>
+          <Tooltip title="Re-Order">
+            <span>
+              <CustomFormButton
+                sx={{
+                  boxShadow: 0,
+                  borderStyle: "solid",
+                  width: "100%",
+                  height: "42px",
+                  borderRadius: 0,
+                  fontSize: "small",
+                }}
+                variant="contained"
+                onClick={() => setReorderModalOpen(true)}
+                startIcon={<LowPriorityIcon />}
+                disabled={reorderDisabled}
+              ></CustomFormButton>
+            </span>
+          </Tooltip>
         </Grid>
       </Grid>
       <FolderModal
@@ -124,6 +149,15 @@ const AddItems = (props) => {
         appState={appState}
         folderState={folderState}
         newFolder={true}
+      />
+      <ReorderModal
+        open={reorderModalOpen}
+        onClose={() => {
+          setReorderModalOpen(false);
+        }}
+        appState={appState}
+        setReorderDisabled={setReorderDisabled}
+        setReorderModalOpen={setReorderModalOpen}
       />
     </Box>
   );

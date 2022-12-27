@@ -24,44 +24,32 @@ const DrawerFileList = (props) => {
           component="div"
           disablePadding
         >
-          <Draggable
-            axis="y"
-            handle={`#drag-handle-${obj.id}`}
-            onStart={() => {
-              appState.setFileDragging(obj.id);
-            }}
-            onStop={() => {
-              appState.setFileDragging(null);
+          <div
+            style={{
+              pointerEvents: appState.fileDragging === obj.id ? "none" : "auto",
             }}
           >
-            <div
-              style={{
-                pointerEvents:
-                  appState.fileDragging === obj.id ? "none" : "auto",
-              }}
-            >
-              {!obj.is_file && (
-                <DrawerFolder
-                  obj={obj}
-                  depth={newDepth}
-                  currentPath={currentPath}
-                  appState={appState}
-                  getUser={props.getUser}
-                  folderId={props.folderId}
-                />
-              )}
-              {obj.is_file && (
-                <DrawerFile
-                  obj={obj}
-                  depth={newDepth}
-                  currentPath={currentPath}
-                  appState={appState}
-                  getUser={props.getUser}
-                  folderId={props.folderId}
-                />
-              )}
-            </div>
-          </Draggable>
+            {!obj.is_file && (
+              <DrawerFolder
+                obj={obj}
+                depth={newDepth}
+                currentPath={currentPath}
+                appState={appState}
+                getUser={props.getUser}
+                folderId={props.folderId}
+              />
+            )}
+            {obj.is_file && (
+              <DrawerFile
+                obj={obj}
+                depth={newDepth}
+                currentPath={currentPath}
+                appState={appState}
+                getUser={props.getUser}
+                folderId={props.folderId}
+              />
+            )}
+          </div>
         </List>
       ))}
     </>

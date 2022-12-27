@@ -36,8 +36,6 @@ const App = () => {
   const [editorVisibility, setEditorVisibility] = useState("visible");
   const [unsaved, setUnsaved] = useState(false);
   const [fileDrawerOpen, setFileDrawerOpen] = useState(false);
-  const [fileDragging, setFileDragging] = useState(null);
-  const [fileDragTo, setFileDragTo] = useState(null);
   const [filePath, setFilePath] = useState([]);
   const [filename, setFilename] = useState(defaultFilename);
   const [fileId, setFileId] = useState(null);
@@ -69,10 +67,6 @@ const App = () => {
     setUnsaved,
     fileDrawerOpen,
     setFileDrawerOpen,
-    fileDragging,
-    setFileDragging,
-    fileDragTo,
-    setFileDragTo,
     filePath,
     setFilePath,
     filename,
@@ -237,24 +231,6 @@ const App = () => {
         });
     }
   }, [appState.loadId]);
-
-  useEffect(() => {
-    if (fileDragTo === null) {
-      return;
-    }
-    setFileDragTo(null);
-
-    axios
-      .patch(`${backendOrigin}/re_order/`, fileDragTo, {
-        headers: {
-          Authorization: `token ${Cookies.get("token")}`,
-        },
-      })
-      .then((response) => {
-        setStorageObjects(null);
-      })
-      .catch(() => {});
-  }, [fileDragTo]);
 
   useEffect(() => {
     if (storageObjects === null) {

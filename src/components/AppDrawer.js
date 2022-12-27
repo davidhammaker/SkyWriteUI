@@ -52,19 +52,7 @@ const AppDrawer = (props) => {
         appState={appState}
         getUser={props.getUser}
       />
-      <ListItem
-        sx={{ ...borderObj }}
-        onPointerEnter={() => {
-          if (appState.fileDragging !== null) {
-            setDraggingObjId(appState.fileDragging);
-          }
-        }}
-        onPointerLeave={() => {
-          if (appState.fileDragging !== null) {
-            setDraggingObjId(null);
-          }
-        }}
-      >
+      <ListItem sx={{ ...borderObj }}>
         <ListItemText />
       </ListItem>
     </>

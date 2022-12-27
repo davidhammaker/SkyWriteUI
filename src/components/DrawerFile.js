@@ -3,7 +3,6 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import ArticleIcon from "@mui/icons-material/Article";
-import UnfoldMoreIcon from "@mui/icons-material/UnfoldMore";
 import theme from "./utils/theme";
 import { decryptDataFromBytes } from "./utils/encryption";
 
@@ -141,20 +140,6 @@ const DrawerFile = (props) => {
           },
         }}
       />
-      <div
-        onClick={(event) => {
-          event.stopPropagation();
-        }}
-        style={{
-          width: "20px",
-          height: "20px",
-          cursor: "ns-resize",
-        }}
-      >
-        <ListItemIcon id={`drag-handle-${obj.id}`}>
-          <UnfoldMoreIcon />
-        </ListItemIcon>
-      </div>
     </ListItemButton>
   );
 };

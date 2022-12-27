@@ -27,12 +27,16 @@
     "react-draggable": "^4.4.5",
     "react-router-dom": "^6.3.0",
     "react-scripts": "^4.0.3",
+    "react-sortablejs": "6.1.1",
     "slate": "^0.82.1",
     "slate-history": "^0.66.0",
     "slate-react": "^0.82",
+    "sortablejs": "^1.15.0",
     "styled-components": "^5.3.3"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "@types/sortablejs": "^1.15.0"
+  },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",

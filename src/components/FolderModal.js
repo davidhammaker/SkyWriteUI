@@ -1,13 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import Save from "@mui/icons-material/Save";
-import CreateNewFolderIcon from "@mui/icons-material/CreateNewFolder";
 import NoteAddIcon from "@mui/icons-material/NoteAdd";
+import LowPriorityIcon from "@mui/icons-material/LowPriority";
 import Modal from "@mui/material/Modal";
+import ReorderModal from "./ReorderModal";
 import { StyledTextField } from "./CustomTextField";
 import CustomFormButton from "./CustomFormButton";
 import theme from "./utils/theme";
@@ -17,6 +18,9 @@ const FolderModal = (props) => {
   const obj = props.obj;
   const appState = props.appState;
   const folderState = props.folderState;
+
+  const [reorderModalOpen, setReorderModalOpen] = useState(false);
+  const [reorderDisabled, setReorderDisabled] = useState(true);
 
   return (
     <Modal
@@ -121,7 +125,47 @@ const FolderModal = (props) => {
                 </CustomFormButton>
               </Tooltip>
             </Grid>
+            <Grid
+              item
+              xs={12}
+              sm={4}
+              sx={{ textAlign: "center", mb: { xs: 2 } }}
+            >
+              <Tooltip title="Re-order Items in this Folder">
+                <span>
+                  <CustomFormButton
+                    sx={{
+                      backgroundColor: theme.primaryLight,
+                      color: theme.primaryDark,
+                      boxShadow: 5,
+                      "&:hover": {
+                        backgroundColor: theme.primary,
+                      },
+                    }}
+                    onClick={() => {
+                      setReorderModalOpen(true);
+                    }}
+                    startIcon={<LowPriorityIcon />}
+                    disabled={reorderDisabled}
+                  >
+                    Re-order
+                  </CustomFormButton>
+                </span>
+              </Tooltip>
+            </Grid>
           </Grid>
+        )}
+        {obj && (
+          <ReorderModal
+            open={reorderModalOpen}
+            onClose={() => {
+              setReorderModalOpen(false);
+            }}
+            appState={appState}
+            setReorderDisabled={setReorderDisabled}
+            setReorderModalOpen={setReorderModalOpen}
+            folderId={obj.id}
+          />
         )}
       </Box>
     </Modal>

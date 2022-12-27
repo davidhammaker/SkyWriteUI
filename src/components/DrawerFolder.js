@@ -7,7 +7,6 @@ import FolderIcon from "@mui/icons-material/Folder";
 import EditIcon from "@mui/icons-material/Edit";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
-import UnfoldMoreIcon from "@mui/icons-material/UnfoldMore";
 import Collapse from "@mui/material/Collapse";
 import Cookies from "js-cookie";
 import axios from "axios";
@@ -222,7 +221,7 @@ const DrawerFolder = (props) => {
                 setEditName(true);
               }
             }}
-            style={{ paddingRight: "10px", paddingLeft: "10px" }}
+            style={{ paddingRight: "0px", paddingLeft: "10px" }}
           >
             <IconButton
               sx={{
@@ -237,20 +236,6 @@ const DrawerFolder = (props) => {
             >
               <EditIcon fontSize="small" />
             </IconButton>
-          </div>
-          <div
-            onClick={(event) => {
-              event.stopPropagation();
-            }}
-            style={{
-              width: "20px",
-              height: "20px",
-              cursor: "ns-resize",
-            }}
-          >
-            <ListItemIcon id={`drag-handle-${obj.id}`}>
-              <UnfoldMoreIcon />
-            </ListItemIcon>
           </div>
         </>
       </ListItemButton>
