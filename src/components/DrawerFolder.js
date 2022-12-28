@@ -23,8 +23,6 @@ const DrawerFolder = (props) => {
   const path = [...props.currentPath, obj.id];
   const parentFolderId = props.folderId ? props.folderId : null;
 
-  const [draggingObjId, setDraggingObjId] = useState(null);
-
   const [open, setOpen] = useState(false);
   const [folderName, setFolderName] = useState("");
   const [editName, setEditName] = useState(false);
@@ -121,30 +119,6 @@ const DrawerFolder = (props) => {
       .catch((error) => {});
   }, [appState.key]);
 
-  useEffect(() => {
-    if (draggingObjId !== null) {
-      appState.setFileDragTo({
-        from_id: draggingObjId,
-        to_id: obj.id,
-        folder_id: parentFolderId,
-      });
-      setDraggingObjId(null);
-    }
-  }, [appState.fileDragging]);
-
-  // Dragging style
-  let borderObj;
-  if (draggingObjId !== null) {
-    borderObj = {
-      borderTopWidth: "3px",
-      borderTopStyle: "solid",
-      borderTopColor: theme.primaryDark,
-      marginTop: "-3px",
-    };
-  } else {
-    borderObj = {};
-  }
-
   return (
     <>
       <ListItemButton
@@ -159,17 +133,6 @@ const DrawerFolder = (props) => {
         sx={{
           pl: depth * 1.5 + 1,
           pr: 3,
-          ...borderObj,
-        }}
-        onPointerEnter={() => {
-          if (appState.fileDragging !== null) {
-            setDraggingObjId(appState.fileDragging);
-          }
-        }}
-        onPointerLeave={() => {
-          if (appState.fileDragging !== null) {
-            setDraggingObjId(null);
-          }
         }}
       >
         <>

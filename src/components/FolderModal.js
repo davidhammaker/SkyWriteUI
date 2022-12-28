@@ -132,7 +132,7 @@ const FolderModal = (props) => {
               sx={{ textAlign: "center", mb: { xs: 2 } }}
             >
               <Tooltip title="Re-order Items in this Folder">
-                <span>
+                <div>
                   <CustomFormButton
                     sx={{
                       backgroundColor: theme.primaryLight,
@@ -150,7 +150,7 @@ const FolderModal = (props) => {
                   >
                     Re-order
                   </CustomFormButton>
-                </span>
+                </div>
               </Tooltip>
             </Grid>
           </Grid>
@@ -160,6 +160,7 @@ const FolderModal = (props) => {
             open={reorderModalOpen}
             onClose={() => {
               setReorderModalOpen(false);
+              appState.setStorageObjects(null);
             }}
             appState={appState}
             setReorderDisabled={setReorderDisabled}

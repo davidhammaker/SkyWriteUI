@@ -5,11 +5,13 @@ import NoteAddIcon from "@mui/icons-material/NoteAdd";
 import CreateNewFolderIcon from "@mui/icons-material/CreateNewFolder";
 import Tooltip from "@mui/material/Tooltip";
 import LowPriorityIcon from "@mui/icons-material/LowPriority";
+import DriveFileMoveOutlinedIcon from "@mui/icons-material/DriveFileMoveOutlined";
 import CustomFormButton from "./CustomFormButton";
 import Cookies from "js-cookie";
 import axios from "axios";
 import FolderModal from "./FolderModal";
 import ReorderModal from "./ReorderModal";
+import MoveItemsModal from "./MoveFilesModal";
 import { backendOrigin } from "./utils/navTools";
 import { encryptDataToBytes } from "./utils/encryption";
 import { setUpNewFile } from "./utils/skyWriteUtils";
@@ -21,6 +23,8 @@ const AddItems = (props) => {
   const [folderModalOpen, setFolderModalOpen] = useState(false);
   const [reorderModalOpen, setReorderModalOpen] = useState(false);
   const [reorderDisabled, setReorderDisabled] = useState(true);
+  const [moveFilesModalOpen, setMoveFilesModalOpen] = useState(false);
+  const [moveFilesDisabled, setMoveFilesDisabled] = useState(true);
   const [ciphertext, setCiphertext] = useState(null);
   const [iv, setIv] = useState(null);
   const [saveFolder, setSaveFolder] = useState(false);
@@ -80,10 +84,21 @@ const AddItems = (props) => {
     }
   }, [saveFolder]);
 
+  useEffect(() => {
+    if (
+      appState.storageObjects !== null &&
+      appState.storageObjects.length > 0
+    ) {
+      setMoveFilesDisabled(false);
+    } else {
+      setMoveFilesDisabled(true);
+    }
+  }, [appState.storageObjects]);
+
   return (
     <Box sx={{ height: "42px" }} id="add-items">
       <Grid container direction="row">
-        <Grid item xs={4} sx={{ width: "100%" }}>
+        <Grid item xs={3} sx={{ width: "100%" }}>
           <Tooltip title="New Folder">
             <CustomFormButton
               sx={{
@@ -100,7 +115,7 @@ const AddItems = (props) => {
             ></CustomFormButton>
           </Tooltip>
         </Grid>
-        <Grid item xs={4} sx={{ width: "100%" }}>
+        <Grid item xs={3} sx={{ width: "100%" }}>
           <Tooltip title="New File">
             <CustomFormButton
               variant="contained"
@@ -119,9 +134,9 @@ const AddItems = (props) => {
             ></CustomFormButton>
           </Tooltip>
         </Grid>
-        <Grid item xs={4} sx={{ width: "100%" }}>
+        <Grid item xs={3} sx={{ width: "100%" }}>
           <Tooltip title="Re-Order">
-            <span>
+            <div>
               <CustomFormButton
                 sx={{
                   boxShadow: 0,
@@ -136,7 +151,29 @@ const AddItems = (props) => {
                 startIcon={<LowPriorityIcon />}
                 disabled={reorderDisabled}
               ></CustomFormButton>
-            </span>
+            </div>
+          </Tooltip>
+        </Grid>
+        <Grid item xs={3} sx={{ width: "100%" }}>
+          <Tooltip title="Move Files Between Folders">
+            <div>
+              <CustomFormButton
+                sx={{
+                  boxShadow: 0,
+                  borderStyle: "solid",
+                  width: "100%",
+                  height: "42px",
+                  borderRadius: 0,
+                  fontSize: "small",
+                }}
+                variant="contained"
+                onClick={() => {
+                  setMoveFilesModalOpen(true);
+                }}
+                startIcon={<DriveFileMoveOutlinedIcon />}
+                disabled={moveFilesDisabled}
+              ></CustomFormButton>
+            </div>
           </Tooltip>
         </Grid>
       </Grid>
@@ -154,10 +191,20 @@ const AddItems = (props) => {
         open={reorderModalOpen}
         onClose={() => {
           setReorderModalOpen(false);
+          appState.setStorageObjects(null);
         }}
         appState={appState}
         setReorderDisabled={setReorderDisabled}
         setReorderModalOpen={setReorderModalOpen}
+      />
+      <MoveItemsModal
+        open={moveFilesModalOpen}
+        onClose={() => {
+          setMoveFilesModalOpen(false);
+        }}
+        appState={appState}
+        setMoveFilesModalOpen={setMoveFilesModalOpen}
+        setMoveFilesDisabled={setMoveFilesDisabled}
       />
     </Box>
   );

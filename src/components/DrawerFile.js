@@ -13,7 +13,6 @@ const DrawerFile = (props) => {
   const parentFolderId = props.folderId ? props.folderId : null;
 
   const [drawerFilename, setDrawerFilename] = useState("");
-  const [draggingObjId, setDraggingObjId] = useState(null);
 
   // After the key has been set, decrypt the file name.
   useEffect(() => {
@@ -43,17 +42,6 @@ const DrawerFile = (props) => {
     }
   }, [appState.filename]);
 
-  useEffect(() => {
-    if (draggingObjId !== null) {
-      appState.setFileDragTo({
-        from_id: draggingObjId,
-        to_id: obj.id,
-        folder_id: parentFolderId,
-      });
-      setDraggingObjId(null);
-    }
-  }, [appState.fileDragging]);
-
   /**
    * Set the filename in the editor's filename box and load/decrypt file content.
    */
@@ -78,24 +66,11 @@ const DrawerFile = (props) => {
     }
   };
 
-  // Dragging style
-  let borderObj;
-  if (draggingObjId !== null) {
-    borderObj = {
-      borderTopWidth: "3px",
-      borderTopStyle: "solid",
-      borderTopColor: theme.primaryDark,
-      marginTop: "-3px",
-    };
-  } else {
-    borderObj = {};
-  }
-
   return (
     <ListItemButton
       className="drawer-object"
       objid={obj.id}
-      sx={{ pl: depth * 1.5 + 1, pr: 3, ...borderObj }}
+      sx={{ pl: depth * 1.5 + 1, pr: 3 }}
       onClick={(event) => {
         event.preventDefault;
         if (!appState.fileDragging) {
@@ -104,16 +79,6 @@ const DrawerFile = (props) => {
           } else {
             confirmLoad();
           }
-        }
-      }}
-      onPointerEnter={() => {
-        if (appState.fileDragging !== null) {
-          setDraggingObjId(appState.fileDragging);
-        }
-      }}
-      onPointerLeave={() => {
-        if (appState.fileDragging !== null) {
-          setDraggingObjId(null);
         }
       }}
     >
