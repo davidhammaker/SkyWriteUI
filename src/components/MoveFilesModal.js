@@ -43,15 +43,19 @@ const ModalFile = (props) => {
   const [invalid, setInvalid] = useState(false);
 
   useEffect(() => {
-    decryptDataFromBytes(
-      appState.key,
-      window.atob(file.name_iv),
-      window.atob(file.name)
-    )
-      .then((decryptedName) => {
-        setFilename(decryptedName);
-      })
-      .catch((error) => {});
+    if (file.id === null) {
+      setFilename("(no folder)");
+    } else {
+      decryptDataFromBytes(
+        appState.key,
+        window.atob(file.name_iv),
+        window.atob(file.name)
+      )
+        .then((decryptedName) => {
+          setFilename(decryptedName);
+        })
+        .catch((error) => {});
+    }
 
     if (props.selection && props.selection.includes(file.id)) {
       setInvalid(true);
@@ -197,6 +201,8 @@ const ModalFolderOptions = (props) => {
 const MoveItemsModal = (props) => {
   const appState = props.appState;
 
+  const nullFolder = { id: null, is_file: false, files: [] };
+
   const [rootList, setRootList] = useState([]);
   const [idsVertical, setIdsVertical] = useState([]);
   const [prevSelect, setPrevSelect] = useState(null);
@@ -302,12 +308,9 @@ const MoveItemsModal = (props) => {
               fontSize: "small",
             }}
             onClick={() => {
-              if (targetId !== null) {
-                handleSave();
-              }
+              handleSave();
             }}
             startIcon={<DoneIcon />}
-            disabled={targetId === null}
           ></CustomFormButton>
         </Grid>
         <Grid item xs={2} sm={1} sx={{ width: "100%" }}>
@@ -372,7 +375,7 @@ const MoveItemsModal = (props) => {
                 </Typography>
                 <Divider />
                 <ModalFolderOptions
-                  objList={rootList}
+                  objList={[nullFolder, ...rootList]}
                   appState={appState}
                   targetId={targetId}
                   setTargetId={setTargetId}
