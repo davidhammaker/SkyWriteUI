@@ -1,12 +1,18 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Modal from "@mui/material/Modal";
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import Link from "@mui/material/Link";
+import IconButton from "@mui/material/IconButton";
+import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
+import CheckBoxIcon from "@mui/icons-material/CheckBox";
+import Cookies from "js-cookie";
+import axios from "axios";
 import CustomFormButton from "./CustomFormButton";
 import SelectDefaultStorage from "./SelectDefaultStorage";
+import { backendOrigin } from "./utils/navTools";
 import theme from "./utils/theme";
 import Dropbox_Tab_32 from "../Dropbox_Tab_32.svg";
 
@@ -17,13 +23,51 @@ const SettingsModal = (props) => {
     ? "Reconnect Dropbox"
     : "Connect Dropbox";
 
+  const [reopenLast, setReopenLast] = useState(false);
+
+  useEffect(() => {
+    setReopenLast(Boolean(appState.lastOpenedData.id));
+  }, [appState.lastOpenedData]);
+
+  const toggleReopenLast = () => {
+    let newReopenId;
+    if (reopenLast) {
+      newReopenId = null;
+    } else {
+      if (appState.fileId !== null && appState.fileId !== undefined) {
+        newReopenId = appState.fileId;
+      } else {
+        appState.storageObjects.forEach((obj) => {
+          if (obj.is_file) {
+            newReopenId = obj.id;
+            return;
+          }
+        });
+      }
+    }
+    axios
+      .patch(
+        `${backendOrigin}/config/`,
+        { last_file: newReopenId },
+        {
+          headers: { Authorization: `token ${Cookies.get("token")}` },
+        }
+      )
+      .then((response) => {
+        if (response.status === 200) {
+          setReopenLast(!reopenLast);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   return (
     <Modal
       open={props.open}
       onClose={props.onClose}
-      sx={{
-        justifyContent: "center",
-      }}
+      sx={{ justifyContent: "center" }}
     >
       <div
         style={{
@@ -52,6 +96,36 @@ const SettingsModal = (props) => {
             alignItems="center"
             spacing={2}
           >
+            <Grid item xs={12} sx={{ textAlign: "center" }}>
+              <Typography sx={{ fontStyle: "italic" }}>
+                General Options
+              </Typography>
+              <Divider />
+            </Grid>
+            <Grid item xs={12} sx={{ textAlign: "center" }}>
+              <Grid
+                container
+                direction="row"
+                justifyContent="center"
+                alignItems="center"
+              >
+                <Grid item>
+                  <IconButton
+                    sx={{ color: theme.primaryDark }}
+                    onClick={toggleReopenLast}
+                  >
+                    {reopenLast ? (
+                      <CheckBoxIcon />
+                    ) : (
+                      <CheckBoxOutlineBlankIcon />
+                    )}
+                  </IconButton>
+                </Grid>
+                <Grid item>
+                  <Typography>Re-open Last File</Typography>
+                </Grid>
+              </Grid>
+            </Grid>
             <Grid item xs={12} sx={{ textAlign: "center" }}>
               {appState.needStorage && (
                 <Typography color="#f00">

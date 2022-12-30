@@ -42,6 +42,10 @@ const App = () => {
   const [saving, setSaving] = useState(false);
   const [loadId, setLoadId] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [lastOpenedData, setLastOpenedData] = useState({
+    id: null,
+    ready: false,
+  });
   const [currentValue, setCurrentValue] = useState(null);
   const [key, setKey] = useState(null);
   const [needStorage, setNeedStorage] = useState(false);
@@ -79,6 +83,8 @@ const App = () => {
     setLoadId,
     loading,
     setLoading,
+    lastOpenedData,
+    setLastOpenedData,
     currentValue,
     setCurrentValue,
     key,
@@ -147,6 +153,9 @@ const App = () => {
         setUsername(response.data.username);
         setStorageObjects(response.data.storage_objects);
         getOrCreateKey(response.data.encryption_key);
+        if (response.data.last_file !== null) {
+          setLastOpenedData({ ...lastOpenedData, id: response.data.last_file });
+        }
       })
       .catch(function (error) {
         if (error.response) {
@@ -226,7 +235,10 @@ const App = () => {
                   appState.setEditorValue(JSON.parse(decryptedContent));
                 }
               })
-              .finally(() => appState.setLoadId(null));
+              .catch((error) => {})
+              .finally(() => {
+                appState.setLoadId(null);
+              });
           }
         });
     }
@@ -237,6 +249,16 @@ const App = () => {
       getUser();
     }
   }, [storageObjects]);
+
+  useEffect(() => {
+    if (
+      storageObjects !== null &&
+      lastOpenedData.id !== null &&
+      lastOpenedData.ready === false
+    ) {
+      setLastOpenedData({ ...lastOpenedData, ready: true });
+    }
+  }, [storageObjects, lastOpenedData]);
 
   /*************
    *

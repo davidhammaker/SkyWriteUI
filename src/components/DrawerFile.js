@@ -3,16 +3,20 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import ArticleIcon from "@mui/icons-material/Article";
+import Cookies from "js-cookie";
+import axios from "axios";
+import { backendOrigin } from "./utils/navTools";
 import theme from "./utils/theme";
 import { decryptDataFromBytes } from "./utils/encryption";
+
+const defaultFilename = "";
 
 const DrawerFile = (props) => {
   const appState = props.appState;
   const obj = props.obj;
   const depth = props.depth;
-  const parentFolderId = props.folderId ? props.folderId : null;
 
-  const [drawerFilename, setDrawerFilename] = useState("");
+  const [drawerFilename, setDrawerFilename] = useState(defaultFilename);
 
   // After the key has been set, decrypt the file name.
   useEffect(() => {
@@ -30,7 +34,7 @@ const DrawerFile = (props) => {
   useEffect(() => {
     if (appState.fileId === obj.id) {
       appState.setFilePath([...props.currentPath, obj.id]);
-      if (drawerFilename !== "") {
+      if (drawerFilename !== defaultFilename) {
         appState.setFilename(drawerFilename);
       }
     }
@@ -42,6 +46,16 @@ const DrawerFile = (props) => {
     }
   }, [appState.filename]);
 
+  useEffect(() => {
+    if (
+      appState.lastOpenedData.id === obj.id &&
+      appState.lastOpenedData.ready &&
+      drawerFilename !== defaultFilename
+    ) {
+      loadFile();
+    }
+  }, [appState.lastOpenedData, drawerFilename]);
+
   /**
    * Set the filename in the editor's filename box and load/decrypt file content.
    */
@@ -51,6 +65,22 @@ const DrawerFile = (props) => {
     appState.setEditorVisibility("hidden"); // To prevent old content from flashing before new content
     appState.setLoadId(obj.id);
     appState.setLoading(true);
+    if (appState.lastOpenedData.id !== null) {
+      axios
+        .patch(
+          `${backendOrigin}/config/`,
+          { last_file: obj.id },
+          {
+            headers: {
+              Authorization: `token ${Cookies.get("token")}`,
+            },
+          }
+        )
+        .then((response) => {})
+        .catch((error) => {
+          console.log(error);
+        });
+    }
   };
 
   /**
@@ -73,12 +103,10 @@ const DrawerFile = (props) => {
       sx={{ pl: depth * 1.5 + 1, pr: 3 }}
       onClick={(event) => {
         event.preventDefault;
-        if (!appState.fileDragging) {
-          if (!appState.unsaved) {
-            loadFile();
-          } else {
-            confirmLoad();
-          }
+        if (!appState.unsaved) {
+          loadFile();
+        } else {
+          confirmLoad();
         }
       }}
     >

@@ -257,7 +257,9 @@ const SkySlateBox = (props) => {
                   props.getUser();
                   appState.setFileId(response.data.id);
                 })
-                .catch((error) => console.log(error))
+                .catch((error) => {
+                  console.log(error);
+                })
                 .finally(() => {
                   appState.setSaving(false);
                 });
@@ -278,7 +280,9 @@ const SkySlateBox = (props) => {
                   props.getUser();
                   appState.setFileId(response.data.id);
                 })
-                .catch((error) => console.log(error))
+                .catch((error) => {
+                  console.log(error);
+                })
                 .finally(() => {
                   appState.setSaving(false);
                 });
