@@ -50,8 +50,13 @@ const DrawerFile = (props) => {
     if (
       appState.lastOpenedData.id === obj.id &&
       appState.lastOpenedData.ready &&
+      !appState.lastOpenedData.complete &&
       drawerFilename !== defaultFilename
     ) {
+      appState.setLastOpenedData({
+        ...appState.lastOpenedData,
+        complete: true,
+      });
       loadFile();
     }
   }, [appState.lastOpenedData, drawerFilename]);

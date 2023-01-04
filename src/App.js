@@ -45,6 +45,7 @@ const App = () => {
   const [lastOpenedData, setLastOpenedData] = useState({
     id: null,
     ready: false,
+    complete: false,
   });
   const [currentValue, setCurrentValue] = useState(null);
   const [key, setKey] = useState(null);
