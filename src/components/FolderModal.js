@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
@@ -6,13 +6,19 @@ import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import Save from "@mui/icons-material/Save";
 import NoteAddIcon from "@mui/icons-material/NoteAdd";
+import CreateNewFolderIcon from "@mui/icons-material/CreateNewFolder";
 import LowPriorityIcon from "@mui/icons-material/LowPriority";
 import Modal from "@mui/material/Modal";
+import Cookies from "js-cookie";
+import axios from "axios";
 import ReorderModal from "./ReorderModal";
 import { StyledTextField } from "./CustomTextField";
 import CustomFormButton from "./CustomFormButton";
 import theme from "./utils/theme";
 import { setUpNewFile } from "./utils/skyWriteUtils";
+import { encryptDataToBytes } from "./utils/encryption";
+import { defaultFilename } from "../settings";
+import { backendOrigin } from "./utils/navTools";
 
 const FolderModal = (props) => {
   const obj = props.obj;
@@ -21,6 +27,48 @@ const FolderModal = (props) => {
 
   const [reorderModalOpen, setReorderModalOpen] = useState(false);
   const [reorderDisabled, setReorderDisabled] = useState(true);
+  const [saveFolder, setSaveFolder] = useState(false);
+
+  const newFolderInFolder = () => {
+    encryptDataToBytes(`${defaultFilename} folder`, appState.key)
+      .then((ret) => {
+        axios
+          .post(
+            `${backendOrigin}/storage_objects/`,
+            {
+              name: window.btoa(ret.ciphertext),
+              name_iv: window.btoa(ret.iv),
+              is_file: false,
+              folder_id: obj.id,
+            },
+            {
+              headers: {
+                Authorization: `token ${Cookies.get("token")}`,
+              },
+            }
+          )
+          .then(function (response) {
+            // Close the modal
+            folderState.setEditName(false);
+          })
+          .catch(function (error) {
+            if (error.response) {
+              console.log(error.response.data);
+            }
+          });
+      })
+      .then(() => {
+        // Get storage objects again
+        props.getUser();
+      });
+  };
+
+  useEffect(() => {
+    if (saveFolder) {
+      setSaveFolder(false);
+      newFolderInFolder();
+    }
+  }, [saveFolder]);
 
   return (
     <Modal
@@ -94,6 +142,34 @@ const FolderModal = (props) => {
         </Grid>
         {!props.newFolder && (
           <Grid container justifyContent="center">
+            <Grid
+              item
+              xs={12}
+              sm={4}
+              sx={{ textAlign: "center", mb: { xs: 2 } }}
+            >
+              <Tooltip title="Add New File to this Folder">
+                <CustomFormButton
+                  sx={{
+                    backgroundColor: theme.primaryLight,
+                    color: theme.primaryDark,
+                    boxShadow: 5,
+                    "&:hover": {
+                      backgroundColor: theme.primary,
+                    },
+                  }}
+                  onClick={() => {
+                    if (obj !== undefined && obj !== null) {
+                      setSaveFolder(true);
+                      folderState.setOpen(true);
+                    }
+                  }}
+                  startIcon={<CreateNewFolderIcon />}
+                >
+                  Add New Folder
+                </CustomFormButton>
+              </Tooltip>
+            </Grid>
             <Grid
               item
               xs={12}

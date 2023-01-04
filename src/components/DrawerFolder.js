@@ -212,6 +212,7 @@ const DrawerFolder = (props) => {
         folderState={folderState}
         newFolder={false}
         obj={obj}
+        getUser={props.getUser}
       />
       <Collapse in={open} timeout="auto" unmountOnExit>
         {makeNewList()}

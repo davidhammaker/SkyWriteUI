@@ -186,6 +186,7 @@ const AddItems = (props) => {
         appState={appState}
         folderState={folderState}
         newFolder={true}
+        getUser={props.getUser}
       />
       <ReorderModal
         open={reorderModalOpen}
