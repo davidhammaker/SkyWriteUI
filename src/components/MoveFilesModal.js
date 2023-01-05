@@ -286,6 +286,13 @@ const MoveItemsModal = (props) => {
       });
   };
 
+  useEffect(() => {
+    if (props.open) {
+      setSelection([]);
+      setTargetId(null);
+    }
+  }, [props.open]);
+
   return (
     <Dialog
       fullScreen
