@@ -100,6 +100,12 @@ const DrawerFolder = (props) => {
   }, []);
 
   useEffect(() => {
+    if (appState.lastOpenedData.pathToFile.includes(obj.id)) {
+      setOpen(true);
+    }
+  }, [appState.lastOpenedData]);
+
+  useEffect(() => {
     if (ciphertext !== null) {
       saveFolderName();
     }

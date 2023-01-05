@@ -46,6 +46,7 @@ const App = () => {
     id: null,
     ready: false,
     complete: false,
+    pathToFile: [],
   });
   const [currentValue, setCurrentValue] = useState(null);
   const [key, setKey] = useState(null);
@@ -155,7 +156,11 @@ const App = () => {
         setStorageObjects(response.data.storage_objects);
         getOrCreateKey(response.data.encryption_key);
         if (response.data.last_file !== null) {
-          setLastOpenedData({ ...lastOpenedData, id: response.data.last_file });
+          setLastOpenedData({
+            ...lastOpenedData,
+            id: response.data.last_file,
+            pathToFile: response.data.path_to_last_file,
+          });
         }
       })
       .catch(function (error) {
