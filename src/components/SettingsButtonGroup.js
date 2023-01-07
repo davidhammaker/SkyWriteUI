@@ -9,7 +9,6 @@ const SettingsButtonGroup = (props) => {
 
   return (
     <ButtonGroup
-      id="editorButtons"
       variant="contained"
       sx={{
         boxShadow: 0,

@@ -4,7 +4,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import IconButton from "@mui/material/IconButton";
 import FolderIcon from "@mui/icons-material/Folder";
-import EditIcon from "@mui/icons-material/Edit";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import Collapse from "@mui/material/Collapse";
@@ -21,7 +21,6 @@ const DrawerFolder = (props) => {
   const obj = props.obj;
   const depth = props.depth;
   const path = [...props.currentPath, obj.id];
-  const parentFolderId = props.folderId ? props.folderId : null;
 
   const [open, setOpen] = useState(false);
   const [folderName, setFolderName] = useState("");
@@ -203,7 +202,7 @@ const DrawerFolder = (props) => {
                 },
               }}
             >
-              <EditIcon fontSize="small" />
+              <MoreVertIcon />
             </IconButton>
           </div>
         </>

@@ -23,6 +23,9 @@ const theme = {
   secondary: "#6e8a99",
   secondaryLight: "#afc6d5",
   secondaryLightest: "#d7e3ea",
+  errorDark: "#aa7788",
+  error: "#ddaabb",
+  errorLight: "#ffccdd",
 };
 
 export default theme;

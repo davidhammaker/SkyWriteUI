@@ -3,8 +3,11 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import ArticleIcon from "@mui/icons-material/Article";
+import IconButton from "@mui/material/IconButton";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 import Cookies from "js-cookie";
 import axios from "axios";
+import FileModal from "./FileModal";
 import { backendOrigin } from "./utils/navTools";
 import theme from "./utils/theme";
 import { decryptDataFromBytes } from "./utils/encryption";
@@ -17,6 +20,7 @@ const DrawerFile = (props) => {
   const depth = props.depth;
 
   const [drawerFilename, setDrawerFilename] = useState(defaultFilename);
+  const [fileModalOpen, setFileModalOpen] = useState(false);
 
   // After the key has been set, decrypt the file name.
   useEffect(() => {
@@ -102,43 +106,77 @@ const DrawerFile = (props) => {
   };
 
   return (
-    <ListItemButton
-      className="drawer-object"
-      objid={obj.id}
-      sx={{ pl: depth * 1.5 + 1, pr: 3 }}
-      onClick={(event) => {
-        event.preventDefault;
-        if (!appState.unsaved) {
-          loadFile();
-        } else {
-          confirmLoad();
-        }
-      }}
-    >
-      <ListItemIcon
-        sx={{
-          minWidth: "30px",
-          color: appState.filePath.includes(obj.id)
-            ? theme.primaryDarkest
-            : theme.primaryDark,
+    <>
+      <ListItemButton
+        className="drawer-object"
+        objid={obj.id}
+        sx={{ pl: depth * 1.5 + 1, pr: 3 }}
+        onClick={(event) => {
+          event.preventDefault;
+          if (!appState.unsaved) {
+            loadFile();
+          } else {
+            confirmLoad();
+          }
         }}
       >
-        <ArticleIcon fontSize="small" />
-      </ListItemIcon>
-      <ListItemText
-        primary={drawerFilename}
-        primaryTypographyProps={{
-          sx: {
-            color: theme.primaryDarkest,
-            fontSize: "smaller",
-            fontWeight: appState.filePath.includes(obj.id) ? "bold" : "inherit",
-            wordWrap: "break-word",
-            pr: 2,
-            pl: 0.5,
-          },
+        <ListItemIcon
+          sx={{
+            minWidth: "30px",
+            color: appState.filePath.includes(obj.id)
+              ? theme.primaryDarkest
+              : theme.primaryDark,
+          }}
+        >
+          <ArticleIcon fontSize="small" />
+        </ListItemIcon>
+        <ListItemText
+          primary={drawerFilename}
+          primaryTypographyProps={{
+            sx: {
+              color: theme.primaryDarkest,
+              fontSize: "smaller",
+              fontWeight: appState.filePath.includes(obj.id)
+                ? "bold"
+                : "inherit",
+              wordWrap: "break-word",
+              pr: 2,
+              pl: 0.5,
+            },
+          }}
+        />
+        <div
+          onClick={(event) => {
+            event.stopPropagation();
+            setFileModalOpen(true);
+          }}
+          style={{ paddingRight: "0px", paddingLeft: "10px" }}
+        >
+          <IconButton
+            sx={{
+              width: "20px",
+              height: "20px",
+              color: theme.primaryDark,
+              "&:hover": {
+                color: theme.primaryDarkest,
+                backgroundColor: theme.primaryLight,
+              },
+            }}
+          >
+            <MoreVertIcon />
+          </IconButton>
+        </div>
+      </ListItemButton>
+      <FileModal
+        open={fileModalOpen}
+        onClose={() => {
+          setFileModalOpen(false);
         }}
+        obj={obj}
+        filename={drawerFilename}
+        appState={appState}
       />
-    </ListItemButton>
+    </>
   );
 };
 

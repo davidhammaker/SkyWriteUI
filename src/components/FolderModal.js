@@ -6,6 +6,7 @@ import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import Save from "@mui/icons-material/Save";
 import NoteAddIcon from "@mui/icons-material/NoteAdd";
+import DeleteIcon from "@mui/icons-material/Delete";
 import CreateNewFolderIcon from "@mui/icons-material/CreateNewFolder";
 import LowPriorityIcon from "@mui/icons-material/LowPriority";
 import Modal from "@mui/material/Modal";
@@ -14,8 +15,9 @@ import axios from "axios";
 import ReorderModal from "./ReorderModal";
 import { StyledTextField } from "./CustomTextField";
 import CustomFormButton from "./CustomFormButton";
+import FolderDeleteConfirm from "./FolderDeleteConfirm";
 import theme from "./utils/theme";
-import { setUpNewFile } from "./utils/skyWriteUtils";
+import { setUpNewFile, deleteObj } from "./utils/skyWriteUtils";
 import { encryptDataToBytes } from "./utils/encryption";
 import { defaultFilename } from "../settings";
 import { backendOrigin } from "./utils/navTools";
@@ -28,6 +30,7 @@ const FolderModal = (props) => {
   const [reorderModalOpen, setReorderModalOpen] = useState(false);
   const [reorderDisabled, setReorderDisabled] = useState(true);
   const [saveFolder, setSaveFolder] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   const newFolderInFolder = () => {
     encryptDataToBytes(`${defaultFilename} folder`, appState.key)
@@ -84,7 +87,13 @@ const FolderModal = (props) => {
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
-          width: 500,
+          width: { xs: 300, sm: 500 },
+          backgroundColor: theme.primary,
+          padding: "10px",
+          borderStyle: "solid",
+          borderWidth: 0,
+          borderRadius: 5,
+          boxShadow: 5,
         }}
       >
         <Typography
@@ -107,7 +116,7 @@ const FolderModal = (props) => {
               defaultValue={folderState.folderName}
               placeholder="Folder name"
               sx={{
-                width: { xs: 250, sm: 400 },
+                width: { xs: 220, sm: 370 },
                 boxShadow: 5,
               }}
               onChange={(event) => {
@@ -128,7 +137,8 @@ const FolderModal = (props) => {
                   color: theme.primaryDark,
                   boxShadow: 5,
                   "&:hover": {
-                    backgroundColor: theme.primary,
+                    backgroundColor: theme.primaryDark,
+                    color: theme.primaryLight,
                   },
                 }}
                 onClick={() => {
@@ -138,6 +148,26 @@ const FolderModal = (props) => {
                 <Save />
               </IconButton>
             </Tooltip>
+            {!props.newFolder && (
+              <Tooltip title="Delete Folder">
+                <IconButton
+                  sx={{
+                    ml: 1,
+                    backgroundColor: theme.errorDark,
+                    color: theme.errorLight,
+                    boxShadow: 5,
+                    "&:hover": {
+                      backgroundColor: theme.error,
+                    },
+                  }}
+                  onClick={() => {
+                    setDeleting(true);
+                  }}
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </Tooltip>
+            )}
           </Grid>
         </Grid>
         {!props.newFolder && (
@@ -148,14 +178,15 @@ const FolderModal = (props) => {
               sm={4}
               sx={{ textAlign: "center", mb: { xs: 2 } }}
             >
-              <Tooltip title="Add New File to this Folder">
+              <Tooltip title="Add New Folder to this Folder">
                 <CustomFormButton
                   sx={{
                     backgroundColor: theme.primaryLight,
                     color: theme.primaryDark,
                     boxShadow: 5,
                     "&:hover": {
-                      backgroundColor: theme.primary,
+                      backgroundColor: theme.primaryDark,
+                      color: theme.primaryLight,
                     },
                   }}
                   onClick={() => {
@@ -166,7 +197,7 @@ const FolderModal = (props) => {
                   }}
                   startIcon={<CreateNewFolderIcon />}
                 >
-                  Add New Folder
+                  New Folder
                 </CustomFormButton>
               </Tooltip>
             </Grid>
@@ -183,7 +214,8 @@ const FolderModal = (props) => {
                     color: theme.primaryDark,
                     boxShadow: 5,
                     "&:hover": {
-                      backgroundColor: theme.primary,
+                      backgroundColor: theme.primaryDark,
+                      color: theme.primaryLight,
                     },
                   }}
                   onClick={() => {
@@ -197,7 +229,7 @@ const FolderModal = (props) => {
                   }}
                   startIcon={<NoteAddIcon />}
                 >
-                  Add New File
+                  New File
                 </CustomFormButton>
               </Tooltip>
             </Grid>
@@ -215,7 +247,8 @@ const FolderModal = (props) => {
                       color: theme.primaryDark,
                       boxShadow: 5,
                       "&:hover": {
-                        backgroundColor: theme.primary,
+                        backgroundColor: theme.primaryDark,
+                        color: theme.primaryLight,
                       },
                     }}
                     onClick={() => {
@@ -232,17 +265,29 @@ const FolderModal = (props) => {
           </Grid>
         )}
         {obj && (
-          <ReorderModal
-            open={reorderModalOpen}
-            onClose={() => {
-              setReorderModalOpen(false);
-              appState.setStorageObjects(null);
-            }}
-            appState={appState}
-            setReorderDisabled={setReorderDisabled}
-            setReorderModalOpen={setReorderModalOpen}
-            folderId={obj.id}
-          />
+          <>
+            <ReorderModal
+              open={reorderModalOpen}
+              onClose={() => {
+                setReorderModalOpen(false);
+                appState.setStorageObjects(null);
+              }}
+              appState={appState}
+              setReorderDisabled={setReorderDisabled}
+              setReorderModalOpen={setReorderModalOpen}
+              folderId={obj.id}
+            />
+            <FolderDeleteConfirm
+              open={deleting}
+              onclose={() => {
+                setDeleting(false);
+              }}
+              obj={obj}
+              folderState={folderState}
+              appState={appState}
+              setDeleting={setDeleting}
+            />
+          </>
         )}
       </Box>
     </Modal>
