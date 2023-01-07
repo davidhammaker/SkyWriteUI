@@ -77,10 +77,13 @@ const FolderDeleteConfirm = (props) => {
                 },
               }}
               onClick={() => {
-                deleteObj(obj.id, false);
-                props.setDeleting(false);
-                folderState.setEditName(false);
-                appState.setStorageObjects(null);
+                if (obj !== undefined && obj !== null) {
+                  deleteObj(obj.id, false).then(() => {
+                    props.setDeleting(false);
+                    folderState.setEditName(false);
+                    appState.setStorageObjects(null);
+                  });
+                }
               }}
               startIcon={<FolderIcon />}
               endIcon={<DeleteIcon />}
@@ -101,10 +104,11 @@ const FolderDeleteConfirm = (props) => {
               }}
               onClick={() => {
                 if (obj !== undefined && obj !== null) {
-                  deleteObj(obj.id, true);
-                  props.setDeleting(false);
-                  folderState.setEditName(false);
-                  appState.setStorageObjects(null);
+                  deleteObj(obj.id, true).then(() => {
+                    props.setDeleting(false);
+                    folderState.setEditName(false);
+                    appState.setStorageObjects(null);
+                  });
                 }
               }}
               startIcon={<FolderCopyIcon />}

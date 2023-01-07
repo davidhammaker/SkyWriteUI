@@ -21,9 +21,9 @@ export const setUpNewFile = (appState) => {
  * @param {int} objId - The ID of the object to be deleted.
  * @param {bool} recursive - If 'true', set '?recursive' param, deleting folder contents with folder.
  */
-export const deleteObj = (objId, recursive) => {
-  axios
-    .delete(
+export const deleteObj = async (objId, recursive) => {
+  try {
+    await axios.delete(
       `${backendOrigin}/storage_objects/${objId}/${
         recursive ? "?recursive" : ""
       }`,
@@ -32,7 +32,10 @@ export const deleteObj = (objId, recursive) => {
           Authorization: `token ${Cookies.get("token")}`,
         },
       }
-    )
-    .then((response) => {})
-    .catch((error) => {});
+    );
+  } catch {
+    (error) => {
+      console.log(error);
+    };
+  }
 };

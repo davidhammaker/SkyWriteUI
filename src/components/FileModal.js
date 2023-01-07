@@ -69,8 +69,9 @@ const FileModal = (props) => {
                     `Are you sure you want to delete "${filename}"?`
                   );
                   if (deleteYes) {
-                    deleteObj(obj.id, false);
-                    appState.setStorageObjects(null);
+                    deleteObj(obj.id, false).then(() => {
+                      appState.setStorageObjects(null);
+                    });
                   }
                 }}
               >
