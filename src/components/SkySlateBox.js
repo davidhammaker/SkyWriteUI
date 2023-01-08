@@ -123,7 +123,7 @@ const SkySlateBox = (props) => {
         );
       case "code":
         return (
-          <pre
+          <p
             style={{
               backgroundColor: theme.secondaryLightest,
               color: theme.secondaryDark,
@@ -133,7 +133,7 @@ const SkySlateBox = (props) => {
             {...attributes}
           >
             <code>{children}</code>
-          </pre>
+          </p>
         );
       default:
         return <p {...attributes}>{children}</p>;
